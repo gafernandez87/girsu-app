@@ -1,4 +1,4 @@
-# Resumen funcional - El Camino de los Residuos
+# Documento funcional - El Camino de los Residuos
 
 Fuente: Google Doc "Producto 2.5 - Aplicacion Movil - Documento tecnico de presentacion", pestaña "Presentacion del juego".
 
