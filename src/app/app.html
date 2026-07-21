@@ -1,0 +1,21 @@
+<div class="app-shell" [class.game-mode]="router.url.startsWith('/juego')">
+  @if (!router.url.startsWith('/juego')) {
+    <header class="top-bar">
+      <a class="brand" routerLink="/" aria-label="Inicio">
+        <span class="brand-mark">CR</span>
+        <span>
+          <strong>El Camino</strong>
+          <small>de los Residuos</small>
+        </span>
+      </a>
+
+      <nav class="top-nav" aria-label="Principal">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          Inicio
+        </a>
+      </nav>
+    </header>
+  }
+
+  <router-outlet />
+</div>

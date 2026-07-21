@@ -1,0 +1,81 @@
+<main class="home-page">
+  <section class="hero">
+    <div class="hero-copy">
+      <span class="eyebrow">Jujuy GIRSU</span>
+      <h1>El Camino de los Residuos</h1>
+      <p>
+        Recorre cuatro etapas del ciclo de residuos con desafios cortos, puntajes y ranking
+        provincial.
+      </p>
+    </div>
+
+    <div class="profile-panel" aria-label="Perfil actual">
+      <div>
+        <span class="label">Participante</span>
+        <strong>{{ user.name }}</strong>
+        <small>{{ user.course }} - {{ user.school }}</small>
+      </div>
+      <div class="score-badge">
+        <span>{{ totalScore() }}</span>
+        <small>pts</small>
+      </div>
+    </div>
+  </section>
+
+  <section class="progress-panel" aria-label="Progreso del recorrido">
+    <div>
+      <span class="label">Recorrido</span>
+      <strong>{{ completedStages() }} de {{ stages.length }} etapas</strong>
+    </div>
+    <div class="progress-track" aria-hidden="true">
+      <span [style.width.%]="progressPercent()"></span>
+    </div>
+    <strong>{{ progressPercent() }}%</strong>
+  </section>
+
+  <section class="stage-section">
+    <div class="section-heading">
+      <span class="label">Mini juegos</span>
+      <h2>Camino pedagogico</h2>
+    </div>
+
+    <div class="stage-list">
+      @for (stage of stages; track stage.id) {
+        <article class="stage-card" [style.--accent]="stage.accentColor">
+          <div class="stage-order">{{ stage.order }}</div>
+          <div class="stage-body">
+            <span>{{ stage.shortTitle }}</span>
+            <h3>{{ stage.title }}</h3>
+            <p>{{ stage.subtitle }}</p>
+            <div class="stage-meta">
+              <small>{{ stage.durationSeconds }}s</small>
+              <small>{{ stageScore(stage.id) }} pts</small>
+            </div>
+          </div>
+          <a [routerLink]="['/juego', stage.id]" class="play-button">Jugar</a>
+        </article>
+      }
+    </div>
+  </section>
+
+  <section class="ranking-section">
+    <div class="section-heading">
+      <span class="label">Ranking</span>
+      <h2>Provincia</h2>
+    </div>
+
+    <div class="ranking-list">
+      @for (entry of leaderboard(); track entry.name) {
+        <article class="ranking-row" [class.current]="entry.isCurrentUser">
+          <span class="position">{{ entry.position }}</span>
+          <div>
+            <strong>{{ entry.name }}</strong>
+            <small>{{ entry.school }}</small>
+          </div>
+          <strong>{{ entry.score }}</strong>
+        </article>
+      }
+    </div>
+  </section>
+</main>
+

@@ -1,0 +1,4 @@
+<main class="game-page" [style.--accent]="stage().accentColor">
+  <app-game-canvas class="game-surface" [stage]="stage()" (completed)="saveResult($event)" />
+  <a routerLink="/" class="exit-button" aria-label="Volver al recorrido">Salir</a>
+</main>
