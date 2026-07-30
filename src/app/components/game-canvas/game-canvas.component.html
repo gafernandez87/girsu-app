@@ -1,3 +1,146 @@
 <section class="game-card">
-  <div #gameHost class="game-host" aria-label="Lienzo interactivo del minijuego"></div>
+  <div
+    #gameHost
+    class="game-host"
+    [class.is-hidden]="stage.id === 'separacion-origen' || stage.id === 'valorizacion-industrial'"
+    aria-label="Lienzo interactivo del minijuego"
+  ></div>
+
+  @if (stage.id === 'valorizacion-industrial') {
+    <app-industrial-game
+      [stage]="stage"
+      (tick)="handleIndustrialTick($event)"
+      (completed)="handleStageCompleted($event)"
+    />
+  }
+
+  <div
+    #homeStage
+    class="home-game"
+    [class.is-hidden]="stage.id !== 'separacion-origen'"
+    [style.background-image]="homeBackgroundImage"
+    aria-label="Minijuego de separacion en origen"
+  >
+    @if (stage.id === 'separacion-origen') {
+      <div class="home-game__shade" aria-hidden="true"></div>
+
+      <div class="home-game__bins">
+        @for (zone of stage.dropZones; track zone.id) {
+          <div
+            class="home-game__bin"
+            [class.is-hover]="homeBinState(zone.id) === 'hover'"
+            [class.is-open]="homeBinState(zone.id) === 'open'"
+            [class.is-error]="homeBinState(zone.id) === 'error'"
+            [attr.data-home-zone-id]="zone.id"
+          >
+            <img [src]="homeBinImage(zone.id)" [alt]="zone.label" draggable="false" />
+          </div>
+        }
+      </div>
+
+      @if (activeItem(); as item) {
+        <button
+          type="button"
+          class="home-game__item"
+          [class.is-dragging]="homeDragging()"
+          [style.transform]="homeTokenTransform()"
+          [attr.aria-label]="'Arrastrar ' + item.label"
+          (pointerdown)="startHomeDrag($event)"
+        >
+          <span class="home-game__item-orb">
+            <img
+              [src]="homeProductImage(item.id)"
+              [alt]="item.label"
+              [style.width.px]="homeProductSize(item.id)"
+              [style.height.px]="homeProductSize(item.id)"
+              draggable="false"
+            />
+          </span>
+          <span class="home-game__item-label">{{ item.label }}</span>
+        </button>
+      }
+
+      @for (effect of homeEffects(); track effect.id) {
+        <span
+          class="home-game__effect"
+          [class.home-game__effect--score]="effect.type === 'score'"
+          [class.home-game__effect--success]="effect.type === 'success'"
+          [class.home-game__effect--error]="effect.type === 'error'"
+          [style.left.px]="effect.x"
+          [style.top.px]="effect.y"
+          aria-hidden="true"
+        >
+          {{ effect.text }}
+        </span>
+      }
+    }
+  </div>
+  @if (stage.id === 'separacion-origen') {
+    <div class="home-hud" aria-live="polite">
+      <div class="home-hud__top">
+        <strong class="home-hud__title">{{ stage.title }}</strong>
+        <div class="home-hud__score">
+          <span>{{ score() }} pts</span>
+        </div>
+        <div class="home-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+          <span>Tiempo</span>
+          <strong>{{ remainingSeconds() }}s</strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-bin-labels" aria-hidden="true">
+      @for (zone of stage.dropZones; track zone.id) {
+        <span [style.--zone-color]="zone.color">{{ zone.shortLabel }}</span>
+      }
+    </div>
+
+    @if (completedResult(); as result) {
+      <div class="home-complete" aria-live="polite">
+        <div class="home-complete__panel">
+          <img src="/assets/game-1/effects/processed/medal.png" alt="" />
+          <strong>Separacion lograda</strong>
+          <span>{{ result.score }} puntos</span>
+          <small>
+            Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{ homeAccuracyBonus(result) }}
+          </small>
+        </div>
+      </div>
+    }
+  }
+
+  @if (stage.id === 'valorizacion-industrial') {
+    <div class="industrial-hud" aria-live="polite">
+      <div class="industrial-hud__top">
+        <strong class="industrial-hud__title">{{ stage.title }}</strong>
+        <div class="industrial-hud__score">
+          <span>{{ score() }} pts</span>
+        </div>
+        <div class="industrial-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+          <span>Tiempo</span>
+          <strong>{{ remainingSeconds() }}s</strong>
+        </div>
+        <div class="industrial-hud__progress" aria-hidden="true">
+          @for (item of stage.items; track item.id; let index = $index) {
+            <span [class.is-complete]="index < completedItems()"></span>
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (completedResult(); as result) {
+      <div class="industrial-complete" aria-live="polite">
+        <div class="industrial-complete__panel">
+          <img src="/assets/game-1/effects/processed/medal.png" alt="" />
+          <strong>Planta en marcha</strong>
+          <span>{{ result.score }} puntos</span>
+          <small>
+            Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{
+              industrialAccuracyBonus(result)
+            }}
+          </small>
+        </div>
+      </div>
+    }
+  }
 </section>

@@ -1,0 +1,85 @@
+<div
+  #industrialStage
+  class="industrial-game"
+  [style.background-image]="backgroundImage"
+  aria-label="Minijuego de valorizacion industrial"
+>
+  <div class="industrial-game__shade" aria-hidden="true"></div>
+  <div class="industrial-game__floor" aria-hidden="true"></div>
+
+  <div class="industrial-game__stations">
+    @for (zone of stage.dropZones; track zone.id) {
+      @if (binAsset(zone.id); as asset) {
+        <div
+          class="industrial-game__station"
+          [class.industrial-game__station--plastico]="zone.id === 'plastico'"
+          [class.industrial-game__station--papel-carton]="zone.id === 'papel-carton'"
+          [class.industrial-game__station--vidrio]="zone.id === 'vidrio'"
+          [class.industrial-game__station--metal]="zone.id === 'metal'"
+          [class.industrial-game__station--descarte]="zone.id === 'descarte'"
+          [class.is-hover]="zoneState(zone.id) === 'hover'"
+          [class.is-open]="zoneState(zone.id) === 'open'"
+          [class.is-error]="zoneState(zone.id) === 'error'"
+          [attr.data-industrial-zone-id]="zone.id"
+        >
+          <span class="industrial-game__station-pad" aria-hidden="true"></span>
+          <span class="industrial-game__asset" [ngStyle]="assetFrameStyle(asset)">
+            <img
+              [src]="asset.path"
+              [alt]="zone.label"
+              [ngStyle]="assetImageStyle(asset)"
+              draggable="false"
+            />
+          </span>
+        </div>
+      }
+    }
+  </div>
+
+  <div class="industrial-game__conveyor" aria-hidden="true">
+    <span class="industrial-game__asset industrial-game__asset--conveyor-base">
+      <img
+        [src]="conveyorBaseAsset.path"
+        alt=""
+        draggable="false"
+      />
+    </span>
+    <span
+      #beltTrack
+      class="industrial-game__asset industrial-game__asset--conveyor-belt"
+      [style.--industrial-belt-pattern]="conveyorBeltPattern"
+    ></span>
+  </div>
+
+  @if (activeItem(); as item) {
+    <button
+      type="button"
+      class="industrial-game__item"
+      [class.is-dragging]="dragging()"
+      [style.transform]="tokenTransform()"
+      [attr.aria-label]="'Arrastrar ' + item.label"
+      (pointerdown)="startDrag($event)"
+    >
+      <span class="industrial-game__product-plate" aria-hidden="true">
+        @if (productAsset(item.id); as product) {
+          <img
+            class="industrial-game__product-image"
+            [src]="product.path"
+            alt=""
+            [style.width.px]="product.size"
+            [style.height.px]="product.size"
+            draggable="false"
+          />
+        } @else {
+          <span
+            class="industrial-game__product-art"
+            [class.industrial-game__product-art--diario]="item.id === 'diario'"
+            [class.industrial-game__product-art--lata]="item.id === 'lata'"
+            [class.industrial-game__product-art--papel-sucio]="item.id === 'papel-sucio'"
+          ></span>
+        }
+      </span>
+      <span class="industrial-game__item-label">{{ item.label }}</span>
+    </button>
+  }
+</div>

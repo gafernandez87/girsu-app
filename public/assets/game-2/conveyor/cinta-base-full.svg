@@ -1,0 +1,96 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="2400" height="360" viewBox="0 0 2400 360" role="img" aria-label="Base industrial de cinta transportadora">
+  <defs>
+    <linearGradient id="topShell" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#7fe044"/>
+      <stop offset="0.2" stop-color="#3fb829"/>
+      <stop offset="0.58" stop-color="#188014"/>
+      <stop offset="1" stop-color="#0c4f11"/>
+    </linearGradient>
+    <linearGradient id="frontPanel" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#5acb2d"/>
+      <stop offset="0.36" stop-color="#27991c"/>
+      <stop offset="0.72" stop-color="#167414"/>
+      <stop offset="1" stop-color="#0b4b0d"/>
+    </linearGradient>
+    <linearGradient id="edgeMetal" x1="0" x2="1" y1="0" y2="0">
+      <stop offset="0" stop-color="#d3e86d"/>
+      <stop offset="0.22" stop-color="#67bd29"/>
+      <stop offset="0.68" stop-color="#1c7e17"/>
+      <stop offset="1" stop-color="#dbed64"/>
+    </linearGradient>
+    <linearGradient id="hazardYellow" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffe65d"/>
+      <stop offset="1" stop-color="#cfa50f"/>
+    </linearGradient>
+    <filter id="machineShadow" x="-4%" y="-8%" width="108%" height="124%">
+      <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#05110d" flood-opacity="0.28"/>
+    </filter>
+    <g id="bolt">
+      <circle r="12" fill="#ffe46b"/>
+      <circle r="7" fill="#41560d" opacity="0.48"/>
+    </g>
+    <g id="smallWheel">
+      <circle r="30" fill="#172015"/>
+      <circle r="22" fill="#e1c342"/>
+      <circle r="14" fill="#24300f"/>
+      <circle r="8" fill="#c4bd91"/>
+    </g>
+  </defs>
+
+  <g filter="url(#machineShadow)">
+    <rect x="70" y="44" width="2260" height="105" rx="58" fill="url(#topShell)" stroke="#062f0b" stroke-width="10"/>
+    <rect x="104" y="62" width="2192" height="18" rx="9" fill="#cbff78" opacity="0.5"/>
+    <rect x="110" y="122" width="2180" height="18" rx="8" fill="#072e08" opacity="0.62"/>
+
+    <rect x="104" y="120" width="2192" height="178" rx="24" fill="url(#frontPanel)" stroke="#062f0b" stroke-width="10"/>
+    <rect x="132" y="142" width="2136" height="28" rx="12" fill="#8cf04d" opacity="0.28"/>
+    <rect x="132" y="260" width="2136" height="12" rx="6" fill="#092d09" opacity="0.52"/>
+
+    <rect x="104" y="268" width="2192" height="46" rx="10" fill="#19320d" stroke="#072307" stroke-width="6"/>
+    <g>
+      <rect x="116" y="272" width="90" height="40" fill="url(#hazardYellow)"/>
+      <path d="M156 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M276 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M396 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M516 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M636 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M756 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M876 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M996 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M1116 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M1236 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M1356 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M1476 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M1596 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M1716 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M1836 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M1956 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M2076 272h42l42 40h-42z" fill="#171b14"/>
+      <path d="M2196 272h42l42 40h-42z" fill="#171b14"/>
+    </g>
+
+    <rect x="72" y="98" width="92" height="218" rx="18" fill="url(#edgeMetal)" stroke="#062f0b" stroke-width="8"/>
+    <rect x="2236" y="98" width="92" height="218" rx="18" fill="url(#edgeMetal)" stroke="#062f0b" stroke-width="8"/>
+    <rect x="84" y="307" width="96" height="42" rx="9" fill="#1d271d" stroke="#070b07" stroke-width="6"/>
+    <rect x="2220" y="307" width="96" height="42" rx="9" fill="#1d271d" stroke="#070b07" stroke-width="6"/>
+
+    <use href="#smallWheel" x="168" y="102"/>
+    <use href="#smallWheel" x="360" y="102"/>
+    <use href="#smallWheel" x="552" y="102"/>
+    <use href="#smallWheel" x="744" y="102"/>
+    <use href="#smallWheel" x="936" y="102"/>
+    <use href="#smallWheel" x="1464" y="102"/>
+    <use href="#smallWheel" x="1656" y="102"/>
+    <use href="#smallWheel" x="1848" y="102"/>
+    <use href="#smallWheel" x="2040" y="102"/>
+    <use href="#smallWheel" x="2232" y="102"/>
+
+    <use href="#bolt" x="120" y="150"/>
+    <use href="#bolt" x="120" y="236"/>
+    <use href="#bolt" x="2280" y="150"/>
+    <use href="#bolt" x="2280" y="236"/>
+    <use href="#bolt" x="292" y="62"/>
+    <use href="#bolt" x="2108" y="62"/>
+
+  </g>
+</svg>

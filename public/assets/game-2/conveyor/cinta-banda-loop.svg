@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="128" viewBox="0 0 512 128" role="img" aria-label="Banda de cinta transportadora repetible">
+  <defs>
+    <linearGradient id="beltBody" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#3f4242"/>
+      <stop offset="0.14" stop-color="#151717"/>
+      <stop offset="0.5" stop-color="#232626"/>
+      <stop offset="0.86" stop-color="#0a0b0b"/>
+      <stop offset="1" stop-color="#2f3232"/>
+    </linearGradient>
+    <linearGradient id="chevronFace" x1="0" x2="1" y1="0" y2="1">
+      <stop offset="0" stop-color="#6f716c"/>
+      <stop offset="0.46" stop-color="#3b3d39"/>
+      <stop offset="1" stop-color="#1f211f"/>
+    </linearGradient>
+    <filter id="innerLine" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="1.4" flood-color="#000000" flood-opacity="0.65"/>
+    </filter>
+    <g id="chevron">
+      <path d="M0 20 78 64 0 108h36l78-44-78-44z" fill="#050606" opacity="0.92"/>
+      <path d="M10 25 79 64 10 103h24l69-39-69-39z" fill="url(#chevronFace)" stroke="#898b82" stroke-width="3" stroke-linejoin="round" filter="url(#innerLine)"/>
+      <path d="M32 28 97 64 32 100" fill="none" stroke="#161817" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" opacity="0.8"/>
+      <path d="M18 29 75 64" fill="none" stroke="#b5b7aa" stroke-width="2" stroke-linecap="round" opacity="0.28"/>
+    </g>
+  </defs>
+
+  <rect width="512" height="128" fill="url(#beltBody)"/>
+  <rect y="2" width="512" height="10" fill="#777870" opacity="0.55"/>
+  <rect y="12" width="512" height="4" fill="#050606" opacity="0.72"/>
+  <rect y="112" width="512" height="4" fill="#85867e" opacity="0.42"/>
+  <rect y="116" width="512" height="10" fill="#030404" opacity="0.82"/>
+  <rect y="22" width="512" height="84" fill="#ffffff" opacity="0.04"/>
+  <use href="#chevron" x="-86"/>
+  <use href="#chevron" x="42"/>
+  <use href="#chevron" x="170"/>
+  <use href="#chevron" x="298"/>
+  <use href="#chevron" x="426"/>
+  <path d="M0 18h512M0 110h512" fill="none" stroke="#aeb0a5" stroke-width="2" opacity="0.34"/>
+  <path d="M0 25h512M0 104h512" fill="none" stroke="#000000" stroke-width="3" opacity="0.55"/>
+</svg>
