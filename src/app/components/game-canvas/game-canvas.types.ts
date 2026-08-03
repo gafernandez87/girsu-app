@@ -1,10 +1,3 @@
-import type { StageResult } from '../../core/app.models';
-
-export interface SceneHooks {
-  readonly onTick: (score: number, remainingSeconds: number, completedItems?: number) => void;
-  readonly onComplete: (result: StageResult) => void;
-}
-
 export interface StageTick {
   readonly score: number;
   readonly remainingSeconds: number;

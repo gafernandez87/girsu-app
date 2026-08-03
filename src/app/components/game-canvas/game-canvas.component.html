@@ -1,17 +1,38 @@
 <section class="game-card">
-  <div
-    #gameHost
-    class="game-host"
-    [class.is-hidden]="stage.id === 'separacion-origen' || stage.id === 'valorizacion-industrial'"
-    aria-label="Lienzo interactivo del minijuego"
-  ></div>
-
   @if (stage.id === 'valorizacion-industrial') {
     <app-industrial-game
       [stage]="stage"
       (tick)="handleIndustrialTick($event)"
       (completed)="handleStageCompleted($event)"
     />
+  }
+
+  @if (stage.id === 'compostaje-domiciliario') {
+    <app-compost-game
+      [stage]="stage"
+      (tick)="handleCompostTick($event)"
+      (completed)="handleStageCompleted($event)"
+    />
+  }
+
+  @if (stage.id === 'relleno-sanitario') {
+    <app-landfill-game
+      [stage]="stage"
+      (tick)="handleLandfillTick($event)"
+      (completed)="handleStageCompleted($event)"
+    />
+  }
+
+  @if (isUnsupportedStage()) {
+    <div class="game-placeholder" [style.--placeholder-accent]="stage.accentColor">
+      <div class="game-placeholder__sky" aria-hidden="true"></div>
+      <div class="game-placeholder__ground" aria-hidden="true"></div>
+      <section class="game-placeholder__panel" aria-live="polite">
+        <span>{{ stage.shortTitle }}</span>
+        <strong>{{ stage.title }}</strong>
+        <small>Etapa en diseño</small>
+      </section>
+    </div>
   }
 
   <div
@@ -137,6 +158,80 @@
           <small>
             Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{
               industrialAccuracyBonus(result)
+            }}
+          </small>
+        </div>
+      </div>
+    }
+  }
+
+  @if (stage.id === 'compostaje-domiciliario') {
+    <div class="compost-hud" aria-live="polite">
+      <div class="compost-hud__top">
+        <strong class="compost-hud__title">{{ stage.title }}</strong>
+        <div class="compost-hud__score">
+          <span>{{ score() }} pts</span>
+        </div>
+        <div class="compost-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+          <span>Tiempo</span>
+          <strong>{{ remainingSeconds() }}s</strong>
+        </div>
+        <div class="compost-hud__progress" aria-hidden="true">
+          @for (item of stage.items; track item.id; let index = $index) {
+            <span [class.is-complete]="index < completedItems()"></span>
+          }
+        </div>
+      </div>
+    </div>
+
+    @if (completedResult(); as result) {
+      <div class="compost-complete" aria-live="polite">
+        <div class="compost-complete__panel">
+          <img src="/assets/game-1/effects/processed/medal.png" alt="" />
+          <strong>{{
+            result.correct === stage.items.length && result.mistakes === 0
+              ? 'Abono desbloqueado'
+              : 'Compost en proceso'
+          }}</strong>
+          <span>{{ result.score }} puntos</span>
+          <small>
+            Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{
+              compostAccuracyBonus(result)
+            }}
+          </small>
+        </div>
+      </div>
+    }
+  }
+
+  @if (stage.id === 'relleno-sanitario') {
+    <div class="landfill-hud" aria-live="polite">
+      <div class="landfill-hud__top">
+        <strong class="landfill-hud__title">{{ stage.title }}</strong>
+        <div class="landfill-hud__score">
+          <span>{{ score() }} pts</span>
+        </div>
+        <div class="landfill-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+          <span>Tiempo</span>
+          <strong>{{ remainingSeconds() }}s</strong>
+        </div>
+        <div class="landfill-hud__progress" aria-hidden="true">
+          <span>{{ completedItems() }} piezas compactadas</span>
+        </div>
+      </div>
+    </div>
+
+    @if (completedResult(); as result) {
+      <div class="landfill-complete" aria-live="polite">
+        <div class="landfill-complete__panel">
+          <img src="/assets/game-1/effects/processed/medal.png" alt="" />
+          <strong>{{
+            result.remainingSeconds === 0 ? 'Fosa sostenida' : 'Relleno estabilizado'
+          }}</strong>
+          <span>{{ result.score }} puntos</span>
+          <small>
+            Vida util +{{ landfillDurabilityBonus(result) }} | Compactacion +{{
+              landfillCompactionBonus(result)
             }}
           </small>
         </div>

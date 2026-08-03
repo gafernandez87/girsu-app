@@ -5,7 +5,6 @@ import {
   EventEmitter,
   HostListener,
   Input,
-  NgZone,
   OnChanges,
   OnDestroy,
   Output,
@@ -13,7 +12,6 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
-import Phaser from 'phaser';
 
 import { DropZone, GameItem, GameStage, StageResult } from '../../core/app.models';
 import {
@@ -22,26 +20,20 @@ import {
   HOME_BIN_ASSET_PATHS,
   HOME_PRODUCT_ASSETS,
 } from './game-canvas.assets';
-import type {
-  ActiveItemHud,
-  BinVisualState,
-  HomeEffect,
-  SceneHooks,
-  StageTick,
-} from './game-canvas.types';
+import type { ActiveItemHud, BinVisualState, HomeEffect, StageTick } from './game-canvas.types';
+import { CompostGameComponent } from './compost-game/compost-game.component';
 import { IndustrialGameComponent } from './industrial-game/industrial-game.component';
-import { WasteJourneyScene } from './scenes/waste-journey.scene';
+import { LandfillGameComponent } from './landfill-game/landfill-game.component';
 
 @Component({
   selector: 'app-game-canvas',
-  imports: [IndustrialGameComponent],
+  imports: [CompostGameComponent, IndustrialGameComponent, LandfillGameComponent],
   templateUrl: './game-canvas.component.html',
   styleUrl: './game-canvas.component.scss',
 })
 export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input({ required: true }) stage!: GameStage;
   @Output() completed = new EventEmitter<StageResult>();
-  @ViewChild('gameHost', { static: true }) private readonly gameHost!: ElementRef<HTMLDivElement>;
   @ViewChild('homeStage', { static: true }) private readonly homeStage!: ElementRef<HTMLDivElement>;
 
   readonly score = signal(0);
@@ -57,7 +49,6 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   readonly homeTokenPosition = signal({ x: 0, y: 0 });
   readonly homeTokenRotation = signal(0);
 
-  private game?: Phaser.Game;
   private resizeTimer?: ReturnType<typeof setTimeout>;
   private homeTimer?: ReturnType<typeof setInterval>;
   private homeStartFrame?: number;
@@ -72,8 +63,6 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   private homeDragPointerId?: number;
   private homeDragOffset = { x: 0, y: 0 };
   private homeTokenHome = { x: 0, y: 0 };
-
-  constructor(private readonly ngZone: NgZone) {}
 
   ngAfterViewInit(): void {
     this.createGame();
@@ -92,6 +81,10 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   @HostListener('window:resize')
   handleResize(): void {
+    if (this.stage.id !== 'separacion-origen') {
+      return;
+    }
+
     clearTimeout(this.resizeTimer);
     this.resizeTimer = setTimeout(() => this.createGame(), 180);
   }
@@ -127,64 +120,16 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   private createGame(): void {
-    if (!this.stage || !this.gameHost?.nativeElement) {
+    if (!this.stage) {
       return;
     }
 
-    const host = this.gameHost.nativeElement;
-
     this.destroyGame();
-    host.innerHTML = '';
     this.resetSharedState();
 
     if (this.stage.id === 'separacion-origen') {
       this.startHomeGame();
-      return;
     }
-
-    if (this.stage.id === 'valorizacion-industrial') {
-      return;
-    }
-
-    const availableWidth = Math.max(320, Math.floor(host.clientWidth || window.innerWidth || 360));
-    const availableHeight = Math.max(
-      560,
-      Math.floor(host.clientHeight || window.innerHeight || availableWidth * 1.18),
-    );
-    const width = Math.min(760, availableWidth);
-    const height = Math.min(720, Math.max(560, Math.round(width * 1.18)));
-
-    const hooks: SceneHooks = {
-      onTick: (score, remainingSeconds, completedItems = 0) => {
-        this.ngZone.run(() => {
-          this.score.set(score);
-          this.remainingSeconds.set(remainingSeconds);
-          this.completedItems.set(completedItems);
-        });
-      },
-      onComplete: (result) => {
-        this.ngZone.run(() => {
-          this.completedResult.set(result);
-          this.completed.emit(result);
-        });
-      },
-    };
-    const scene = new WasteJourneyScene(this.stage, hooks);
-
-    this.ngZone.runOutsideAngular(() => {
-      this.game = new Phaser.Game({
-        type: Phaser.AUTO,
-        parent: host,
-        width,
-        height,
-        backgroundColor: this.stage.backgroundColor,
-        scale: {
-          autoCenter: Phaser.Scale.CENTER_BOTH,
-          mode: Phaser.Scale.FIT,
-        },
-        scene,
-      });
-    });
   }
 
   private destroyGame(): void {
@@ -200,8 +145,6 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
     this.homeDragging.set(false);
     this.homeDragPointerId = undefined;
-    this.game?.destroy(true);
-    this.game = undefined;
   }
 
   homeBinImage(zoneId: string): string {
@@ -260,7 +203,40 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     return Math.max(0, result.correct - result.mistakes) * 18;
   }
 
+  compostAccuracyBonus(result: StageResult): number {
+    return Math.max(0, result.correct - result.mistakes) * 22;
+  }
+
+  landfillDurabilityBonus(result: StageResult): number {
+    return Math.max(0, this.stage.durationSeconds - result.remainingSeconds) * 6;
+  }
+
+  landfillCompactionBonus(result: StageResult): number {
+    return Math.max(0, result.correct - result.mistakes) * 20;
+  }
+
+  isUnsupportedStage(): boolean {
+    return ![
+      'separacion-origen',
+      'valorizacion-industrial',
+      'compostaje-domiciliario',
+      'relleno-sanitario',
+    ].includes(this.stage.id);
+  }
+
   handleIndustrialTick(update: StageTick): void {
+    this.score.set(update.score);
+    this.remainingSeconds.set(update.remainingSeconds);
+    this.completedItems.set(update.completedItems);
+  }
+
+  handleCompostTick(update: StageTick): void {
+    this.score.set(update.score);
+    this.remainingSeconds.set(update.remainingSeconds);
+    this.completedItems.set(update.completedItems);
+  }
+
+  handleLandfillTick(update: StageTick): void {
     this.score.set(update.score);
     this.remainingSeconds.set(update.remainingSeconds);
     this.completedItems.set(update.completedItems);

@@ -89,5 +89,4 @@ Mecanica:
 
 ## Decision tecnica inicial
 
-Se adopta Angular + Capacitor porque los mini juegos se implementaran con JavaScript/Canvas/WebGL. Phaser queda como motor 2D principal para los juegos, encapsulado dentro de componentes Angular. Esta arquitectura permite reutilizar el mismo codigo para web, Android e iOS.
-
+Se adopta Angular + Capacitor porque los mini juegos se implementan con HTML, SCSS y JavaScript/TypeScript dentro de componentes Angular. Esta arquitectura permite reutilizar el mismo codigo para web, Android e iOS sin depender de un motor 2D externo.

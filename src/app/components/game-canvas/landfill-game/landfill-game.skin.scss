@@ -1,0 +1,865 @@
+.landfill-game {
+  --landfill-crane-x: 50%;
+  --landfill-board-width: min(29dvh, calc(100vw - 7rem), 22rem);
+  --landfill-grid-gap: 0.08rem;
+  --landfill-preview-cell-size: calc((var(--landfill-board-width) - 0.56rem) / 8);
+
+  position: absolute;
+  inset: 0;
+  min-height: 100dvh;
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(49, 32, 22, 0.18), rgba(49, 32, 22, 0.04) 22%, transparent 62%),
+    url('/assets/game-4/processed/background/fondo-tetris.png') center bottom / cover no-repeat,
+    #c69366;
+  color: #241b19;
+  font-family: Inter, Arial, sans-serif;
+  touch-action: none;
+}
+
+.landfill-game__crane,
+.landfill-game__well,
+.landfill-game__controls,
+.landfill-game__status,
+.landfill-game__next,
+.landfill-game__effect {
+  position: absolute;
+}
+
+.landfill-game__crane {
+  z-index: 12;
+  top: max(16.35rem, calc(env(safe-area-inset-top) + 5.35rem));
+  right: 0;
+  left: 0;
+  height: clamp(7.8rem, 18dvh, 11.2rem);
+  pointer-events: none;
+}
+
+.landfill-game__crane img {
+  display: block;
+  max-width: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.landfill-game__crane-structure {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(96vw, 43rem);
+  height: auto;
+  filter: drop-shadow(0 0.45rem 0.38rem rgba(35, 25, 18, 0.2));
+  transform: translateX(-50%);
+}
+
+.landfill-game__crane-trolley {
+  position: absolute;
+  top: 0;
+  left: var(--landfill-crane-x);
+  width: auto;
+  height: clamp(7.2rem, 17.2dvh, 10.8rem);
+  filter: drop-shadow(0 0.34rem 0.26rem rgba(25, 19, 16, 0.24));
+  transform: translateX(-50%);
+}
+
+.landfill-game__status {
+  z-index: 16;
+  display: grid;
+  gap: 0.22rem;
+  align-content: center;
+  min-width: 6.2rem;
+  min-height: 4.05rem;
+  padding: 0.5rem 0.62rem 0.54rem;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  border-radius: 8px;
+  background: rgba(39, 30, 27, 0.62);
+  box-shadow: 0 0.78rem 1.6rem rgba(35, 26, 22, 0.18);
+  color: #fff4d7;
+  text-align: center;
+  text-shadow: 0 0.08rem 0.28rem rgba(22, 15, 12, 0.42);
+  backdrop-filter: blur(12px);
+}
+
+.landfill-game__status {
+  top: max(9.35rem, calc(env(safe-area-inset-top) + 9.35rem));
+  right: max(1rem, calc(env(safe-area-inset-right) + 1rem));
+}
+
+.landfill-game__next {
+  z-index: 14;
+  top: clamp(6.18rem, 14.2dvh, 8.75rem);
+  left: var(--landfill-crane-x);
+  display: grid;
+  gap: 0.2rem;
+  justify-items: center;
+  min-width: max-content;
+  color: #fff4d7;
+  text-align: center;
+  text-shadow: 0 0.08rem 0.28rem rgba(22, 15, 12, 0.42);
+  transform: translateX(-50%);
+}
+
+.landfill-game__next::before {
+  content: '';
+  width: 0.08rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  background: rgba(33, 25, 22, 0.62);
+  box-shadow: 0 0 0.28rem rgba(255, 232, 176, 0.32);
+}
+
+.landfill-game__status span {
+  color: rgba(255, 236, 195, 0.76);
+  font-size: 0.56rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.landfill-game__next > span {
+  order: 3;
+  padding: 0.17rem 0.38rem 0.18rem;
+  border: 1px solid rgba(255, 236, 195, 0.18);
+  border-radius: 999px;
+  background: rgba(39, 30, 27, 0.54);
+  color: rgba(255, 236, 195, 0.82);
+  font-size: 0.46rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+  backdrop-filter: blur(8px);
+}
+
+.landfill-game__status strong {
+  color: #f5d67b;
+  font-size: 1.2rem;
+  font-weight: 950;
+  line-height: 0.95;
+}
+
+.landfill-game__status small {
+  color: rgba(255, 244, 214, 0.82);
+  font-size: 0.64rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.landfill-game__preview {
+  display: grid;
+  order: 2;
+  gap: var(--landfill-grid-gap);
+  align-items: stretch;
+  justify-content: center;
+  filter: drop-shadow(0 0.34rem 0.34rem rgba(24, 16, 12, 0.26));
+}
+
+.landfill-game__preview-cell {
+  display: grid;
+  place-items: center;
+}
+
+.landfill-game__preview-cell .landfill-game__bag {
+  width: 100%;
+  height: 100%;
+}
+
+.landfill-game__well {
+  z-index: 9;
+  bottom: max(6.05rem, calc(env(safe-area-inset-bottom) + 6.05rem));
+  left: 50%;
+  display: grid;
+  width: var(--landfill-board-width);
+  aspect-ratio: 8 / 16;
+  padding: 0;
+  border: 0;
+  border-radius: 8px 8px 18px 18px;
+  background: transparent;
+  box-shadow: none;
+  transform: translateX(-50%);
+  transition:
+    box-shadow 180ms ease,
+    filter 180ms ease;
+}
+
+.landfill-game__well::before,
+.landfill-game__well::after {
+  display: none;
+}
+
+.landfill-game__well::before {
+  display: none;
+}
+
+.landfill-game__well::after {
+  display: none;
+}
+
+.landfill-game__well.is-danger {
+  box-shadow:
+    inset 0 0 0 0.18rem rgba(255, 255, 255, 0.08),
+    0 0 0 0.36rem rgba(162, 69, 54, 0.74),
+    0 0 1.5rem rgba(226, 83, 57, 0.3),
+    0 1.4rem 2.5rem rgba(17, 13, 11, 0.36);
+}
+
+.landfill-game__liner {
+  position: absolute;
+  z-index: 2;
+  display: none;
+  background:
+    repeating-linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0.08) 0 0.24rem,
+      transparent 0.24rem 1.4rem
+    ),
+    linear-gradient(180deg, #141516, #020303);
+  pointer-events: none;
+}
+
+.landfill-game__liner--left,
+.landfill-game__liner--right {
+  top: 0.42rem;
+  bottom: 0.38rem;
+  width: 0.34rem;
+}
+
+.landfill-game__liner--left {
+  left: 0.22rem;
+}
+
+.landfill-game__liner--right {
+  right: 0.22rem;
+}
+
+.landfill-game__liner--bottom {
+  right: 0.34rem;
+  bottom: 0.22rem;
+  left: 0.34rem;
+  height: 0.36rem;
+  border-radius: 999px;
+}
+
+.landfill-game__safe-limit {
+  position: absolute;
+  top: 0.48rem;
+  right: 0.52rem;
+  left: 0.52rem;
+  z-index: 3;
+  height: 12.5%;
+  border-top: 0.12rem dashed rgba(255, 212, 123, 0.58);
+  opacity: 0.7;
+  pointer-events: none;
+}
+
+.landfill-game__grid {
+  position: relative;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: repeat(8, minmax(0, 1fr));
+  grid-template-rows: repeat(16, minmax(0, 1fr));
+  gap: var(--landfill-grid-gap);
+  overflow: hidden;
+  min-width: 0;
+  min-height: 0;
+  border-radius: 4px 4px 12px 12px;
+  background: rgba(3, 6, 8, 0.2);
+  box-shadow:
+    inset 0 0 0 0.14rem rgba(255, 255, 255, 0.12),
+    inset 0 0.8rem 1rem rgba(255, 255, 255, 0.035),
+    inset 0 -1.1rem 1.4rem rgba(0, 0, 0, 0.18);
+}
+
+.landfill-game__grid-cell {
+  min-width: 0;
+  min-height: 0;
+  border-radius: 3px;
+  background: rgba(255, 255, 255, 0.018);
+  box-shadow: inset 0 0 0 1.6px rgba(255, 255, 255, 0.13);
+}
+
+.landfill-game__grid-cell--limit {
+  background: rgba(255, 197, 111, 0.06);
+}
+
+.landfill-game__block {
+  --piece-border-color: rgba(39, 28, 22, 0.66);
+  --piece-edge-color: rgba(255, 231, 166, 0.7);
+  --piece-border-width: 0.06rem;
+  --piece-edge-size: 0.14rem;
+  --piece-shadow-base:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 0.14rem 0.24rem rgba(12, 9, 8, 0.16);
+
+  position: relative;
+  z-index: 8;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  padding: 2%;
+  overflow: hidden;
+  border-radius: 5px;
+  background: rgba(255, 239, 203, 0.08);
+  box-sizing: border-box;
+}
+
+.landfill-game__block--placed {
+  animation: landfill-block-settle 240ms ease-out both;
+}
+
+.landfill-game__block--active {
+  --piece-border-color: rgba(53, 36, 25, 0.76);
+  --piece-edge-color: rgba(255, 239, 190, 0.94);
+
+  z-index: 12;
+  filter: drop-shadow(0 0.36rem 0.34rem rgba(0, 0, 0, 0.24));
+}
+
+.landfill-game__block--ghost {
+  --piece-border-color: rgba(255, 235, 184, 0.32);
+  --piece-edge-color: rgba(255, 235, 184, 0.45);
+
+  z-index: 6;
+  opacity: 0.28;
+  filter: saturate(0.72) brightness(1.08);
+}
+
+.landfill-game__piece-cell {
+  --piece-shadow-top: 0 0 0 transparent;
+  --piece-shadow-right: 0 0 0 transparent;
+  --piece-shadow-bottom: 0 0 0 transparent;
+  --piece-shadow-left: 0 0 0 transparent;
+
+  border: var(--piece-border-width, 0.06rem) solid var(--piece-border-color, rgba(39, 28, 22, 0.66));
+  box-shadow:
+    var(--piece-shadow-base, 0 0 0 transparent), var(--piece-shadow-top), var(--piece-shadow-right),
+    var(--piece-shadow-bottom), var(--piece-shadow-left);
+  box-sizing: border-box;
+}
+
+.landfill-game__preview-cell.landfill-game__piece-cell {
+  --piece-border-color: rgba(45, 31, 23, 0.58);
+  --piece-edge-color: rgba(255, 236, 177, 0.82);
+  --piece-border-width: 0.4rem;
+  --piece-edge-size: 0.8rem;
+  --piece-shadow-base: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
+
+  overflow: hidden;
+  border-radius: 4px;
+  background: rgba(255, 244, 216, 0.12);
+}
+
+.landfill-game__piece-cell--edge-top {
+  --piece-shadow-top: inset 0 var(--piece-edge-size, 0.14rem) 0
+    var(--piece-edge-color, rgba(255, 231, 166, 0.7));
+}
+
+.landfill-game__piece-cell--edge-right {
+  --piece-shadow-right: inset calc(var(--piece-edge-size, 0.14rem) * -1) 0 0
+    var(--piece-edge-color, rgba(255, 231, 166, 0.7));
+}
+
+.landfill-game__piece-cell--edge-bottom {
+  --piece-shadow-bottom: inset 0 calc(var(--piece-edge-size, 0.14rem) * -1) 0
+    var(--piece-edge-color, rgba(255, 231, 166, 0.7));
+}
+
+.landfill-game__piece-cell--edge-left {
+  --piece-shadow-left: inset var(--piece-edge-size, 0.14rem) 0 0
+    var(--piece-edge-color, rgba(255, 231, 166, 0.7));
+}
+
+.landfill-game__bag {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 100%;
+  height: 100%;
+  filter: drop-shadow(0 0.16rem 0.12rem rgba(0, 0, 0, 0.22));
+  transform: none;
+}
+
+.landfill-game__bag img {
+  display: block;
+  width: 128%;
+  height: 128%;
+  max-width: none;
+  object-fit: contain;
+  pointer-events: none;
+  transform: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.landfill-game__controls {
+  z-index: 24;
+  right: max(1.05rem, calc(env(safe-area-inset-right) + 1.05rem));
+  bottom: max(0.72rem, calc(env(safe-area-inset-bottom) + 0.72rem));
+  left: max(1.05rem, calc(env(safe-area-inset-left) + 1.05rem));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  max-width: 28rem;
+  margin: 0 auto;
+  pointer-events: auto;
+}
+
+.landfill-game__control-cluster {
+  display: flex;
+  gap: 0.82rem;
+  align-items: center;
+  min-width: 0;
+}
+
+.landfill-game__controls button {
+  display: inline-grid;
+  place-items: center;
+  width: 4.05rem;
+  height: 4.05rem;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  box-shadow: none;
+  line-height: 1;
+  touch-action: manipulation;
+  transition:
+    opacity 140ms ease,
+    transform 140ms ease,
+    filter 140ms ease;
+}
+
+.landfill-game__control-drop {
+  width: 4.32rem;
+  height: 4.32rem;
+}
+
+.landfill-game__controls button:active:not(:disabled) {
+  transform: translateY(0.08rem) scale(0.97);
+}
+
+.landfill-game__controls button:disabled {
+  cursor: default;
+  opacity: 1;
+}
+
+.landfill-game__control-art {
+  --control-normal: none;
+  --control-pressed: var(--control-normal);
+  --control-disabled: var(--control-normal);
+
+  display: block;
+  width: 100%;
+  height: 100%;
+  background-image: var(--control-normal);
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: contain;
+  filter: drop-shadow(0 0.5rem 0.42rem rgba(21, 15, 12, 0.24));
+  pointer-events: none;
+}
+
+.landfill-game__controls button:active:not(:disabled) .landfill-game__control-art {
+  background-image: var(--control-pressed);
+  filter: drop-shadow(0 0.24rem 0.22rem rgba(21, 15, 12, 0.22));
+}
+
+.landfill-game__controls button:disabled .landfill-game__control-art {
+  background-image: var(--control-disabled);
+  filter: drop-shadow(0 0.26rem 0.24rem rgba(21, 15, 12, 0.16));
+}
+
+.landfill-game__control-art--left {
+  --control-normal: url('/assets/game-4/processed/buttons/left-normal.png');
+  --control-pressed: url('/assets/game-4/processed/buttons/left-pressed.png');
+  --control-disabled: url('/assets/game-4/processed/buttons/left-disabled.png');
+}
+
+.landfill-game__control-art--right {
+  --control-normal: url('/assets/game-4/processed/buttons/right-normal.png');
+  --control-pressed: url('/assets/game-4/processed/buttons/right-pressed.png');
+  --control-disabled: url('/assets/game-4/processed/buttons/right-disabled.png');
+}
+
+.landfill-game__control-art--rotate {
+  --control-normal: url('/assets/game-4/processed/buttons/rotate-normal.png');
+  --control-pressed: url('/assets/game-4/processed/buttons/rotate-pressed.png');
+  --control-disabled: url('/assets/game-4/processed/buttons/rotate-disabled.png');
+}
+
+.landfill-game__control-art--down {
+  --control-normal: url('/assets/game-4/processed/buttons/down-normal.png');
+  --control-pressed: url('/assets/game-4/processed/buttons/down-pressed.png');
+  --control-disabled: url('/assets/game-4/processed/buttons/down-disabled.png');
+}
+
+.landfill-game__effect {
+  z-index: 28;
+  display: grid;
+  place-items: center;
+  min-width: 2.5rem;
+  min-height: 2.35rem;
+  color: #f7d76f;
+  font-size: 1.12rem;
+  font-weight: 950;
+  line-height: 1;
+  pointer-events: none;
+  text-align: center;
+  text-shadow:
+    0 1px 0 rgba(38, 27, 21, 0.8),
+    0 0.42rem 0.9rem rgba(20, 14, 10, 0.36);
+  transform: translate(-50%, -50%);
+  animation: landfill-score-pop 820ms ease-out forwards;
+}
+
+.landfill-game__effect--warning {
+  color: #ffac78;
+  font-size: 0.78rem;
+}
+
+.landfill-hud,
+.landfill-complete {
+  position: absolute;
+  pointer-events: none;
+  font-family: Inter, Arial, sans-serif;
+}
+
+.landfill-hud {
+  z-index: 20;
+  top: 0;
+  right: 0;
+  left: 0;
+  height: 7.1rem;
+  color: #fff;
+  text-shadow: 0 2px 10px rgba(41, 25, 20, 0.42);
+}
+
+.landfill-hud__top {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+.landfill-hud__title {
+  position: absolute;
+  top: max(0.92rem, calc(env(safe-area-inset-top) + 0.92rem));
+  left: max(1.3rem, calc(env(safe-area-inset-left) + 1.3rem));
+  display: block;
+  max-width: min(24rem, calc(50vw - 6rem));
+  color: rgba(255, 255, 255, 0.9);
+  font-size: clamp(1.05rem, 3.2vw, 2.05rem);
+  font-weight: 950;
+  line-height: 1.02;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.landfill-hud__score {
+  position: absolute;
+  top: max(3.82rem, calc(env(safe-area-inset-top) + 3.82rem));
+  left: max(1.3rem, calc(env(safe-area-inset-left) + 1.3rem));
+}
+
+.landfill-hud__score span,
+.landfill-hud__timer,
+.landfill-hud__progress {
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: 8px;
+  background: rgba(42, 31, 29, 0.66);
+  box-shadow: 0 10px 24px rgba(35, 24, 19, 0.22);
+  backdrop-filter: blur(12px);
+}
+
+.landfill-hud__score span {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 5.25rem;
+  min-height: 2.32rem;
+  padding: 0.3rem 0.62rem;
+  color: #f5d67b;
+  font-size: 1.08rem;
+  font-weight: 950;
+  line-height: 1;
+  text-align: center;
+}
+
+.landfill-hud__timer {
+  position: absolute;
+  top: max(0.82rem, calc(env(safe-area-inset-top) + 0.82rem));
+  left: 50%;
+  display: grid;
+  justify-items: center;
+  min-width: 8.1rem;
+  min-height: 4.55rem;
+  padding: 0.64rem 0.94rem 0.7rem;
+  color: #fff8df;
+  line-height: 1;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.landfill-hud__timer span {
+  color: rgba(255, 222, 151, 0.78);
+  font-size: 0.78rem;
+  font-weight: 950;
+  letter-spacing: 0;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.landfill-hud__timer strong {
+  margin-top: 0.16rem;
+  color: #f5d67b;
+  font-size: clamp(1.92rem, 4.8vw, 2.45rem);
+  font-weight: 950;
+  line-height: 0.95;
+}
+
+.landfill-hud__timer.is-low strong {
+  color: #ffae6e;
+}
+
+.landfill-hud__progress {
+  display: none;
+}
+
+.landfill-complete {
+  z-index: 25;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+  background: rgba(35, 24, 20, 0.4);
+}
+
+.landfill-complete__panel {
+  display: grid;
+  justify-items: center;
+  width: min(100%, 22rem);
+  padding: 1rem 1.2rem 1.1rem;
+  border: 2px solid rgba(114, 81, 163, 0.28);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.96);
+  box-shadow: 0 18px 48px rgba(35, 24, 19, 0.32);
+  color: #1e2a22;
+  text-align: center;
+  text-shadow: none;
+  backdrop-filter: blur(12px);
+}
+
+.landfill-complete__panel img {
+  width: 5.1rem;
+  height: 5rem;
+  margin-top: -3.55rem;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 18px rgba(44, 24, 12, 0.2));
+}
+
+.landfill-complete__panel strong {
+  margin-top: 0.25rem;
+  color: #1f2725;
+  font-size: 1.55rem;
+  font-weight: 950;
+  line-height: 1.05;
+}
+
+.landfill-complete__panel span {
+  margin-top: 0.45rem;
+  color: #7251a3;
+  font-size: 2rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.landfill-complete__panel small {
+  margin-top: 0.62rem;
+  color: #5f6f64;
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.25;
+}
+
+@keyframes landfill-block-settle {
+  0% {
+    opacity: 0.75;
+    transform: translateY(-0.32rem) scale(1.04);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes landfill-score-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -10%) scale(0.72);
+  }
+
+  18% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -132%) scale(1.1);
+  }
+}
+
+@media (max-width: 520px) {
+  .landfill-game {
+    --landfill-board-width: min(28dvh, calc(100vw - 7.2rem), 19.2rem);
+    --landfill-grid-gap: 0.075rem;
+    --landfill-preview-cell-size: calc((var(--landfill-board-width) - 0.525rem) / 8);
+  }
+
+  .landfill-game__crane {
+    top: max(9.42rem, calc(env(safe-area-inset-top) + 5.42rem));
+    height: 7.6rem;
+  }
+
+  .landfill-game__crane-structure {
+    width: min(106vw, 34rem);
+  }
+
+  .landfill-game__crane-trolley {
+    height: 7.45rem;
+  }
+
+  .landfill-game__status {
+    top: max(4.55rem, calc(env(safe-area-inset-top) + 4.55rem));
+    min-width: 5.35rem;
+    min-height: 3.72rem;
+    padding: 0.42rem 0.48rem 0.46rem;
+  }
+
+  .landfill-game__status {
+    right: max(0.68rem, calc(env(safe-area-inset-right) + 0.68rem));
+  }
+
+  .landfill-game__next {
+    top: 6.08rem;
+  }
+
+  .landfill-game__status span {
+    font-size: 0.48rem;
+  }
+
+  .landfill-game__next > span {
+    font-size: 0.42rem;
+  }
+
+  .landfill-game__status strong {
+    font-size: 1.02rem;
+  }
+
+  .landfill-game__status small {
+    font-size: 0.56rem;
+  }
+
+  .landfill-game__preview {
+    gap: var(--landfill-grid-gap);
+  }
+
+  .landfill-game__well {
+    bottom: max(5.96rem, calc(env(safe-area-inset-bottom) + 5.96rem));
+    width: var(--landfill-board-width);
+  }
+
+  .landfill-game__grid {
+    gap: var(--landfill-grid-gap);
+  }
+
+  .landfill-game__controls {
+    bottom: max(0.64rem, calc(env(safe-area-inset-bottom) + 0.64rem));
+    right: max(0.7rem, calc(env(safe-area-inset-right) + 0.7rem));
+    left: max(0.7rem, calc(env(safe-area-inset-left) + 0.7rem));
+    max-width: 23rem;
+  }
+
+  .landfill-game__control-cluster {
+    gap: 0.56rem;
+  }
+
+  .landfill-game__controls button {
+    width: 3.68rem;
+    height: 3.68rem;
+    font-size: 1.38rem;
+  }
+
+  .landfill-game__control-drop {
+    width: 3.98rem;
+    height: 3.98rem;
+  }
+
+  .landfill-hud {
+    height: 6.95rem;
+  }
+
+  .landfill-hud__title {
+    top: max(0.76rem, calc(env(safe-area-inset-top) + 0.76rem));
+    left: max(0.85rem, calc(env(safe-area-inset-left) + 0.85rem));
+    max-width: min(8.1rem, calc(100vw - 13.7rem));
+    font-size: 0.9rem;
+    line-height: 1.02;
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+  }
+
+  .landfill-hud__score {
+    top: max(3.34rem, calc(env(safe-area-inset-top) + 3.34rem));
+    left: max(0.85rem, calc(env(safe-area-inset-left) + 0.85rem));
+  }
+
+  .landfill-hud__score span {
+    min-width: 4.25rem;
+    min-height: 2.08rem;
+    padding: 0.22rem 0.44rem;
+    font-size: 0.82rem;
+  }
+
+  .landfill-hud__timer {
+    top: max(0.74rem, calc(env(safe-area-inset-top) + 0.74rem));
+    min-width: 5.22rem;
+    min-height: 3.02rem;
+    padding: 0.42rem 0.52rem 0.46rem;
+  }
+
+  .landfill-hud__timer span {
+    font-size: 0.52rem;
+  }
+
+  .landfill-hud__timer strong {
+    margin-top: 0.08rem;
+    font-size: 1.48rem;
+  }
+
+  .landfill-hud__progress {
+    display: none;
+  }
+
+  .landfill-complete__panel {
+    width: min(100%, 19rem);
+  }
+
+  .landfill-complete__panel strong {
+    font-size: 1.34rem;
+  }
+
+  .landfill-complete__panel span {
+    font-size: 1.72rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .landfill-game__block--placed,
+  .landfill-game__effect {
+    animation: none;
+  }
+}

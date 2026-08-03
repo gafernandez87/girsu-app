@@ -1,0 +1,191 @@
+<div
+  class="landfill-game"
+  [style.--landfill-crane-x]="cranePosition()"
+  aria-label="Minijuego de relleno sanitario"
+  (pointerdown)="startBoardGesture($event)"
+  (pointerup)="finishBoardGesture($event)"
+  (pointercancel)="cancelBoardGesture()"
+>
+  <div class="landfill-game__crane">
+    <img
+      class="landfill-game__crane-structure"
+      src="/assets/game-4/processed/crane/grua-estructura-fija.png"
+      alt=""
+      draggable="false"
+    />
+    <img
+      class="landfill-game__crane-trolley"
+      src="/assets/game-4/processed/crane/grua-carro-cable-gancho.png"
+      alt=""
+      draggable="false"
+    />
+
+    <aside class="landfill-game__next" aria-label="Proxima pieza">
+      <span>Proximo</span>
+      <div
+        class="landfill-game__preview"
+        [style.grid-template-columns]="previewGridColumns()"
+        [style.grid-template-rows]="previewGridRows()"
+        aria-hidden="true"
+      >
+        @for (cell of previewCells(); track cell.id) {
+          <span
+            class="landfill-game__preview-cell landfill-game__piece-cell"
+            [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
+            [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
+            [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
+            [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
+            [style.grid-column]="gridColumn(cell.x)"
+            [style.grid-row]="gridRow(cell.y)"
+          >
+            <span class="landfill-game__bag">
+              <img [src]="cell.bagImagePath" alt="" draggable="false" />
+            </span>
+          </span>
+        }
+      </div>
+    </aside>
+  </div>
+
+  <aside class="landfill-game__status" aria-live="polite">
+    <span>Compactacion</span>
+    <strong>{{ compactionQuality() }}%</strong>
+    <small>{{ compactedLayers() }} capas</small>
+  </aside>
+
+  <section class="landfill-game__well" [class.is-danger]="dangerActive()">
+    <span class="landfill-game__liner landfill-game__liner--left" aria-hidden="true"></span>
+    <span class="landfill-game__liner landfill-game__liner--right" aria-hidden="true"></span>
+    <span class="landfill-game__liner landfill-game__liner--bottom" aria-hidden="true"></span>
+    <span class="landfill-game__safe-limit" aria-hidden="true"></span>
+
+    <div class="landfill-game__grid" aria-live="polite">
+      @for (cell of gridCells; track cell.id) {
+        <span
+          class="landfill-game__grid-cell"
+          [class.landfill-game__grid-cell--limit]="cell.row < safetyRows"
+        ></span>
+      }
+
+      @for (cell of ghostCells(); track cell.id) {
+        <span
+          class="landfill-game__block landfill-game__piece-cell landfill-game__block--ghost"
+          [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
+          [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
+          [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
+          [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
+          [style.grid-column]="gridColumn(cell.x)"
+          [style.grid-row]="gridRow(cell.y)"
+          aria-hidden="true"
+        >
+          <span class="landfill-game__bag">
+            <img [src]="cell.bagImagePath" alt="" draggable="false" />
+          </span>
+        </span>
+      }
+
+      @for (cell of boardCells(); track cell.id) {
+        <span
+          class="landfill-game__block landfill-game__piece-cell landfill-game__block--placed"
+          [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
+          [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
+          [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
+          [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
+          [style.grid-column]="gridColumn(cell.x)"
+          [style.grid-row]="gridRow(cell.y)"
+          [attr.aria-label]="cell.label"
+        >
+          <span class="landfill-game__bag">
+            <img [src]="cell.bagImagePath" alt="" draggable="false" />
+          </span>
+        </span>
+      }
+
+      @for (cell of activeCells(); track cell.id) {
+        <span
+          class="landfill-game__block landfill-game__piece-cell landfill-game__block--active"
+          [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
+          [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
+          [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
+          [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
+          [style.grid-column]="gridColumn(cell.x)"
+          [style.grid-row]="gridRow(cell.y)"
+          [attr.aria-label]="cell.label"
+        >
+          <span class="landfill-game__bag">
+            <img [src]="cell.bagImagePath" alt="" draggable="false" />
+          </span>
+        </span>
+      }
+    </div>
+  </section>
+
+  <div class="landfill-game__controls" aria-label="Controles de pieza">
+    <div class="landfill-game__control-cluster">
+      <button
+        type="button"
+        [disabled]="!canControl()"
+        aria-label="Mover a la izquierda"
+        title="Mover a la izquierda"
+        (click)="moveLeft()"
+      >
+        <span
+          class="landfill-game__control-art landfill-game__control-art--left"
+          aria-hidden="true"
+        ></span>
+      </button>
+      <button
+        type="button"
+        [disabled]="!canControl()"
+        aria-label="Mover a la derecha"
+        title="Mover a la derecha"
+        (click)="moveRight()"
+      >
+        <span
+          class="landfill-game__control-art landfill-game__control-art--right"
+          aria-hidden="true"
+        ></span>
+      </button>
+    </div>
+
+    <div class="landfill-game__control-cluster">
+      <button
+        type="button"
+        [disabled]="!canControl()"
+        aria-label="Rotar"
+        title="Rotar"
+        (click)="rotatePiece()"
+      >
+        <span
+          class="landfill-game__control-art landfill-game__control-art--rotate"
+          aria-hidden="true"
+        ></span>
+      </button>
+      <button
+        type="button"
+        class="landfill-game__control-drop"
+        [disabled]="!canControl()"
+        aria-label="Bajar"
+        title="Bajar"
+        (click)="softDrop()"
+      >
+        <span
+          class="landfill-game__control-art landfill-game__control-art--down"
+          aria-hidden="true"
+        ></span>
+      </button>
+    </div>
+  </div>
+
+  @for (effect of effects(); track effect.id) {
+    <span
+      class="landfill-game__effect"
+      [class.landfill-game__effect--warning]="effect.type === 'warning'"
+      [style.left.%]="effect.x"
+      [style.top.%]="effect.y"
+      aria-hidden="true"
+    >
+      {{ effect.text }}
+    </span>
+  }
+</div>

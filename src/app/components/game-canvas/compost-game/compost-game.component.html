@@ -1,0 +1,215 @@
+<div
+  #compostStage
+  class="compost-game"
+  [style.background-image]="backgroundImage"
+  aria-label="Minijuego de compostaje domiciliario"
+>
+  <div class="compost-game__shade" aria-hidden="true"></div>
+
+  <aside
+    class="compost-game__moisture"
+    [class.is-wet]="moistureState() === 'wet'"
+    [class.is-dry]="moistureState() === 'dry'"
+    aria-live="polite"
+  >
+    <span class="compost-game__moisture-title">Humedad</span>
+    <div class="compost-game__moisture-icons" aria-hidden="true">
+      @for (icon of moistureIcons; track icon.id) {
+        <span
+          class="compost-game__drop"
+          [class.is-active]="moistureState() === icon.id"
+          [class.compost-game__drop--dry]="icon.id === 'dry'"
+          [class.compost-game__drop--balanced]="icon.id === 'balanced'"
+          [class.compost-game__drop--wet]="icon.id === 'wet'"
+        ></span>
+      }
+    </div>
+    <strong>{{ moistureLabel() }}</strong>
+  </aside>
+
+  <div class="compost-game__playfield">
+    @for (zone of stage.dropZones; track zone.id) {
+      <section
+        class="compost-game__source"
+        [class.compost-game__source--verdes]="zone.id === 'verdes'"
+        [class.compost-game__source--marrones]="zone.id === 'marrones'"
+      >
+        <div class="compost-game__source-top">
+          <strong>{{ zone.label }}</strong>
+          <small>{{ zone.shortLabel }}</small>
+        </div>
+
+        <div class="compost-game__source-items">
+          @for (item of itemsByCategory(zone.id); track item.id) {
+            <button
+              type="button"
+              class="compost-game__source-item"
+              [class.is-picked]="activeItem()?.id === item.id"
+              [class.is-spent]="isItemPlaced(item.id)"
+              [disabled]="isItemPlaced(item.id)"
+              [attr.aria-hidden]="isItemPlaced(item.id) ? 'true' : null"
+              [attr.aria-label]="'Arrastrar ' + item.label"
+              (pointerdown)="startDrag(item, $event)"
+            >
+              <span class="compost-game__source-art" aria-hidden="true">
+                @if (productAsset(item.id); as product) {
+                  <img
+                    [src]="product.path"
+                    alt=""
+                    [style.width.px]="product.size"
+                    [style.height.px]="product.size"
+                    draggable="false"
+                  />
+                } @else {
+                  <span
+                    class="compost-game__item-art"
+                    [class.compost-game__item-art--te]="item.id === 'te'"
+                    [class.compost-game__item-art--hojas]="item.id === 'hojas-secas'"
+                    [class.compost-game__item-art--lechuga]="item.id === 'hojas-lechuga'"
+                    [class.compost-game__item-art--ramas]="item.id === 'ramas'"
+                    [class.compost-game__item-art--cesped]="item.id === 'cesped-seco'"
+                  ></span>
+                }
+              </span>
+              <span>{{ item.label }}</span>
+            </button>
+          }
+        </div>
+      </section>
+    }
+
+    <section
+      class="compost-game__composter"
+      [class.is-hover]="composterState() === 'hover'"
+      [class.is-open]="composterState() === 'open'"
+      data-compost-drop-zone
+      aria-live="polite"
+    >
+      <span
+        class="compost-game__composter-depth compost-game__composter-depth--back"
+        aria-hidden="true"
+      ></span>
+      <span
+        class="compost-game__composter-depth compost-game__composter-depth--left"
+        aria-hidden="true"
+      ></span>
+      <span
+        class="compost-game__composter-depth compost-game__composter-depth--right"
+        aria-hidden="true"
+      ></span>
+
+      <div class="compost-game__composter-body">
+        <span class="compost-game__composter-plank compost-game__composter-plank--left"></span>
+        <span class="compost-game__composter-plank compost-game__composter-plank--right"></span>
+
+        <div class="compost-game__window">
+          <div class="compost-game__glass" aria-hidden="true"></div>
+
+          <div class="compost-game__falling" aria-hidden="true">
+            @for (particle of particles(); track particle.id) {
+              <span
+                class="compost-game__particle"
+                [class.compost-game__particle--verdes]="particle.category === 'verdes'"
+                [class.compost-game__particle--marrones]="particle.category === 'marrones'"
+                [class.compost-game__particle--te]="particle.itemId === 'te'"
+                [class.compost-game__particle--ramas]="particle.itemId === 'ramas'"
+                [class.compost-game__particle--cesped]="particle.itemId === 'cesped-seco'"
+                [class.compost-game__particle--carton]="
+                  particle.itemId === 'carton-sin-tinta' || particle.itemId === 'carton-trocitos'
+                "
+                [style.--particle-x]="particle.x + '%'"
+                [style.--particle-drift]="particle.drift + 'px'"
+                [style.--particle-delay]="particle.delay + 'ms'"
+                [style.--particle-duration]="particle.duration + 'ms'"
+                [style.--particle-size]="particle.size + 'px'"
+                [style.--particle-rotation]="particle.rotation + 'deg'"
+              ></span>
+            }
+          </div>
+
+          <div class="compost-game__layers">
+            @for (layer of layers(); track layer.id) {
+              <span
+                class="compost-game__layer"
+                [class.compost-game__layer--verdes]="layer.category === 'verdes'"
+                [class.compost-game__layer--marrones]="layer.category === 'marrones'"
+                [style.--layer-offset]="layer.offset + 'px'"
+                [style.--layer-height]="layer.height + '%'"
+                [style.--layer-tilt]="layer.tilt + 'deg'"
+                [attr.aria-label]="layer.label"
+              >
+                <span class="compost-game__layer-texture"></span>
+                <span class="compost-game__layer-fragments" aria-hidden="true">
+                  @for (fragment of layer.fragments; track fragment.id) {
+                    <span
+                      class="compost-game__layer-fragment"
+                      [class.compost-game__layer-fragment--soil]="fragment.type === 'soil'"
+                      [class.compost-game__layer-fragment--peel]="fragment.type === 'peel'"
+                      [class.compost-game__layer-fragment--lettuce]="fragment.type === 'lettuce'"
+                      [class.compost-game__layer-fragment--yerba]="fragment.type === 'yerba'"
+                      [class.compost-game__layer-fragment--tea]="fragment.type === 'tea'"
+                      [class.compost-game__layer-fragment--leaf]="fragment.type === 'leaf'"
+                      [class.compost-game__layer-fragment--twig]="fragment.type === 'twig'"
+                      [class.compost-game__layer-fragment--cardboard]="
+                        fragment.type === 'cardboard'
+                      "
+                      [class.compost-game__layer-fragment--grass]="fragment.type === 'grass'"
+                      [style.--fragment-x]="fragment.x + '%'"
+                      [style.--fragment-y]="fragment.y + '%'"
+                      [style.--fragment-size]="fragment.size + 'px'"
+                      [style.--fragment-stretch]="fragment.stretch + ''"
+                      [style.--fragment-rotation]="fragment.rotation + 'deg'"
+                    ></span>
+                  }
+                </span>
+              </span>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  @if (activeItem(); as item) {
+    <button
+      type="button"
+      class="compost-game__drag-token"
+      [class.is-dragging]="dragging()"
+      [style.transform]="tokenTransform()"
+      [attr.aria-label]="'Arrastrando ' + item.label"
+    >
+      <span class="compost-game__drag-art" aria-hidden="true">
+        @if (productAsset(item.id); as product) {
+          <img
+            [src]="product.path"
+            alt=""
+            [style.width.px]="product.size"
+            [style.height.px]="product.size"
+            draggable="false"
+          />
+        } @else {
+          <span
+            class="compost-game__item-art"
+            [class.compost-game__item-art--te]="item.id === 'te'"
+            [class.compost-game__item-art--hojas]="item.id === 'hojas-secas'"
+            [class.compost-game__item-art--lechuga]="item.id === 'hojas-lechuga'"
+            [class.compost-game__item-art--ramas]="item.id === 'ramas'"
+            [class.compost-game__item-art--cesped]="item.id === 'cesped-seco'"
+          ></span>
+        }
+      </span>
+      <span>{{ item.label }}</span>
+    </button>
+  }
+
+  @for (effect of effects(); track effect.id) {
+    <span
+      class="compost-game__effect compost-game__effect--score"
+      [style.left.px]="effect.x"
+      [style.top.px]="effect.y"
+      aria-hidden="true"
+    >
+      {{ effect.text }}
+    </span>
+  }
+</div>

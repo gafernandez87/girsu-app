@@ -6,9 +6,9 @@ Convertir la primera etapa en una escena mas cercana a un videojuego 2D, manteni
 
 ## Implementacion actual
 
-La escena del juego 1 usa una clase Phaser especifica, `HomeSortingScene`, separada del fallback generico usado por los otros juegos.
+La escena del juego 1 esta implementada con HTML, SCSS y eventos de puntero dentro de `GameCanvasComponent`.
 
-La pantalla de juego se presenta en modo full screen: la barra superior de la app se oculta y el canvas ocupa todo el viewport. El puntaje, tiempo, progreso e instrucciones se dibujan dentro de Phaser para que la experiencia no se sienta como una web con un juego embebido.
+La pantalla de juego se presenta en modo full screen: la barra superior de la app se oculta y la escena ocupa todo el viewport. El puntaje, tiempo, progreso e instrucciones se dibujan como HUD propio para que la experiencia no se sienta como una web con un juego embebido.
 
 Elementos visuales de la escena:
 
@@ -19,7 +19,7 @@ Elementos visuales de la escena:
 - HUD interno con puntaje, tiempo y progreso por residuos clasificados.
 - Cola de residuos: se muestra un solo producto por vez para concentrar la interaccion en una decision clara.
 
-Los productos, tachos y efectos originales llegaron sin alpha real. Se generaron copias transparentes en las carpetas `processed/`, que son las que carga Phaser.
+Los productos, tachos y efectos originales llegaron sin alpha real. Se generaron copias transparentes en las carpetas `processed/`, que son las que carga la escena HTML.
 
 Animaciones incluidas:
 
@@ -33,4 +33,4 @@ Animaciones incluidas:
 
 ## Proximo paso visual
 
-Cuando se definan assets finales, los dibujos vectoriales actuales pueden reemplazarse por sprites PNG/WebP sin cambiar la logica de clasificacion, puntaje ni drag/drop.
+Cuando se definan assets finales, los dibujos actuales pueden reemplazarse por PNG/WebP sin cambiar la logica de clasificacion, puntaje ni drag/drop.

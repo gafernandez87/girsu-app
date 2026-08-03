@@ -46,6 +46,29 @@ export const INDUSTRIAL_PRODUCT_ASSETS: Record<string, ProductAsset> = {
   },
 };
 
+export const COMPOST_PRODUCT_ASSETS: Record<string, ProductAsset> = {
+  'restos-verdura': {
+    path: '/assets/game-1/products/processed/cascaras.png',
+    size: 58,
+  },
+  'cascaras-fruta': {
+    path: '/assets/game-1/products/processed/cascaras.png',
+    size: 58,
+  },
+  'yerba-compost': {
+    path: '/assets/game-1/products/processed/yerba.png',
+    size: 58,
+  },
+  'carton-sin-tinta': {
+    path: '/assets/game-1/products/processed/caja-carton.png',
+    size: 56,
+  },
+  'carton-trocitos': {
+    path: '/assets/game-1/products/processed/caja-carton.png',
+    size: 54,
+  },
+};
+
 export const HOME_BIN_ASSETS: Record<string, BinAssets> = {
   reciclables: {
     normal: 'bin-reciclables-normal',
@@ -96,6 +119,11 @@ export const HOME_EFFECT_ASSETS: Record<string, string> = {
 export const INDUSTRIAL_BACKGROUND_ASSET: ImageAsset = {
   key: 'industrial-background',
   path: '/assets/game-2/backgrounds/fondo-juego-2.png',
+};
+
+export const COMPOST_BACKGROUND_ASSET: ImageAsset = {
+  key: 'compost-background',
+  path: '/assets/game-3/backgrounds/fondo-compostera.png',
 };
 
 export const INDUSTRIAL_CONVEYOR_ASSETS: Record<'base' | 'belt', ImageAsset> = {

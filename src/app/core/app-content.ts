@@ -5,7 +5,7 @@ export const CURRENT_USER: UserProfile = {
   name: 'Sofia',
   role: 'student',
   school: 'Escuela Ambiental Jujuy',
-  course: '6to grado'
+  course: '6to grado',
 };
 
 export const GAME_STAGES: readonly GameStage[] = [
@@ -32,22 +32,22 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Reciclables',
         shortLabel: 'Secos',
         color: '#2f8f4e',
-        description: 'Plastico, papel, carton, metal y vidrio limpio.'
+        description: 'Plastico, papel, carton, metal y vidrio limpio.',
       },
       {
         id: 'no-reciclables',
         label: 'No reciclables',
         shortLabel: 'Resto',
         color: '#2f80ed',
-        description: 'Materiales sin valorizacion actual.'
+        description: 'Materiales sin valorizacion actual.',
       },
       {
         id: 'compostables',
         label: 'Compostables',
         shortLabel: 'Organicos',
         color: '#8a5a26',
-        description: 'Residuos vegetales para degradacion biologica.'
-      }
+        description: 'Residuos vegetales para degradacion biologica.',
+      },
     ],
     items: [
       {
@@ -56,7 +56,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'PET',
         category: 'reciclables',
         detail: 'Plastico limpio y seco.',
-        points: 120
+        points: 120,
       },
       {
         id: 'frasco-vidrio',
@@ -64,7 +64,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'VID',
         category: 'reciclables',
         detail: 'Vidrio entero y limpio.',
-        points: 120
+        points: 120,
       },
       {
         id: 'carton',
@@ -72,7 +72,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'CAR',
         category: 'reciclables',
         detail: 'Carton seco.',
-        points: 110
+        points: 110,
       },
       {
         id: 'cascara',
@@ -80,7 +80,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'ORG',
         category: 'compostables',
         detail: 'Residuo vegetal.',
-        points: 130
+        points: 130,
       },
       {
         id: 'yerba',
@@ -88,7 +88,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'YRB',
         category: 'compostables',
         detail: 'Organico humedo.',
-        points: 130
+        points: 130,
       },
       {
         id: 'envoltorio',
@@ -96,9 +96,9 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'ENV',
         category: 'no-reciclables',
         detail: 'Material mixto o sucio.',
-        points: 100
-      }
-    ]
+        points: 100,
+      },
+    ],
   },
   {
     id: 'valorizacion-industrial',
@@ -110,8 +110,7 @@ export const GAME_STAGES: readonly GameStage[] = [
       'Visibilizar el trabajo de recuperadores urbanos y la clasificacion tecnica por material.',
     environment:
       'Planta urbana limpia, luminosa y techada, con cinta transportadora y cerros al fondo.',
-    mechanic:
-      'Clasificar residuos secos en plastico, papel/carton, vidrio, metal o descarte.',
+    mechanic: 'Clasificar residuos secos en plastico, papel/carton, vidrio, metal o descarte.',
     scoring:
       'Los aciertos sostienen el flujo de la planta; los errores representan mezcla inadecuada.',
     kind: 'conveyor',
@@ -124,36 +123,36 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Plastico',
         shortLabel: 'Azul',
         color: '#2f80ed',
-        description: 'Botellas PET, envases y contenedores limpios.'
+        description: 'Botellas PET, envases y contenedores limpios.',
       },
       {
         id: 'papel-carton',
         label: 'Papel y carton',
         shortLabel: 'Amarillo',
         color: '#d99b21',
-        description: 'Cajas, diarios, revistas y carpetas.'
+        description: 'Cajas, diarios, revistas y carpetas.',
       },
       {
         id: 'vidrio',
         label: 'Vidrio',
         shortLabel: 'Verde',
         color: '#3a9152',
-        description: 'Frascos, botellas y envases de conserva.'
+        description: 'Frascos, botellas y envases de conserva.',
       },
       {
         id: 'metal',
         label: 'Metal',
         shortLabel: 'Rojo',
         color: '#c44536',
-        description: 'Latas de aluminio, hojalata y ferrosos pequeños.'
+        description: 'Latas de aluminio, hojalata y ferrosos pequeños.',
       },
       {
         id: 'descarte',
         label: 'Descarte',
         shortLabel: 'Compuerta',
         color: '#4f5963',
-        description: 'Residuos no valorizables que no deben contaminar la cinta.'
-      }
+        description: 'Residuos no valorizables que no deben contaminar la cinta.',
+      },
     ],
     items: [
       {
@@ -162,7 +161,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'PET',
         category: 'plastico',
         detail: 'Botella plastica limpia.',
-        points: 120
+        points: 120,
       },
       {
         id: 'caja',
@@ -170,7 +169,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'BOX',
         category: 'papel-carton',
         detail: 'Carton de embalaje.',
-        points: 120
+        points: 120,
       },
       {
         id: 'diario',
@@ -178,7 +177,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'PAP',
         category: 'papel-carton',
         detail: 'Papel seco.',
-        points: 110
+        points: 110,
       },
       {
         id: 'botella-vidrio',
@@ -186,7 +185,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'VID',
         category: 'vidrio',
         detail: 'Vidrio entero.',
-        points: 130
+        points: 130,
       },
       {
         id: 'lata',
@@ -194,7 +193,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'ALU',
         category: 'metal',
         detail: 'Aluminio valorizable.',
-        points: 130
+        points: 130,
       },
       {
         id: 'papel-sucio',
@@ -202,9 +201,9 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'DSC',
         category: 'descarte',
         detail: 'No debe mezclarse con reciclables limpios.',
-        points: 100
-      }
-    ]
+        points: 100,
+      },
+    ],
   },
   {
     id: 'compostaje-domiciliario',
@@ -221,7 +220,7 @@ export const GAME_STAGES: readonly GameStage[] = [
     scoring:
       'Cada capa correcta suma puntos y el equilibrio final desbloquea el abono para el jardin.',
     kind: 'compost',
-    durationSeconds: 70,
+    durationSeconds: 90,
     accentColor: '#8a5a26',
     backgroundColor: '#e7d5bd',
     dropZones: [
@@ -230,15 +229,15 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Verdes humedos',
         shortLabel: 'Nitrogeno',
         color: '#4f8f46',
-        description: 'Cascaras, verduras, yerba y saquitos de te.'
+        description: 'Cascaras, verduras, yerba y saquitos de te.',
       },
       {
         id: 'marrones',
         label: 'Marrones secos',
         shortLabel: 'Carbono',
         color: '#9c6b3d',
-        description: 'Hojas secas, ramas, cesped seco y carton sin tinta.'
-      }
+        description: 'Hojas secas, ramas, cesped seco y carton sin tinta.',
+      },
     ],
     items: [
       {
@@ -247,7 +246,23 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'VER',
         category: 'verdes',
         detail: 'Aporta humedad y nitrogeno.',
-        points: 120
+        points: 120,
+      },
+      {
+        id: 'cascaras-fruta',
+        label: 'Cascaras',
+        symbol: 'FRU',
+        category: 'verdes',
+        detail: 'Restos de fruta para nitrogeno.',
+        points: 120,
+      },
+      {
+        id: 'hojas-lechuga',
+        label: 'Lechuga',
+        symbol: 'LEC',
+        category: 'verdes',
+        detail: 'Hoja vegetal humeda.',
+        points: 115,
       },
       {
         id: 'yerba-compost',
@@ -255,7 +270,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'YRB',
         category: 'verdes',
         detail: 'Material verde humedo.',
-        points: 120
+        points: 120,
       },
       {
         id: 'te',
@@ -263,7 +278,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'TE',
         category: 'verdes',
         detail: 'Organico compostable.',
-        points: 110
+        points: 110,
       },
       {
         id: 'hojas-secas',
@@ -271,7 +286,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'HOJ',
         category: 'marrones',
         detail: 'Aporta estructura y carbono.',
-        points: 130
+        points: 130,
       },
       {
         id: 'ramas',
@@ -279,7 +294,15 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'RAM',
         category: 'marrones',
         detail: 'Material seco del jardin.',
-        points: 130
+        points: 130,
+      },
+      {
+        id: 'cesped-seco',
+        label: 'Cesped seco',
+        symbol: 'CES',
+        category: 'marrones',
+        detail: 'Fibra seca para airear la mezcla.',
+        points: 120,
       },
       {
         id: 'carton-sin-tinta',
@@ -287,9 +310,17 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'CAR',
         category: 'marrones',
         detail: 'Carbono sin tinta.',
-        points: 110
-      }
-    ]
+        points: 110,
+      },
+      {
+        id: 'carton-trocitos',
+        label: 'Carton trozado',
+        symbol: 'CTZ',
+        category: 'marrones',
+        detail: 'Pedacitos de carton sin tinta.',
+        points: 115,
+      },
+    ],
   },
   {
     id: 'relleno-sanitario',
@@ -315,15 +346,15 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Fosa compacta',
         shortLabel: 'Compactar',
         color: '#7251a3',
-        description: 'Ubicacion eficiente dentro de la fosa impermeabilizada.'
+        description: 'Ubicacion eficiente dentro de la fosa impermeabilizada.',
       },
       {
         id: 'zona-riesgo',
         label: 'Huecos vacios',
         shortLabel: 'Riesgo',
         color: '#a4503f',
-        description: 'Espacios desordenados que reducen la vida util.'
-      }
+        description: 'Espacios desordenados que reducen la vida util.',
+      },
     ],
     items: [
       {
@@ -332,7 +363,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'B1',
         category: 'fosa-compacta',
         detail: 'Debe encastrarse cerca del fondo.',
-        points: 120
+        points: 120,
       },
       {
         id: 'bolsa-2',
@@ -340,7 +371,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'B2',
         category: 'fosa-compacta',
         detail: 'Conviene ubicarla alineada.',
-        points: 130
+        points: 130,
       },
       {
         id: 'bolsa-3',
@@ -348,7 +379,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'B3',
         category: 'fosa-compacta',
         detail: 'Debe evitar huecos.',
-        points: 120
+        points: 120,
       },
       {
         id: 'bolsa-4',
@@ -356,10 +387,10 @@ export const GAME_STAGES: readonly GameStage[] = [
         symbol: 'B4',
         category: 'fosa-compacta',
         detail: 'Aporta estabilidad si se ubica abajo.',
-        points: 140
-      }
-    ]
-  }
+        points: 140,
+      },
+    ],
+  },
 ];
 
 export const MOCK_LEADERBOARD: readonly LeaderboardEntry[] = [
@@ -367,27 +398,27 @@ export const MOCK_LEADERBOARD: readonly LeaderboardEntry[] = [
     position: 1,
     name: 'Camila',
     school: 'Esc. N 12 San Salvador',
-    score: 3920
+    score: 3920,
   },
   {
     position: 2,
     name: 'Mateo',
     school: 'Colegio Secundario Purmamarca',
-    score: 3640
+    score: 3640,
   },
   {
     position: 3,
     name: CURRENT_USER.name,
     school: CURRENT_USER.school,
     score: 0,
-    isCurrentUser: true
+    isCurrentUser: true,
   },
   {
     position: 4,
     name: 'Lucia',
     school: 'Esc. Rural Tilcara',
-    score: 2780
-  }
+    score: 2780,
+  },
 ];
 
 export function findStageById(stageId: string | null): GameStage {

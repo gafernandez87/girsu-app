@@ -4,18 +4,20 @@ Aplicacion movil educativa para estudiantes y docentes de Jujuy, basada en mini 
 
 ## Stack
 
-- Angular para shell, pantallas y estado.
+- Angular para shell, pantallas, estado y mini juegos HTML/JS.
 - Capacitor para Android/iOS.
-- Phaser para mini juegos 2D en Canvas/WebGL.
 
 ## Estructura del proyecto
 
 - `docs/`: documentacion funcional y tecnica del producto.
 - `src/app/core`: modelos, datos mock y progreso local.
 - `src/app/pages`: pantallas principales.
-- `src/app/components`: componentes reutilizables y canvas Phaser.
+- `src/app/components`: componentes reutilizables y escenas interactivas de los mini juegos.
 
-Documento especifico del primer mini juego: `docs/game-1-separacion.md`.
+Documentos especificos de mini juegos:
+
+- `docs/game-1-separacion.md`.
+- `docs/game-3-compostaje.md`.
 
 ## Scripts utiles
 
