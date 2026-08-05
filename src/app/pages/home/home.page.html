@@ -7,15 +7,6 @@
         Un recorrido jugable por hogares, plantas, compostaje y relleno sanitario, inspirado en los
         cerros, colores y decisiones cotidianas de la provincia.
       </p>
-
-      <div class="hero-actions">
-        @if (nextStage(); as stage) {
-          <a [routerLink]="['/juego', stage.id]" class="primary-action">Continuar recorrido</a>
-        } @else {
-          <a [routerLink]="['/juego', stages[0].id]" class="primary-action">Rejugar recorrido</a>
-        }
-        <span>{{ completedStages() }} de {{ stages.length }} etapas completadas</span>
-      </div>
     </div>
 
     <aside class="journey-panel" aria-label="Perfil y progreso">
@@ -51,7 +42,7 @@
     </aside>
   </section>
 
-  <section class="summary-strip" aria-label="Resumen del recorrido">
+  <!-- <section class="summary-strip" aria-label="Resumen del recorrido">
     <article>
       <span class="label">Tiempo de juego</span>
       <strong>{{ totalDurationMinutes }} min</strong>
@@ -67,11 +58,11 @@
       <strong>4 paisajes</strong>
       <small>casa, planta, compostera y relleno</small>
     </article>
-  </section>
+  </section> -->
 
   <section class="stage-section">
     <div class="section-heading">
-      <span class="label">Mini juegos</span>
+      <span class="label">Juegos</span>
       <h2>Recorrido pedagogico</h2>
       <p>Cada etapa transforma una accion ambiental en una escena jugable de Jujuy.</p>
     </div>
@@ -99,9 +90,8 @@
             <p>{{ stage.environment }}</p>
 
             <div class="stage-meta">
-              <small>{{ stage.durationSeconds }}s</small>
-              <small>{{ stage.dropZones.length }} decisiones</small>
-              <small>{{ stageScore(stage.id) }} pts</small>
+              <small>Duracion: {{ stage.durationSeconds }} segundos</small>
+              <small>Tus puntos: {{ stageScore(stage.id) }}</small>
             </div>
 
             <a [routerLink]="['/juego', stage.id]" class="play-button">

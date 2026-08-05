@@ -509,8 +509,9 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.completedItems.set(this.homeProcessed);
     this.removeHomeSlot(slot.id);
     this.setHomeBinState(dropZone.id, 'open');
-    this.spawnHomeEffect('score', `+${points}`, slot.position);
-    this.spawnHomeEffect('success', undefined, this.getHomeZoneCenter(dropZone.id));
+    const zoneCenter = this.getHomeZoneCenter(dropZone.id);
+    this.spawnHomeEffect('score', `+${points}`, zoneCenter);
+    this.spawnHomeEffect('success', undefined, zoneCenter);
 
     this.settleHomeDrop(dropZone.id);
   }
@@ -523,7 +524,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.completedItems.set(this.homeProcessed);
     this.removeHomeSlot(slot.id);
     this.setHomeBinState(dropZone.id, 'error');
-    this.spawnHomeEffect('error', undefined, this.getHomeZoneCenter(dropZone.id));
+    this.spawnHomeEffect('error', '-40', this.getHomeZoneCenter(dropZone.id));
 
     this.settleHomeDrop(dropZone.id);
   }
@@ -706,7 +707,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.homeEffects.update((effects) => [...effects, effect]);
     this.scheduleHomeTimeout(() => {
       this.homeEffects.update((effects) => effects.filter((current) => current.id !== id));
-    }, 820);
+    }, 1280);
   }
 
   private scheduleHomeTimeout(callback: () => void, delay: number): void {

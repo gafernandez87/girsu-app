@@ -123,7 +123,9 @@
           <strong>Separacion lograda</strong>
           <span>{{ result.score }} puntos</span>
           <small>
-            Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{ homeAccuracyBonus(result) }}
+            Tiempo +{{ result.remainingSeconds * 10 }} | Bonus por aciertos +{{
+              homeAccuracyBonus(result)
+            }}
           </small>
         </div>
       </div>
