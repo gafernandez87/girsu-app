@@ -41,7 +41,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'compostables-cafe-molido',
     label: 'Cafe molido',
     category: 'compostables',
-    path: '/assets/game-1/products/compostables/Cafe%CC%81%20molido.png',
+    path: '/assets/game-1/products/compostables/Caf%C3%A9%20molido.png',
   },
   {
     id: 'compostables-cascara-banana',
@@ -53,7 +53,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'compostables-cascara-de-huevo',
     label: 'Cascara de huevo',
     category: 'compostables',
-    path: '/assets/game-1/products/compostables/Ca%CC%81scara%20de%20huevo.png',
+    path: '/assets/game-1/products/compostables/C%C3%A1scara%20de%20huevo.png',
   },
   {
     id: 'compostables-cascara-naranja',
@@ -65,7 +65,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'compostables-cesped-cortado',
     label: 'Cesped cortado',
     category: 'compostables',
-    path: '/assets/game-1/products/compostables/Ce%CC%81sped%20cortado.png',
+    path: '/assets/game-1/products/compostables/C%C3%A9sped%20cortado.png',
   },
   {
     id: 'compostables-flores-marchitas',
@@ -83,13 +83,13 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'compostables-ramas-pequenas',
     label: 'Ramas pequenas',
     category: 'compostables',
-    path: '/assets/game-1/products/compostables/Ramas%20pequen%CC%83as.png',
+    path: '/assets/game-1/products/compostables/Ramas%20peque%C3%B1as.png',
   },
   {
     id: 'compostables-resto-de-sandia',
     label: 'resto de sandia',
     category: 'compostables',
-    path: '/assets/game-1/products/compostables/resto%20de%20sandi%CC%81a.png',
+    path: '/assets/game-1/products/compostables/resto%20de%20sand%C3%ADa.png',
   },
   {
     id: 'compostables-restos-de-verduras',
@@ -101,7 +101,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'compostables-saquitos-de-te',
     label: 'Saquitos de te',
     category: 'compostables',
-    path: '/assets/game-1/products/compostables/Saquitos%20de%20te%CC%81.png',
+    path: '/assets/game-1/products/compostables/Saquitos%20de%20t%C3%A9.png',
   },
   {
     id: 'compostables-yerba-mate-usada',
@@ -113,19 +113,19 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'reciclables-bidon-plastico-limpio',
     label: 'Bidon plastico limpio',
     category: 'reciclables',
-    path: '/assets/game-1/products/reciclables/Bido%CC%81n%20pla%CC%81stico%20limpio.png',
+    path: '/assets/game-1/products/reciclables/Bid%C3%B3n%20pl%C3%A1stico%20limpio.png',
   },
   {
     id: 'reciclables-bolsa-de-plastico-compras',
     label: 'Bolsa de plastico',
     category: 'reciclables',
-    path: '/assets/game-1/products/reciclables/Bolsa%20de%20pla%CC%81stico%20compras.png',
+    path: '/assets/game-1/products/reciclables/Bolsa%20de%20pl%C3%A1stico%20compras.png',
   },
   {
     id: 'reciclables-botella-de-plastico-pet',
     label: 'Botella de plastico PET',
     category: 'reciclables',
-    path: '/assets/game-1/products/reciclables/Botella%20de%20pla%CC%81stico%20PET.png',
+    path: '/assets/game-1/products/reciclables/Botella%20de%20pl%C3%A1stico%20PET.png',
   },
   {
     id: 'reciclables-botella-de-shampoo',
@@ -143,13 +143,13 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'reciclables-caja-de-carton',
     label: 'Caja de carton',
     category: 'reciclables',
-    path: '/assets/game-1/products/reciclables/Caja%20de%20carto%CC%81n.png',
+    path: '/assets/game-1/products/reciclables/Caja%20de%20cart%C3%B3n.png',
   },
   {
     id: 'reciclables-carton-de-embalaje',
     label: 'Carton de embalaje',
     category: 'reciclables',
-    path: '/assets/game-1/products/reciclables/Carto%CC%81n%20de%20embalaje.png',
+    path: '/assets/game-1/products/reciclables/Cart%C3%B3n%20de%20embalaje.png',
   },
   {
     id: 'reciclables-diario',
@@ -215,7 +215,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'reciclables-tapitas-plasticas',
     label: 'Tapitas plasticas',
     category: 'reciclables',
-    path: '/assets/game-1/products/reciclables/Tapitas%20pla%CC%81sticas.png',
+    path: '/assets/game-1/products/reciclables/Tapitas%20pl%C3%A1sticas.png',
   },
   {
     id: 'reciclables-tetra',
@@ -227,7 +227,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'reciclables-tubo-de-carton',
     label: 'Tubo de carton',
     category: 'reciclables',
-    path: '/assets/game-1/products/reciclables/Tubo%20de%20carto%CC%81n.png',
+    path: '/assets/game-1/products/reciclables/Tubo%20de%20cart%C3%B3n.png',
   },
   {
     id: 'no-reciclables-barbijo-descartable',
@@ -251,13 +251,13 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'no-reciclables-cepillo-de-dientes-de-plastico',
     label: 'Cepillo de dientes de plastico',
     category: 'no-reciclables',
-    path: '/assets/game-1/products/no%20reciclables/Cepillo%20de%20dientes%20de%20pla%CC%81stico.png',
+    path: '/assets/game-1/products/no%20reciclables/Cepillo%20de%20dientes%20de%20pl%C3%A1stico.png',
   },
   {
     id: 'no-reciclables-ceramica-rota',
     label: 'Ceramica rota',
     category: 'no-reciclables',
-    path: '/assets/game-1/products/no%20reciclables/Cera%CC%81mica%20rota.png',
+    path: '/assets/game-1/products/no%20reciclables/Cer%C3%A1mica%20rota.png',
   },
   {
     id: 'no-reciclables-colilla-de-cigarrillo',
@@ -305,7 +305,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'no-reciclables-panal-descartable',
     label: 'Panal descartable',
     category: 'no-reciclables',
-    path: '/assets/game-1/products/no%20reciclables/Pan%CC%83al%20descartable.png',
+    path: '/assets/game-1/products/no%20reciclables/Pa%C3%B1al%20descartable.png',
   },
   {
     id: 'no-reciclables-papel-de-golosinas',
@@ -317,7 +317,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
     id: 'no-reciclables-papel-higienico-usado',
     label: 'Papel higienico usado',
     category: 'no-reciclables',
-    path: '/assets/game-1/products/no%20reciclables/Papel%20higie%CC%81nico%20usado.png',
+    path: '/assets/game-1/products/no%20reciclables/Papel%20higi%C3%A9nico%20usado.png',
   },
   {
     id: 'no-reciclables-papel-plastificado',
