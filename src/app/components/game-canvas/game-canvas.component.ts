@@ -20,10 +20,23 @@ import {
   HOME_BIN_ASSET_PATHS,
   HOME_PRODUCT_ASSETS,
 } from './game-canvas.assets';
-import type { ActiveItemHud, BinVisualState, HomeEffect, StageTick } from './game-canvas.types';
+import type { BinVisualState, HomeEffect, StageTick } from './game-canvas.types';
 import { CompostGameComponent } from './compost-game/compost-game.component';
 import { IndustrialGameComponent } from './industrial-game/industrial-game.component';
 import { LandfillGameComponent } from './landfill-game/landfill-game.component';
+
+type GameIntroState = 'intro' | 'countdown' | 'playing';
+type HomePoint = { readonly x: number; readonly y: number };
+
+interface HomeItemSlot {
+  readonly id: number;
+  readonly home: HomePoint;
+  readonly item: GameItem;
+  readonly position: HomePoint;
+  readonly rotation: number;
+}
+
+const HOME_VISIBLE_SLOT_COUNT = 3;
 
 @Component({
   selector: 'app-game-canvas',
@@ -40,29 +53,30 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   readonly remainingSeconds = signal(0);
   readonly completedItems = signal(0);
   readonly completedResult = signal<StageResult | null>(null);
-  readonly activeItem = signal<ActiveItemHud | null>(null);
   readonly homeBackgroundPath = HOME_BACKGROUND_ASSET.path;
   readonly homeBackgroundImage = `url("${HOME_BACKGROUND_ASSET.path}")`;
   readonly homeBinStates = signal<Record<string, BinVisualState>>({});
   readonly homeDragging = signal(false);
+  readonly homeDraggedSlotId = signal<number | null>(null);
   readonly homeEffects = signal<readonly HomeEffect[]>([]);
-  readonly homeTokenPosition = signal({ x: 0, y: 0 });
-  readonly homeTokenRotation = signal(0);
+  readonly homeItemSlots = signal<readonly HomeItemSlot[]>([]);
+  readonly introState = signal<GameIntroState>('intro');
+  readonly countdownSeconds = signal(3);
 
   private resizeTimer?: ReturnType<typeof setTimeout>;
+  private countdownTimer?: ReturnType<typeof setInterval>;
   private homeTimer?: ReturnType<typeof setInterval>;
   private homeStartFrame?: number;
   private homeTimeouts: Array<ReturnType<typeof setTimeout>> = [];
   private homeEffectId = 0;
   private homePendingItems: GameItem[] = [];
-  private homeCurrentItem?: GameItem;
   private homeCorrect = 0;
   private homeMistakes = 0;
+  private homeProcessed = 0;
   private homeStreak = 0;
   private homeFinished = false;
   private homeDragPointerId?: number;
   private homeDragOffset = { x: 0, y: 0 };
-  private homeTokenHome = { x: 0, y: 0 };
 
   ngAfterViewInit(): void {
     this.createGame();
@@ -76,6 +90,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   ngOnDestroy(): void {
     clearTimeout(this.resizeTimer);
+    this.clearCountdownTimer();
     this.destroyGame();
   }
 
@@ -86,7 +101,11 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     }
 
     clearTimeout(this.resizeTimer);
-    this.resizeTimer = setTimeout(() => this.createGame(), 180);
+    const shouldKeepPlaying = this.gameplayActive();
+    this.resizeTimer = setTimeout(
+      () => this.createGame({ startImmediately: shouldKeepPlaying }),
+      180,
+    );
   }
 
   @HostListener('window:pointermove', ['$event'])
@@ -96,7 +115,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     }
 
     event.preventDefault();
-    this.moveHomeToken(event);
+    this.moveHomeSlot(event);
     this.updateHomeHoverState(event.clientX, event.clientY);
   }
 
@@ -119,17 +138,23 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.cancelHomeDrag();
   }
 
-  private createGame(): void {
+  private createGame(options: { startImmediately?: boolean } = {}): void {
     if (!this.stage) {
       return;
     }
 
+    this.clearCountdownTimer();
     this.destroyGame();
     this.resetSharedState();
+    this.countdownSeconds.set(3);
 
-    if (this.stage.id === 'separacion-origen') {
-      this.startHomeGame();
+    if (options.startImmediately) {
+      this.introState.set('playing');
+      this.startPlayableGame();
+      return;
     }
+
+    this.introState.set('intro');
   }
 
   private destroyGame(): void {
@@ -144,6 +169,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     }
 
     this.homeDragging.set(false);
+    this.homeDraggedSlotId.set(null);
     this.homeDragPointerId = undefined;
   }
 
@@ -164,30 +190,34 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   homeProductSize(itemId: string): number {
-    return Math.min(HOME_PRODUCT_ASSETS[itemId]?.size ?? 96, 98);
+    return Math.min(HOME_PRODUCT_ASSETS[itemId]?.size ?? 96, 104);
   }
 
-  homeTokenTransform(): string {
-    const position = this.homeTokenPosition();
-    const rotation = this.homeTokenRotation();
-    const scale = this.homeDragging() ? 1.08 : 1;
+  homeSlotTransform(slot: HomeItemSlot): string {
+    const scale = this.homeDraggedSlotId() === slot.id ? 1.08 : 1;
 
-    return `translate3d(${position.x - 64}px, ${position.y - 52}px, 0) scale(${scale})`;
+    return `translate3d(${slot.position.x}px, ${slot.position.y}px, 0) translate(-50%, -45%) scale(${scale})`;
   }
 
-  startHomeDrag(event: PointerEvent): void {
-    if (this.homeFinished || !this.homeCurrentItem || this.completedResult()) {
+  isHomeSlotDragging(slotId: number): boolean {
+    return this.homeDraggedSlotId() === slotId;
+  }
+
+  startHomeDrag(event: PointerEvent, slotId: number): void {
+    const slot = this.homeSlot(slotId);
+
+    if (this.homeFinished || !slot || this.completedResult()) {
       return;
     }
 
     event.preventDefault();
     const localPoint = this.getHomeLocalPoint(event.clientX, event.clientY);
-    const position = this.homeTokenPosition();
 
     this.homeDragPointerId = event.pointerId;
+    this.homeDraggedSlotId.set(slotId);
     this.homeDragOffset = {
-      x: localPoint.x - position.x,
-      y: localPoint.y - position.y,
+      x: localPoint.x - slot.position.x,
+      y: localPoint.y - slot.position.y,
     };
     this.homeDragging.set(true);
 
@@ -247,20 +277,64 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.completed.emit(result);
   }
 
+  gameplayActive(): boolean {
+    return this.introState() === 'playing';
+  }
+
+  stageIntroText(): string {
+    return this.stage.introText.trim() || this.stage.mechanic;
+  }
+
+  startIntroCountdown(): void {
+    if (this.introState() !== 'intro') {
+      return;
+    }
+
+    this.clearCountdownTimer();
+    this.countdownSeconds.set(3);
+    this.introState.set('countdown');
+
+    this.countdownTimer = setInterval(() => {
+      const nextSecond = this.countdownSeconds() - 1;
+
+      if (nextSecond <= 0) {
+        this.clearCountdownTimer();
+        this.introState.set('playing');
+        this.startPlayableGame();
+        return;
+      }
+
+      this.countdownSeconds.set(nextSecond);
+    }, 1000);
+  }
+
+  private clearCountdownTimer(): void {
+    clearInterval(this.countdownTimer);
+    this.countdownTimer = undefined;
+  }
+
+  private startPlayableGame(): void {
+    if (this.stage.id === 'separacion-origen') {
+      this.startHomeGame();
+    }
+  }
+
   private resetSharedState(): void {
     this.score.set(0);
     this.remainingSeconds.set(this.stage.durationSeconds);
     this.completedItems.set(0);
     this.completedResult.set(null);
-    this.activeItem.set(null);
     this.homeEffects.set([]);
+    this.homeItemSlots.set([]);
+    this.homeDraggedSlotId.set(null);
   }
 
   private startHomeGame(): void {
-    this.homePendingItems = [...this.stage.items];
-    this.homeCurrentItem = undefined;
+    this.homePendingItems = this.shuffleHomeItems(this.stage.items);
+    this.homeItemSlots.set([]);
     this.homeCorrect = 0;
     this.homeMistakes = 0;
+    this.homeProcessed = 0;
     this.homeStreak = 0;
     this.homeFinished = false;
     this.homeEffectId = 0;
@@ -268,8 +342,12 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
     this.homeStartFrame = window.requestAnimationFrame(() => {
       this.homeStartFrame = undefined;
-      this.spawnNextHomeItem();
+      this.refillHomeSlots();
       this.startHomeTimer();
+
+      if (this.homeDeckExhausted()) {
+        this.finishHomeLevel();
+      }
     });
   }
 
@@ -288,37 +366,79 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     }, 1000);
   }
 
-  private spawnNextHomeItem(): void {
-    if (this.homeFinished || this.homeCurrentItem || this.homePendingItems.length === 0) {
+  private refillHomeSlots(): void {
+    if (this.homeFinished) {
       return;
     }
 
-    const item = this.homePendingItems.shift();
+    const homes = this.createHomeSlotHomes();
+    const draggingSlotId = this.homeDraggedSlotId();
+    const occupiedSlotIds = new Set<number>();
+    const nextSlots = this.homeItemSlots().map((slot) => {
+      const home = homes[slot.id] ?? slot.home;
+      occupiedSlotIds.add(slot.id);
 
-    if (!item) {
-      return;
-    }
-
-    this.homeCurrentItem = item;
-    this.activeItem.set({
-      id: item.id,
-      label: item.label,
+      return {
+        ...slot,
+        home,
+        position: draggingSlotId === slot.id ? slot.position : home,
+      };
     });
-    this.positionHomeTokenAtRest();
-    this.homeTokenRotation.set(Math.floor(Math.random() * 9) - 4);
+
+    for (let slotId = 0; slotId < HOME_VISIBLE_SLOT_COUNT; slotId += 1) {
+      if (occupiedSlotIds.has(slotId)) {
+        continue;
+      }
+
+      const nextItem = this.homePendingItems.shift();
+
+      if (!nextItem) {
+        continue;
+      }
+
+      const home = homes[slotId];
+
+      if (!home) {
+        continue;
+      }
+
+      nextSlots.push(this.createHomeSlot(slotId, nextItem, home));
+    }
+
+    this.homeItemSlots.set([...nextSlots].sort((left, right) => left.id - right.id));
   }
 
-  private positionHomeTokenAtRest(): void {
+  private createHomeSlotHomes(): readonly HomePoint[] {
     const stage = this.homeStage.nativeElement;
     const rect = stage.getBoundingClientRect();
-    const x = rect.width / 2;
-    const y = rect.height < 650 ? rect.height * 0.48 : rect.height * 0.5;
+    const centerX = rect.width / 2;
+    const y = rect.height < 650 ? rect.height * 0.36 : rect.height * 0.42;
+    const spread = Math.min(rect.width < 520 ? rect.width * 0.31 : rect.width * 0.22, 190);
 
-    this.homeTokenHome = { x, y };
-    this.homeTokenPosition.set(this.homeTokenHome);
+    return [
+      { x: centerX - spread, y },
+      { x: centerX, y: y - Math.min(10, rect.height * 0.015) },
+      { x: centerX + spread, y },
+    ];
   }
 
-  private moveHomeToken(event: PointerEvent): void {
+  private createHomeSlot(slotId: number, item: GameItem, home: HomePoint): HomeItemSlot {
+    return {
+      id: slotId,
+      item,
+      home,
+      position: home,
+      rotation: Math.floor(Math.random() * 11) - 5,
+    };
+  }
+
+  private moveHomeSlot(event: PointerEvent): void {
+    const slotId = this.homeDraggedSlotId();
+
+    if (slotId === null) {
+      return;
+    }
+
     const stage = this.homeStage.nativeElement;
     const rect = stage.getBoundingClientRect();
     const localPoint = this.getHomeLocalPoint(event.clientX, event.clientY);
@@ -329,16 +449,21 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
       Math.max(radius, localPoint.y - this.homeDragOffset.y),
     );
 
-    this.homeTokenPosition.set({ x, y });
+    this.updateHomeSlot(slotId, (slot) => ({
+      ...slot,
+      position: { x, y },
+    }));
   }
 
   private finishHomeDrag(clientX: number, clientY: number): void {
-    const item = this.homeCurrentItem;
+    const slotId = this.homeDraggedSlotId();
+    const slot = slotId === null ? undefined : this.homeSlot(slotId);
 
     this.homeDragging.set(false);
+    this.homeDraggedSlotId.set(null);
     this.homeDragPointerId = undefined;
 
-    if (!item || this.homeFinished) {
+    if (!slot || this.homeFinished) {
       return;
     }
 
@@ -346,63 +471,61 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.homeBinStates.set(this.createHomeBinStates());
 
     if (!dropZone) {
-      this.returnHomeToken();
+      this.returnHomeSlot(slot.id);
       return;
     }
 
-    if (dropZone.id === item.category) {
-      this.handleHomeCorrectDrop(item, dropZone);
+    if (dropZone.id === slot.item.category) {
+      this.handleHomeCorrectDrop(slot, dropZone);
       return;
     }
 
-    this.handleHomeWrongDrop(dropZone);
+    this.handleHomeWrongDrop(slot, dropZone);
   }
 
   private cancelHomeDrag(): void {
+    const slotId = this.homeDraggedSlotId();
+
     this.homeDragging.set(false);
+    this.homeDraggedSlotId.set(null);
     this.homeDragPointerId = undefined;
     this.homeBinStates.set(this.createHomeBinStates());
-    this.returnHomeToken();
+
+    if (slotId !== null) {
+      this.returnHomeSlot(slotId);
+    }
   }
 
-  private handleHomeCorrectDrop(item: GameItem, dropZone: DropZone): void {
+  private handleHomeCorrectDrop(slot: HomeItemSlot, dropZone: DropZone): void {
+    const item = slot.item;
+
     this.homeCorrect += 1;
+    this.homeProcessed += 1;
     this.homeStreak += 1;
 
     const comboBonus = Math.max(0, this.homeStreak - 1) * 15;
     const points = item.points + comboBonus;
     this.score.set(this.score() + points);
-    this.completedItems.set(this.homeCorrect);
-    this.homeCurrentItem = undefined;
-    this.activeItem.set(null);
+    this.completedItems.set(this.homeProcessed);
+    this.removeHomeSlot(slot.id);
     this.setHomeBinState(dropZone.id, 'open');
-    this.spawnHomeEffect('score', `+${points}`, this.homeTokenPosition());
+    this.spawnHomeEffect('score', `+${points}`, slot.position);
     this.spawnHomeEffect('success', undefined, this.getHomeZoneCenter(dropZone.id));
 
-    this.scheduleHomeTimeout(() => {
-      this.setHomeBinState(dropZone.id, 'normal');
-
-      if (this.homeFinished) {
-        return;
-      }
-
-      if (this.homeCorrect === this.stage.items.length) {
-        this.finishHomeLevel();
-      } else {
-        this.spawnNextHomeItem();
-      }
-    }, 520);
+    this.settleHomeDrop(dropZone.id);
   }
 
-  private handleHomeWrongDrop(dropZone: DropZone): void {
+  private handleHomeWrongDrop(slot: HomeItemSlot, dropZone: DropZone): void {
     this.homeMistakes += 1;
+    this.homeProcessed += 1;
     this.homeStreak = 0;
     this.score.set(Math.max(0, this.score() - 40));
+    this.completedItems.set(this.homeProcessed);
+    this.removeHomeSlot(slot.id);
     this.setHomeBinState(dropZone.id, 'error');
     this.spawnHomeEffect('error', undefined, this.getHomeZoneCenter(dropZone.id));
-    this.returnHomeToken();
 
-    this.scheduleHomeTimeout(() => this.setHomeBinState(dropZone.id, 'normal'), 520);
+    this.settleHomeDrop(dropZone.id);
   }
 
   private finishHomeLevel(): void {
@@ -413,8 +536,11 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.homeFinished = true;
     clearInterval(this.homeTimer);
     this.homeTimer = undefined;
-    this.homeCurrentItem = undefined;
-    this.activeItem.set(null);
+    this.homePendingItems = [];
+    this.homeItemSlots.set([]);
+    this.homeDragging.set(false);
+    this.homeDraggedSlotId.set(null);
+    this.homeDragPointerId = undefined;
 
     const timeBonus = this.remainingSeconds() * 10;
     const accuracyBonus = Math.max(0, this.homeCorrect - this.homeMistakes) * 20;
@@ -433,8 +559,59 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.completed.emit(result);
   }
 
-  private returnHomeToken(): void {
-    this.homeTokenPosition.set(this.homeTokenHome);
+  private returnHomeSlot(slotId: number): void {
+    this.updateHomeSlot(slotId, (slot) => ({
+      ...slot,
+      position: slot.home,
+    }));
+  }
+
+  private removeHomeSlot(slotId: number): void {
+    this.homeItemSlots.update((slots) => slots.filter((slot) => slot.id !== slotId));
+  }
+
+  private settleHomeDrop(zoneId: string): void {
+    this.scheduleHomeTimeout(() => {
+      this.setHomeBinState(zoneId, 'normal');
+
+      if (this.homeFinished) {
+        return;
+      }
+
+      this.refillHomeSlots();
+
+      if (this.homeDeckExhausted()) {
+        this.finishHomeLevel();
+      }
+    }, 520);
+  }
+
+  private homeDeckExhausted(): boolean {
+    return this.homePendingItems.length === 0 && this.homeItemSlots().length === 0;
+  }
+
+  private homeSlot(slotId: number): HomeItemSlot | undefined {
+    return this.homeItemSlots().find((slot) => slot.id === slotId);
+  }
+
+  private updateHomeSlot(slotId: number, updater: (slot: HomeItemSlot) => HomeItemSlot): void {
+    this.homeItemSlots.update((slots) =>
+      slots.map((slot) => (slot.id === slotId ? updater(slot) : slot)),
+    );
+  }
+
+  private shuffleHomeItems(items: readonly GameItem[]): GameItem[] {
+    const shuffledItems = [...items];
+
+    for (let index = shuffledItems.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [shuffledItems[index], shuffledItems[swapIndex]] = [
+        shuffledItems[swapIndex],
+        shuffledItems[index],
+      ];
+    }
+
+    return shuffledItems;
   }
 
   private updateHomeHoverState(clientX: number, clientY: number): void {
@@ -477,7 +654,10 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     );
 
     if (!zoneElement) {
-      return this.homeTokenPosition();
+      return {
+        x: stageRect.width / 2,
+        y: stageRect.height / 2,
+      };
     }
 
     const rect = zoneElement.getBoundingClientRect();

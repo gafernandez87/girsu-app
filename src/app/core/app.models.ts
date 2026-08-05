@@ -35,6 +35,7 @@ export interface GameStage {
   readonly subtitle: string;
   readonly objective: string;
   readonly environment: string;
+  readonly introText: string;
   readonly mechanic: string;
   readonly scoring: string;
   readonly kind: StageKind;
@@ -61,4 +62,3 @@ export interface LeaderboardEntry {
   readonly score: number;
   readonly isCurrentUser?: boolean;
 }
-

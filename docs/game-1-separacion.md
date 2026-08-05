@@ -14,12 +14,19 @@ Elementos visuales de la escena:
 
 - Fondo externo de cocina jujeña cargado desde `public/assets/game-1/backgrounds/fondo juego 1.png`.
 - Tres tachos externos con estados: normal, hover, abierto y error.
-- Productos/residuos cargados como assets 2D externos: botella PET, frasco, carton, cascara, yerba y envoltorio.
+- Productos/residuos cargados como assets 2D externos desde:
+  `public/assets/game-1/products/compostables/`,
+  `public/assets/game-1/products/reciclables/` y
+  `public/assets/game-1/products/no reciclables/`.
 - Efectos externos de scoring/error: starburst, confetti, moneda, medalla y error burst.
-- HUD interno con puntaje, tiempo y progreso por residuos clasificados.
-- Cola de residuos: se muestra un solo producto por vez para concentrar la interaccion en una decision clara.
+- HUD interno con puntaje y tiempo.
+- Bandeja de residuos: se muestran 3 productos al azar al iniciar. Cuando el jugador tira un
+  producto en un tacho, el producto desaparece y su slot se repone con otro producto del mazo
+  mezclado si todavia quedan productos disponibles.
 
-Los productos, tachos y efectos originales llegaron sin alpha real. Se generaron copias transparentes en las carpetas `processed/`, que son las que carga la escena HTML.
+El juego 1 ya no carga sus productos desde `products/processed/`. Esa carpeta queda fuera de la
+dinamica principal de separacion. Los tachos y efectos siguen usando sus versiones recortadas de
+`bins/processed/` y `effects/processed/`.
 
 Animaciones incluidas:
 
@@ -27,10 +34,7 @@ Animaciones incluidas:
 - Movimiento idle suave en el producto activo.
 - Escalado al tomar un residuo.
 - Pulso de tachos durante drag.
-- Rebote y retorno al equivocarse.
-- Vuelo hacia el tacho, pop-up de puntos y chispas al acertar.
+- Retorno al soltar fuera de un tacho.
+- Pop-up de puntos y chispas al acertar.
+- Error visual y resta de puntos al tirar un producto en el tacho equivocado.
 - Panel final con bonus de tiempo y precision.
-
-## Proximo paso visual
-
-Cuando se definan assets finales, los dibujos actuales pueden reemplazarse por PNG/WebP sin cambiar la logica de clasificacion, puntaje ni drag/drop.

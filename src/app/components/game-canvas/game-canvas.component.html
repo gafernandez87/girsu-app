@@ -1,5 +1,5 @@
 <section class="game-card">
-  @if (stage.id === 'valorizacion-industrial') {
+  @if (stage.id === 'valorizacion-industrial' && gameplayActive()) {
     <app-industrial-game
       [stage]="stage"
       (tick)="handleIndustrialTick($event)"
@@ -7,7 +7,7 @@
     />
   }
 
-  @if (stage.id === 'compostaje-domiciliario') {
+  @if (stage.id === 'compostaje-domiciliario' && gameplayActive()) {
     <app-compost-game
       [stage]="stage"
       (tick)="handleCompostTick($event)"
@@ -15,7 +15,7 @@
     />
   }
 
-  @if (stage.id === 'relleno-sanitario') {
+  @if (stage.id === 'relleno-sanitario' && gameplayActive()) {
     <app-landfill-game
       [stage]="stage"
       (tick)="handleLandfillTick($event)"
@@ -42,7 +42,7 @@
     [style.background-image]="homeBackgroundImage"
     aria-label="Minijuego de separacion en origen"
   >
-    @if (stage.id === 'separacion-origen') {
+    @if (stage.id === 'separacion-origen' && gameplayActive()) {
       <div class="home-game__shade" aria-hidden="true"></div>
 
       <div class="home-game__bins">
@@ -59,25 +59,25 @@
         }
       </div>
 
-      @if (activeItem(); as item) {
+      @for (slot of homeItemSlots(); track slot.id) {
         <button
           type="button"
           class="home-game__item"
-          [class.is-dragging]="homeDragging()"
-          [style.transform]="homeTokenTransform()"
-          [attr.aria-label]="'Arrastrar ' + item.label"
-          (pointerdown)="startHomeDrag($event)"
+          [class.is-dragging]="isHomeSlotDragging(slot.id)"
+          [style.transform]="homeSlotTransform(slot)"
+          [attr.aria-label]="'Arrastrar ' + slot.item.label"
+          (pointerdown)="startHomeDrag($event, slot.id)"
         >
           <span class="home-game__item-orb">
             <img
-              [src]="homeProductImage(item.id)"
-              [alt]="item.label"
-              [style.width.px]="homeProductSize(item.id)"
-              [style.height.px]="homeProductSize(item.id)"
+              [src]="homeProductImage(slot.item.id)"
+              [alt]="slot.item.label"
+              [style.width.px]="homeProductSize(slot.item.id)"
+              [style.height.px]="homeProductSize(slot.item.id)"
               draggable="false"
             />
           </span>
-          <span class="home-game__item-label">{{ item.label }}</span>
+          <span class="home-game__item-label">{{ slot.item.label }}</span>
         </button>
       }
 
@@ -96,7 +96,7 @@
       }
     }
   </div>
-  @if (stage.id === 'separacion-origen') {
+  @if (stage.id === 'separacion-origen' && gameplayActive()) {
     <div class="home-hud" aria-live="polite">
       <div class="home-hud__top">
         <strong class="home-hud__title">{{ stage.title }}</strong>
@@ -130,7 +130,7 @@
     }
   }
 
-  @if (stage.id === 'valorizacion-industrial') {
+  @if (stage.id === 'valorizacion-industrial' && gameplayActive()) {
     <div class="industrial-hud" aria-live="polite">
       <div class="industrial-hud__top">
         <strong class="industrial-hud__title">{{ stage.title }}</strong>
@@ -165,7 +165,7 @@
     }
   }
 
-  @if (stage.id === 'compostaje-domiciliario') {
+  @if (stage.id === 'compostaje-domiciliario' && gameplayActive()) {
     <div class="compost-hud" aria-live="polite">
       <div class="compost-hud__top">
         <strong class="compost-hud__title">{{ stage.title }}</strong>
@@ -204,7 +204,7 @@
     }
   }
 
-  @if (stage.id === 'relleno-sanitario') {
+  @if (stage.id === 'relleno-sanitario' && gameplayActive()) {
     <div class="landfill-hud" aria-live="polite">
       <div class="landfill-hud__top">
         <strong class="landfill-hud__title">{{ stage.title }}</strong>
@@ -237,5 +237,37 @@
         </div>
       </div>
     }
+  }
+
+  @if (introState() === 'intro') {
+    <div
+      class="game-intro"
+      [style.--intro-accent]="stage.accentColor"
+      [style.--intro-surface]="stage.backgroundColor"
+      aria-live="polite"
+    >
+      <section class="game-intro__panel">
+        <span class="game-intro__eyebrow">{{ stage.shortTitle }}</span>
+        <strong>{{ stage.title }}</strong>
+        <p>{{ stageIntroText() }}</p>
+        <button type="button" class="game-intro__button" (click)="startIntroCountdown()">
+          &iexcl;Quiero jugar!
+        </button>
+      </section>
+    </div>
+  }
+
+  @if (introState() === 'countdown') {
+    <div
+      class="game-intro game-intro--countdown"
+      [style.--intro-accent]="stage.accentColor"
+      [style.--intro-surface]="stage.backgroundColor"
+      aria-live="assertive"
+    >
+      <section class="game-intro__panel game-intro__panel--countdown">
+        <span>El juego comienza en</span>
+        <strong>{{ countdownSeconds() }}</strong>
+      </section>
+    </div>
   }
 </section>

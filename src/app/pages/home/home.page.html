@@ -1,67 +1,123 @@
 <main class="home-page">
-  <section class="hero">
+  <section class="hero" aria-labelledby="home-title">
     <div class="hero-copy">
-      <span class="eyebrow">Jujuy GIRSU</span>
-      <h1>El Camino de los Residuos</h1>
+      <span class="eyebrow">GIRSU Jujuy</span>
+      <h1 id="home-title">El Camino de los Residuos</h1>
       <p>
-        Recorre cuatro etapas del ciclo de residuos con desafios cortos, puntajes y ranking
-        provincial.
+        Un recorrido jugable por hogares, plantas, compostaje y relleno sanitario, inspirado en los
+        cerros, colores y decisiones cotidianas de la provincia.
       </p>
+
+      <div class="hero-actions">
+        @if (nextStage(); as stage) {
+          <a [routerLink]="['/juego', stage.id]" class="primary-action">Continuar recorrido</a>
+        } @else {
+          <a [routerLink]="['/juego', stages[0].id]" class="primary-action">Rejugar recorrido</a>
+        }
+        <span>{{ completedStages() }} de {{ stages.length }} etapas completadas</span>
+      </div>
     </div>
 
-    <div class="profile-panel" aria-label="Perfil actual">
-      <div>
-        <span class="label">Participante</span>
-        <strong>{{ user.name }}</strong>
-        <small>{{ user.course }} - {{ user.school }}</small>
+    <aside class="journey-panel" aria-label="Perfil y progreso">
+      <div class="profile-line">
+        <div>
+          <span class="label">Participante</span>
+          <strong>{{ user.name }}</strong>
+          <small>{{ user.course }} - {{ user.school }}</small>
+        </div>
+        <div class="score-badge">
+          <small>Puntaje</small>
+          <span>{{ totalScore() }} pts</span>
+        </div>
       </div>
-      <div class="score-badge">
-        <span>{{ totalScore() }}</span>
-        <small>pts</small>
+
+      <div class="hero-progress">
+        <div>
+          <span class="label">Recorrido</span>
+          <strong>{{ progressPercent() }}%</strong>
+        </div>
+        <div class="progress-track" aria-hidden="true">
+          <span [style.width.%]="progressPercent()"></span>
+        </div>
       </div>
-    </div>
+
+      @if (nextStage(); as stage) {
+        <a [routerLink]="['/juego', stage.id]" class="next-stage">
+          <span>Proxima parada</span>
+          <strong>{{ stage.shortTitle }}</strong>
+          <small>{{ stage.subtitle }}</small>
+        </a>
+      }
+    </aside>
   </section>
 
-  <section class="progress-panel" aria-label="Progreso del recorrido">
-    <div>
-      <span class="label">Recorrido</span>
-      <strong>{{ completedStages() }} de {{ stages.length }} etapas</strong>
-    </div>
-    <div class="progress-track" aria-hidden="true">
-      <span [style.width.%]="progressPercent()"></span>
-    </div>
-    <strong>{{ progressPercent() }}%</strong>
+  <section class="summary-strip" aria-label="Resumen del recorrido">
+    <article>
+      <span class="label">Tiempo de juego</span>
+      <strong>{{ totalDurationMinutes }} min</strong>
+      <small>desafios breves para aula o feria</small>
+    </article>
+    <article>
+      <span class="label">Ranking provincial</span>
+      <strong>#{{ leaderboardPosition() }}</strong>
+      <small>{{ totalScore() }} puntos acumulados</small>
+    </article>
+    <article>
+      <span class="label">Territorio</span>
+      <strong>4 paisajes</strong>
+      <small>casa, planta, compostera y relleno</small>
+    </article>
   </section>
 
   <section class="stage-section">
     <div class="section-heading">
       <span class="label">Mini juegos</span>
-      <h2>Camino pedagogico</h2>
+      <h2>Recorrido pedagogico</h2>
+      <p>Cada etapa transforma una accion ambiental en una escena jugable de Jujuy.</p>
     </div>
 
     <div class="stage-list">
       @for (stage of stages; track stage.id) {
-        <article class="stage-card" [style.--accent]="stage.accentColor">
-          <div class="stage-order">{{ stage.order }}</div>
+        <article
+          class="stage-card"
+          [class.is-complete]="stageCompleted(stage.id)"
+          [style.--accent]="stage.accentColor"
+          [style.--stage-bg]="stage.backgroundColor"
+          [style.--stage-image]="stageImage(stage.id)"
+        >
+          <div class="stage-visual" aria-hidden="true">
+            <span>{{ stage.order }}</span>
+          </div>
+
           <div class="stage-body">
-            <span>{{ stage.shortTitle }}</span>
+            <div class="stage-kicker">
+              <span>{{ stage.shortTitle }}</span>
+              <small>{{ stageCompleted(stage.id) ? 'Completada' : 'Lista para jugar' }}</small>
+            </div>
+
             <h3>{{ stage.title }}</h3>
-            <p>{{ stage.subtitle }}</p>
+            <p>{{ stage.environment }}</p>
+
             <div class="stage-meta">
               <small>{{ stage.durationSeconds }}s</small>
+              <small>{{ stage.dropZones.length }} decisiones</small>
               <small>{{ stageScore(stage.id) }} pts</small>
             </div>
+
+            <a [routerLink]="['/juego', stage.id]" class="play-button">
+              {{ stageCompleted(stage.id) ? 'Rejugar' : 'Jugar' }}
+            </a>
           </div>
-          <a [routerLink]="['/juego', stage.id]" class="play-button">Jugar</a>
         </article>
       }
     </div>
   </section>
 
-  <section class="ranking-section">
+  <section class="ranking-section" aria-label="Ranking provincial">
     <div class="section-heading">
       <span class="label">Ranking</span>
       <h2>Provincia</h2>
+      <p>Escuelas y estudiantes comparten un tablero de avance provincial.</p>
     </div>
 
     <div class="ranking-list">
@@ -78,4 +134,3 @@
     </div>
   </section>
 </main>
-

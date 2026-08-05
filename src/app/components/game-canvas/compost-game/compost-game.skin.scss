@@ -999,9 +999,8 @@
   color: #2d2117;
   pointer-events: none;
   touch-action: none;
-  transition:
-    filter 120ms ease,
-    transform 160ms ease;
+  transition: filter 120ms ease;
+  will-change: transform;
 }
 
 .compost-game__drag-token.is-dragging {

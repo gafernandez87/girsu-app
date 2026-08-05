@@ -66,6 +66,8 @@ La animacion de llenado se apoya en dos estructuras reactivas:
 - `particles`: conserva solo las particulas transitorias; se generan al aceptar un material y se eliminan automaticamente al terminar la animacion.
 - `placedItemIds`: marca los recursos ya usados. En la interfaz, cada pila conserva siempre sus cinco filas y los recursos colocados quedan como espacios invisibles para evitar que los contenedores cambien de alto o que la pantalla salte durante la partida.
 
+El token que se arrastra actualiza su `transform` sin transicion de posicion para que siga al mouse o al dedo sin retraso perceptible. La unica transicion durante el drag queda en la sombra, que no afecta la precision del gesto.
+
 En mobile la interfaz usa una distribucion especifica para evitar superposiciones: el HUD se compacta, el progreso por puntos se oculta, el medidor de humedad queda como indicador lateral reducido y la compostera deja de estirarse a toda la altura disponible. Para lograr el efecto visual de bajar la caja sin depender de un `top` fijo en pixeles, la grilla reserva una primera fila mas alta y alinea la compostera al borde inferior de esa fila. La caja se achica respecto de desktop, suma una base de tierra en perspectiva tipo top-down y agrega planos decorativos de madera para insinuar el borde trasero y los laterales, de modo que no se lea como un frente completamente plano. Los contenedores inferiores quedan en dos columnas tactiles.
 
 ## Proximos ajustes posibles

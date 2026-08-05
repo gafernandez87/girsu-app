@@ -1,35 +1,19 @@
+import { GAME_ONE_PRODUCTS } from '../../core/game-1-products';
 import type { BinAssets, ImageAsset, ProductAsset } from './game-canvas.types';
 
 export const HOME_BACKGROUND_ASSET = {
   path: '/assets/game-1/backgrounds/fondo juego 1.png',
 };
 
-export const HOME_PRODUCT_ASSETS: Record<string, ProductAsset> = {
-  'botella-pet': {
-    path: '/assets/game-1/products/processed/botella.png',
-    size: 102,
-  },
-  'frasco-vidrio': {
-    path: '/assets/game-1/products/processed/tarro-vidrio.png',
-    size: 102,
-  },
-  carton: {
-    path: '/assets/game-1/products/processed/caja-carton.png',
-    size: 98,
-  },
-  cascara: {
-    path: '/assets/game-1/products/processed/cascaras.png',
-    size: 108,
-  },
-  yerba: {
-    path: '/assets/game-1/products/processed/yerba.png',
-    size: 106,
-  },
-  envoltorio: {
-    path: '/assets/game-1/products/processed/envoltorio-dulce.png',
-    size: 106,
-  },
-};
+export const HOME_PRODUCT_ASSETS: Record<string, ProductAsset> = Object.fromEntries(
+  GAME_ONE_PRODUCTS.map((product) => [
+    product.id,
+    {
+      path: product.path,
+      size: 104,
+    },
+  ]),
+);
 
 export const INDUSTRIAL_PRODUCT_ASSETS: Record<string, ProductAsset> = {
   'pet-planta': {

@@ -1,4 +1,5 @@
 import { GameStage, LeaderboardEntry, UserProfile } from './app.models';
+import { GAME_ONE_ITEMS } from './game-1-products';
 
 export const CURRENT_USER: UserProfile = {
   id: 'demo-user',
@@ -18,6 +19,8 @@ export const GAME_STAGES: readonly GameStage[] = [
     objective: 'Promover el habito primario de separar residuos en el nucleo familiar.',
     environment:
       'Cocina familiar con tonos calidos, luz natural y referencias visuales al paisaje andino.',
+    introText:
+      'En este juego vas a separar residuos del hogar en el cesto correcto para aprender que materiales se reciclan, cuales van al resto y cuales pueden compostarse.',
     mechanic:
       'Arrastrar cada residuo domestico al cesto correcto: reciclables, no reciclables o compostables.',
     scoring:
@@ -30,75 +33,26 @@ export const GAME_STAGES: readonly GameStage[] = [
       {
         id: 'reciclables',
         label: 'Reciclables',
-        shortLabel: 'Secos',
+        shortLabel: 'Reciclables',
         color: '#2f8f4e',
         description: 'Plastico, papel, carton, metal y vidrio limpio.',
       },
       {
-        id: 'no-reciclables',
-        label: 'No reciclables',
-        shortLabel: 'Resto',
-        color: '#2f80ed',
-        description: 'Materiales sin valorizacion actual.',
-      },
-      {
         id: 'compostables',
         label: 'Compostables',
-        shortLabel: 'Organicos',
+        shortLabel: 'Compostables',
         color: '#8a5a26',
         description: 'Residuos vegetales para degradacion biologica.',
       },
-    ],
-    items: [
       {
-        id: 'botella-pet',
-        label: 'Botella PET',
-        symbol: 'PET',
-        category: 'reciclables',
-        detail: 'Plastico limpio y seco.',
-        points: 120,
-      },
-      {
-        id: 'frasco-vidrio',
-        label: 'Frasco',
-        symbol: 'VID',
-        category: 'reciclables',
-        detail: 'Vidrio entero y limpio.',
-        points: 120,
-      },
-      {
-        id: 'carton',
-        label: 'Carton',
-        symbol: 'CAR',
-        category: 'reciclables',
-        detail: 'Carton seco.',
-        points: 110,
-      },
-      {
-        id: 'cascara',
-        label: 'Cascara',
-        symbol: 'ORG',
-        category: 'compostables',
-        detail: 'Residuo vegetal.',
-        points: 130,
-      },
-      {
-        id: 'yerba',
-        label: 'Yerba',
-        symbol: 'YRB',
-        category: 'compostables',
-        detail: 'Organico humedo.',
-        points: 130,
-      },
-      {
-        id: 'envoltorio',
-        label: 'Envoltorio',
-        symbol: 'ENV',
-        category: 'no-reciclables',
-        detail: 'Material mixto o sucio.',
-        points: 100,
+        id: 'no-reciclables',
+        label: 'No reciclables',
+        shortLabel: 'No reciclables',
+        color: '#000000',
+        description: 'Materiales sin valorizacion actual.',
       },
     ],
+    items: GAME_ONE_ITEMS,
   },
   {
     id: 'valorizacion-industrial',
@@ -110,6 +64,8 @@ export const GAME_STAGES: readonly GameStage[] = [
       'Visibilizar el trabajo de recuperadores urbanos y la clasificacion tecnica por material.',
     environment:
       'Planta urbana limpia, luminosa y techada, con cinta transportadora y cerros al fondo.',
+    introText:
+      'En este juego vas a clasificar materiales secos en una planta de valorizacion para sostener el flujo de reciclaje y evitar que el descarte contamine la cinta.',
     mechanic: 'Clasificar residuos secos en plastico, papel/carton, vidrio, metal o descarte.',
     scoring:
       'Los aciertos sostienen el flujo de la planta; los errores representan mezcla inadecuada.',
@@ -215,6 +171,8 @@ export const GAME_STAGES: readonly GameStage[] = [
       'Introducir la economia circular biologica mediante compostaje hogareño y balance de nutrientes.',
     environment:
       'Patio jujeño con suelo arcilloso, plantas regionales, cerros de fondo y compostera central.',
+    introText:
+      'En este juego vas a armar una compostera equilibrando materiales verdes humedos y marrones secos para transformar restos organicos en abono.',
     mechanic:
       'Alternar materiales verdes humedos y marrones secos para mantener el equilibrio de humedad.',
     scoring:
@@ -332,6 +290,8 @@ export const GAME_STAGES: readonly GameStage[] = [
       'Mostrar la complejidad de la ingenieria sanitaria y la importancia de reducir residuos desde el hogar.',
     environment:
       'Fosa impermeabilizada con geomembrana, grua hidraulica y cerros jujeños al atardecer.',
+    introText:
+      'En este juego vas a ubicar bolsas en una fosa sanitaria intentando compactar bien, evitar huecos y cuidar la vida util del relleno.',
     mechanic:
       'Ubicar bolsas de residuos en la fosa con criterio de encastre para evitar huecos y colapso.',
     scoring:

@@ -1,8 +1,8 @@
 .app-shell {
   min-height: 100dvh;
   background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.76), rgba(255, 255, 255, 0.92)),
-    #ecf5ea;
+    linear-gradient(180deg, rgba(255, 247, 229, 0.92), rgba(236, 245, 234, 0.94) 54%, #f8f3e8),
+    #f8f3e8;
   color: #19231d;
 }
 
@@ -21,8 +21,8 @@
   justify-content: space-between;
   gap: 1rem;
   padding: max(0.9rem, env(safe-area-inset-top)) 1rem 0.85rem;
-  border-bottom: 1px solid rgba(35, 52, 42, 0.1);
-  background: rgba(247, 250, 244, 0.88);
+  border-bottom: 1px solid rgba(61, 43, 29, 0.12);
+  background: rgba(255, 248, 234, 0.88);
   backdrop-filter: blur(18px);
 }
 
@@ -36,13 +36,23 @@
 
 .brand-mark {
   display: grid;
-  width: 2.45rem;
-  height: 2.45rem;
+  width: 2.7rem;
+  height: 2.7rem;
   place-items: center;
-  border-radius: 0.65rem;
-  background: #2f7d57;
-  color: #fff;
-  font-weight: 800;
+  overflow: hidden;
+  padding: 0.18rem;
+  border: 1px solid rgba(47, 125, 87, 0.18);
+  border-radius: 8px;
+  background: #fff8ea;
+  box-shadow:
+    0 0.45rem 1rem rgba(45, 28, 18, 0.14),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.54);
+}
+
+.brand-mark img {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .brand strong,
@@ -53,7 +63,7 @@
 
 .brand small {
   margin-top: 0.12rem;
-  color: #657268;
+  color: #746555;
   font-size: 0.78rem;
 }
 
@@ -63,14 +73,14 @@
   min-height: 2.25rem;
   padding: 0 0.85rem;
   border-radius: 0.5rem;
-  color: #3d4a42;
+  color: #4f443a;
   font-weight: 700;
   text-decoration: none;
 }
 
 .top-nav a.active {
-  background: rgba(47, 125, 87, 0.12);
-  color: #255f43;
+  background: rgba(47, 125, 87, 0.13);
+  color: #245c40;
 }
 
 @media (min-width: 760px) {

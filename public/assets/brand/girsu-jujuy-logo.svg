@@ -1,0 +1,36 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="logo-title logo-desc">
+  <title id="logo-title">Jujuy GIRSU</title>
+  <desc id="logo-desc">Cerros, hoja y recorrido circular para representar la gestion de residuos.</desc>
+  <defs>
+    <linearGradient id="logo-bg" x1="10" x2="56" y1="8" y2="58" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#fff8ea"/>
+      <stop offset="1" stop-color="#e8f2dd"/>
+    </linearGradient>
+    <linearGradient id="logo-loop" x1="16" x2="50" y1="16" y2="50" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#246a73"/>
+      <stop offset="0.5" stop-color="#2f7d57"/>
+      <stop offset="1" stop-color="#b65330"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="12" fill="url(#logo-bg)"/>
+  <path fill="#e0a33e" d="M8 42 23 22l9 12 7-9 17 17v10H8z"/>
+  <path fill="#b65330" d="m8 44 12-12 10 8 9-8 17 14v6H8z" opacity=".88"/>
+  <path
+    fill="none"
+    stroke="url(#logo-loop)"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    stroke-width="5"
+    d="M48 23a18 18 0 0 0-29-4m-3 23a18 18 0 0 0 29 4"
+  />
+  <path fill="#246a73" d="m17 14 5 2-5 5z"/>
+  <path fill="#2f7d57" d="m47 50-5-2 5-5z"/>
+  <path
+    fill="#fff8ea"
+    stroke="#2f7d57"
+    stroke-linejoin="round"
+    stroke-width="3"
+    d="M33 19c9 4 13 11 11 18-8 1-16-3-20-11 2-5 5-7 9-7z"
+  />
+  <path fill="none" stroke="#2f7d57" stroke-linecap="round" stroke-width="2.6" d="M27 25c5 2 9 6 12 12"/>
+</svg>
