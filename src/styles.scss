@@ -7,7 +7,13 @@ html {
   background: #ecf5ea;
   color-scheme: light;
   font-family:
-    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    Inter,
+    ui-sans-serif,
+    system-ui,
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
 }
 
 body {
@@ -43,4 +49,165 @@ svg {
 :focus-visible {
   outline: 3px solid rgba(47, 125, 87, 0.35);
   outline-offset: 3px;
+}
+
+.score-badge__icon,
+.stage-meta__icon,
+.school-icon {
+  position: relative;
+  display: inline-block;
+  flex: 0 0 auto;
+}
+
+.score-badge__icon,
+.stage-meta__icon--score {
+  width: 0.92rem;
+  height: 0.92rem;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: inset 0 0 0 0.18rem rgba(255, 255, 255, 0.38);
+}
+
+.score-badge__icon::after,
+.stage-meta__icon--score::after {
+  position: absolute;
+  inset: 0.35rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.74);
+  content: '';
+}
+
+.stage-meta__icon--time {
+  width: 0.94rem;
+  height: 0.94rem;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.stage-meta__icon--time::before,
+.stage-meta__icon--time::after {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  border-radius: 99rem;
+  background: currentColor;
+  content: '';
+  transform-origin: left center;
+}
+
+.stage-meta__icon--time::before {
+  width: 0.28rem;
+  height: 2px;
+  transform: rotate(0deg);
+}
+
+.stage-meta__icon--time::after {
+  width: 0.22rem;
+  height: 2px;
+  transform: rotate(-90deg);
+}
+
+.ranking-person {
+  min-width: 0;
+}
+
+.ranking-person strong,
+.ranking-person small {
+  display: flex;
+  min-width: 0;
+}
+
+.ranking-person strong {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ranking-person small {
+  align-items: center;
+  gap: 0.38rem;
+  margin-top: 0.18rem;
+}
+
+.school-icon {
+  width: 1.22rem;
+  height: 1rem;
+  border: 2px solid #7d684e;
+  border-top: 0;
+  border-radius: 0 0 0.18rem 0.18rem;
+}
+
+.school-icon::before,
+.school-icon::after {
+  position: absolute;
+  content: '';
+}
+
+.school-icon::before {
+  right: -0.13rem;
+  bottom: 0.8rem;
+  left: -0.13rem;
+  height: 0.58rem;
+  border-top: 2px solid #7d684e;
+  border-left: 2px solid #7d684e;
+  transform: skewY(-17deg);
+  transform-origin: left bottom;
+}
+
+.school-icon::after {
+  bottom: 0;
+  left: 50%;
+  width: 0.2rem;
+  height: 0.54rem;
+  border-right: 2px solid #7d684e;
+  border-left: 2px solid #7d684e;
+  transform: translateX(-50%);
+}
+
+.ranking-score {
+  color: #2f7d57;
+  white-space: nowrap;
+}
+
+.ranking-section {
+  align-self: start;
+  padding: 1rem;
+  background: linear-gradient(160deg, rgba(255, 253, 244, 0.94), rgba(248, 232, 194, 0.9)), #fff8ea;
+}
+
+.ranking-list {
+  display: grid;
+  gap: 0.6rem;
+}
+
+.ranking-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  gap: 0.75rem;
+  align-items: center;
+  min-height: 4.35rem;
+  padding: 0.78rem;
+  border: 1px solid rgba(61, 43, 29, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.ranking-row.current {
+  border-color: rgba(47, 125, 87, 0.4);
+  background: rgba(238, 247, 228, 0.95);
+}
+
+.ranking-row strong:last-child {
+  justify-self: end;
+}
+
+.position {
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 8px;
+  background: #2f7d57;
+  color: #fffaf0;
+  font-weight: 950;
 }
