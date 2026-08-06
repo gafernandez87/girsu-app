@@ -17,7 +17,7 @@
           <small>{{ user.course }} - {{ user.school }}</small>
         </div>
         <div class="score-badge">
-          <small>Puntaje</small>
+          <small><span class="score-badge__icon" aria-hidden="true"></span>Puntaje</small>
           <span>{{ totalScore() }} pts</span>
         </div>
       </div>
@@ -90,8 +90,14 @@
             <p>{{ stage.environment }}</p>
 
             <div class="stage-meta">
-              <small>Duracion: {{ stage.durationSeconds }} segundos</small>
-              <small>Tus puntos: {{ stageScore(stage.id) }}</small>
+              <small>
+                <span class="stage-meta__icon stage-meta__icon--time" aria-hidden="true"></span>
+                Tiempo: {{ stage.durationSeconds }}s
+              </small>
+              <small>
+                <span class="stage-meta__icon stage-meta__icon--score" aria-hidden="true"></span>
+                Tus puntos: {{ stageScore(stage.id) }}
+              </small>
             </div>
 
             <a [routerLink]="['/juego', stage.id]" class="play-button">
@@ -106,7 +112,7 @@
   <section class="ranking-section" aria-label="Ranking provincial">
     <div class="section-heading">
       <span class="label">Ranking</span>
-      <h2>Provincia</h2>
+      <h2>Ranking provincial</h2>
       <p>Escuelas y estudiantes comparten un tablero de avance provincial.</p>
     </div>
 
@@ -114,11 +120,11 @@
       @for (entry of leaderboard(); track entry.name) {
         <article class="ranking-row" [class.current]="entry.isCurrentUser">
           <span class="position">{{ entry.position }}</span>
-          <div>
+          <div class="ranking-person">
             <strong>{{ entry.name }}</strong>
-            <small>{{ entry.school }}</small>
+            <small><span class="school-icon" aria-hidden="true"></span>{{ entry.school }}</small>
           </div>
-          <strong>{{ entry.score }}</strong>
+          <strong class="ranking-score">{{ entry.score }}</strong>
         </article>
       }
     </div>

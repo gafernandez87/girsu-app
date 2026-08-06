@@ -36,14 +36,11 @@ El juego actualmente carga los tachos recortados desde `bins/processed/`:
 - `yerba.png`
 - `envoltorio.png`
 
-Los productos activos del juego se cargan desde `products/processed/` con nombres seguros para URL:
+Los productos activos del juego se cargan desde las carpetas por categoria con nombres seguros para URL:
 
-- `botella.png`
-- `tarro-vidrio.png`
-- `caja-carton.png`
-- `cascaras.png`
-- `yerba.png`
-- `envoltorio-dulce.png`
+- `products/compostables/compostables-cafe-molido.png`
+- `products/reciclables/reciclables-botella-de-plastico-pet.png`
+- `products/no-reciclables/no-reciclables-papel-de-golosinas.png`
 
 ### Efectos
 

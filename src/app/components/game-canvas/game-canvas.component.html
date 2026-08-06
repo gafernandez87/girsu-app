@@ -94,6 +94,36 @@
           {{ effect.text }}
         </span>
       }
+
+      @if (homeReviewGroups().length) {
+        <div class="home-game__review" aria-label="Repaso de residuos por tacho">
+          @for (group of homeReviewGroups(); track group.zone.id; let zoneIndex = $index) {
+            <section class="home-game__review-group" [style.--zone-color]="group.zone.color">
+              <strong>{{ group.zone.shortLabel }}</strong>
+              <div class="home-game__review-items">
+                @for (reviewItem of group.items; track reviewItem.item.id; let itemIndex = $index) {
+                  <span
+                    class="home-game__review-item"
+                    [class.is-correct]="reviewItem.correct"
+                    [class.is-wrong]="!reviewItem.correct"
+                    [style.--review-delay]="homeReviewDelay(zoneIndex, itemIndex)"
+                  >
+                    <span class="home-game__review-status" aria-hidden="true"></span>
+                    <img
+                      [src]="homeProductImage(reviewItem.item.id)"
+                      [alt]="reviewItem.item.label"
+                      draggable="false"
+                    />
+                    <small>{{ reviewItem.item.label }}</small>
+                  </span>
+                } @empty {
+                  <small class="home-game__review-empty">Sin residuos</small>
+                }
+              </div>
+            </section>
+          }
+        </div>
+      }
     }
   </div>
   @if (stage.id === 'separacion-origen' && gameplayActive()) {
@@ -101,9 +131,10 @@
       <div class="home-hud__top">
         <strong class="home-hud__title">{{ stage.title }}</strong>
         <div class="home-hud__score">
-          <span>{{ score() }} pts</span>
+          <span><i class="hud-icon hud-icon--score" aria-hidden="true"></i>{{ scoreRatio() }}</span>
         </div>
         <div class="home-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+          <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
           <span>Tiempo</span>
           <strong>{{ remainingSeconds() }}s</strong>
         </div>
@@ -121,12 +152,23 @@
         <div class="home-complete__panel">
           <img src="/assets/game-1/effects/processed/medal.png" alt="" />
           <strong>Separacion lograda</strong>
-          <span>{{ result.score }} puntos</span>
+          <span>{{ result.score }}/{{ stageScoreTotal }} puntos</span>
           <small>
             Tiempo +{{ result.remainingSeconds * 10 }} | Bonus por aciertos +{{
               homeAccuracyBonus(result)
             }}
           </small>
+          <div class="home-complete__actions">
+            <button type="button" class="home-complete__action" (click)="restartCurrentGame()">
+              &iexcl;Quiero jugar de nuevo!
+            </button>
+            <a
+              routerLink="/juego/valorizacion-industrial"
+              class="home-complete__action home-complete__action--secondary"
+            >
+              &iexcl;Quiero visitar la planta de reciclaje!
+            </a>
+          </div>
         </div>
       </div>
     }
@@ -137,9 +179,10 @@
       <div class="industrial-hud__top">
         <strong class="industrial-hud__title">{{ stage.title }}</strong>
         <div class="industrial-hud__score">
-          <span>{{ score() }} pts</span>
+          <span><i class="hud-icon hud-icon--score" aria-hidden="true"></i>{{ scoreRatio() }}</span>
         </div>
         <div class="industrial-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+          <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
           <span>Tiempo</span>
           <strong>{{ remainingSeconds() }}s</strong>
         </div>
@@ -156,7 +199,7 @@
         <div class="industrial-complete__panel">
           <img src="/assets/game-1/effects/processed/medal.png" alt="" />
           <strong>Planta en marcha</strong>
-          <span>{{ result.score }} puntos</span>
+          <span>{{ result.score }}/{{ stageScoreTotal }} puntos</span>
           <small>
             Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{
               industrialAccuracyBonus(result)
@@ -172,9 +215,10 @@
       <div class="compost-hud__top">
         <strong class="compost-hud__title">{{ stage.title }}</strong>
         <div class="compost-hud__score">
-          <span>{{ score() }} pts</span>
+          <span><i class="hud-icon hud-icon--score" aria-hidden="true"></i>{{ scoreRatio() }}</span>
         </div>
         <div class="compost-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+          <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
           <span>Tiempo</span>
           <strong>{{ remainingSeconds() }}s</strong>
         </div>
@@ -195,7 +239,7 @@
               ? 'Abono desbloqueado'
               : 'Compost en proceso'
           }}</strong>
-          <span>{{ result.score }} puntos</span>
+          <span>{{ result.score }}/{{ stageScoreTotal }} puntos</span>
           <small>
             Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{
               compostAccuracyBonus(result)
@@ -211,9 +255,10 @@
       <div class="landfill-hud__top">
         <strong class="landfill-hud__title">{{ stage.title }}</strong>
         <div class="landfill-hud__score">
-          <span>{{ score() }} pts</span>
+          <span><i class="hud-icon hud-icon--score" aria-hidden="true"></i>{{ scoreRatio() }}</span>
         </div>
         <div class="landfill-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+          <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
           <span>Tiempo</span>
           <strong>{{ remainingSeconds() }}s</strong>
         </div>
@@ -230,7 +275,7 @@
           <strong>{{
             result.remainingSeconds === 0 ? 'Fosa sostenida' : 'Relleno estabilizado'
           }}</strong>
-          <span>{{ result.score }} puntos</span>
+          <span>{{ result.score }}/{{ stageScoreTotal }} puntos</span>
           <small>
             Vida util +{{ landfillDurabilityBonus(result) }} | Compactacion +{{
               landfillCompactionBonus(result)

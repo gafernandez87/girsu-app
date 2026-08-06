@@ -17,7 +17,7 @@ Elementos visuales de la escena:
 - Productos/residuos cargados como assets 2D externos desde:
   `public/assets/game-1/products/compostables/`,
   `public/assets/game-1/products/reciclables/` y
-  `public/assets/game-1/products/no reciclables/`.
+  `public/assets/game-1/products/no-reciclables/`.
 - Efectos externos de scoring/error: starburst, confetti, moneda, medalla y error burst.
 - HUD interno con puntaje y tiempo.
 - Bandeja de residuos: se muestran 3 productos al azar al iniciar. Cuando el jugador tira un

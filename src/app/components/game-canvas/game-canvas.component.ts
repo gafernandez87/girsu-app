@@ -12,8 +12,10 @@ import {
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 import { DropZone, GameItem, GameStage, StageResult } from '../../core/app.models';
+import { normalizeRawStageScore, STAGE_SCORE_TOTAL } from '../../core/scoring';
 import {
   HOME_BACKGROUND_ASSET,
   HOME_BIN_ASSETS,
@@ -36,11 +38,22 @@ interface HomeItemSlot {
   readonly rotation: number;
 }
 
+interface HomeReviewItem {
+  readonly item: GameItem;
+  readonly correct: boolean;
+  readonly chosenZoneId: string;
+}
+
+interface HomeReviewGroup {
+  readonly zone: DropZone;
+  readonly items: readonly HomeReviewItem[];
+}
+
 const HOME_VISIBLE_SLOT_COUNT = 3;
 
 @Component({
   selector: 'app-game-canvas',
-  imports: [CompostGameComponent, IndustrialGameComponent, LandfillGameComponent],
+  imports: [CompostGameComponent, IndustrialGameComponent, LandfillGameComponent, RouterLink],
   templateUrl: './game-canvas.component.html',
   styleUrl: './game-canvas.component.scss',
 })
@@ -60,8 +73,10 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   readonly homeDraggedSlotId = signal<number | null>(null);
   readonly homeEffects = signal<readonly HomeEffect[]>([]);
   readonly homeItemSlots = signal<readonly HomeItemSlot[]>([]);
+  readonly homeReviewGroups = signal<readonly HomeReviewGroup[]>([]);
   readonly introState = signal<GameIntroState>('intro');
   readonly countdownSeconds = signal(3);
+  readonly stageScoreTotal = STAGE_SCORE_TOTAL;
 
   private resizeTimer?: ReturnType<typeof setTimeout>;
   private countdownTimer?: ReturnType<typeof setInterval>;
@@ -70,6 +85,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   private homeTimeouts: Array<ReturnType<typeof setTimeout>> = [];
   private homeEffectId = 0;
   private homePendingItems: GameItem[] = [];
+  private homePlayedItems: HomeReviewItem[] = [];
   private homeCorrect = 0;
   private homeMistakes = 0;
   private homeProcessed = 0;
@@ -225,6 +241,19 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     target?.setPointerCapture?.(event.pointerId);
   }
 
+  scoreRatio(score = this.score()): string {
+    return `${this.visibleStageScore(score)}/${this.stageScoreTotal}`;
+  }
+
+  homeReviewDelay(zoneIndex: number, itemIndex: number): string {
+    return `${120 + zoneIndex * 90 + itemIndex * 70}ms`;
+  }
+
+  restartCurrentGame(): void {
+    this.createGame();
+    this.startIntroCountdown();
+  }
+
   homeAccuracyBonus(result: StageResult): number {
     return Math.max(0, result.correct - result.mistakes) * 20;
   }
@@ -273,8 +302,11 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   handleStageCompleted(result: StageResult): void {
-    this.completedResult.set(result);
-    this.completed.emit(result);
+    const visibleResult = this.withVisibleStageScore(result);
+
+    this.score.set(result.score);
+    this.completedResult.set(visibleResult);
+    this.completed.emit(visibleResult);
   }
 
   gameplayActive(): boolean {
@@ -326,11 +358,14 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.completedResult.set(null);
     this.homeEffects.set([]);
     this.homeItemSlots.set([]);
+    this.homeReviewGroups.set([]);
+    this.homePlayedItems = [];
     this.homeDraggedSlotId.set(null);
   }
 
   private startHomeGame(): void {
     this.homePendingItems = this.shuffleHomeItems(this.stage.items);
+    this.homePlayedItems = [];
     this.homeItemSlots.set([]);
     this.homeCorrect = 0;
     this.homeMistakes = 0;
@@ -499,6 +534,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   private handleHomeCorrectDrop(slot: HomeItemSlot, dropZone: DropZone): void {
     const item = slot.item;
 
+    this.recordHomeReviewItem(item, true, dropZone.id);
     this.homeCorrect += 1;
     this.homeProcessed += 1;
     this.homeStreak += 1;
@@ -517,6 +553,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   private handleHomeWrongDrop(slot: HomeItemSlot, dropZone: DropZone): void {
+    this.recordHomeReviewItem(slot.item, false, dropZone.id);
     this.homeMistakes += 1;
     this.homeProcessed += 1;
     this.homeStreak = 0;
@@ -545,17 +582,19 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
     const timeBonus = this.remainingSeconds() * 10;
     const accuracyBonus = Math.max(0, this.homeCorrect - this.homeMistakes) * 20;
-    const finalScore = this.score() + timeBonus + accuracyBonus;
-    const result: StageResult = {
+    const rawFinalScore = this.score() + timeBonus + accuracyBonus;
+    const result = this.withVisibleStageScore({
       stageId: this.stage.id,
-      score: finalScore,
+      score: rawFinalScore,
       correct: this.homeCorrect,
       mistakes: this.homeMistakes,
       remainingSeconds: this.remainingSeconds(),
       completedAt: new Date().toISOString(),
-    };
+    });
 
-    this.score.set(finalScore);
+    this.score.set(rawFinalScore);
+    this.homeBinStates.set(this.createHomeBinStates('open'));
+    this.homeReviewGroups.set(this.createHomeReviewGroups());
     this.completedResult.set(result);
     this.completed.emit(result);
   }
@@ -573,12 +612,11 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   private settleHomeDrop(zoneId: string): void {
     this.scheduleHomeTimeout(() => {
-      this.setHomeBinState(zoneId, 'normal');
-
       if (this.homeFinished) {
         return;
       }
 
+      this.setHomeBinState(zoneId, 'normal');
       this.refillHomeSlots();
 
       if (this.homeDeckExhausted()) {
@@ -678,8 +716,8 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     };
   }
 
-  private createHomeBinStates(): Record<string, BinVisualState> {
-    return Object.fromEntries(this.stage.dropZones.map((zone) => [zone.id, 'normal']));
+  private createHomeBinStates(state: BinVisualState = 'normal'): Record<string, BinVisualState> {
+    return Object.fromEntries(this.stage.dropZones.map((zone) => [zone.id, state]));
   }
 
   private setHomeBinState(zoneId: string, state: BinVisualState): void {
@@ -717,5 +755,27 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     }, delay);
 
     this.homeTimeouts.push(timeout);
+  }
+
+  private recordHomeReviewItem(item: GameItem, correct: boolean, chosenZoneId: string): void {
+    this.homePlayedItems.push({ item, correct, chosenZoneId });
+  }
+
+  private createHomeReviewGroups(): readonly HomeReviewGroup[] {
+    return this.stage.dropZones.map((zone) => ({
+      zone,
+      items: this.homePlayedItems.filter((playedItem) => playedItem.item.category === zone.id),
+    }));
+  }
+
+  private withVisibleStageScore(result: StageResult): StageResult {
+    return {
+      ...result,
+      score: this.visibleStageScore(result.score),
+    };
+  }
+
+  private visibleStageScore(score: number): number {
+    return normalizeRawStageScore(score, this.stage);
   }
 }
