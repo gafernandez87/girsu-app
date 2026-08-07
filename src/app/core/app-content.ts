@@ -1,5 +1,71 @@
-import { GameStage, LeaderboardEntry, UserProfile } from './app.models';
+import { GameItem, GameStage, LeaderboardEntry, UserProfile } from './app.models';
 import { GAME_ONE_ITEMS } from './game-1-products';
+
+type IndustrialItemCategory = 'plastico' | 'papel-carton' | 'vidrio' | 'metal' | 'descarte';
+
+const INDUSTRIAL_ITEM_DETAILS: Record<IndustrialItemCategory, string> = {
+  plastico: 'Material plastico recuperable en planta.',
+  'papel-carton': 'Papel o carton recuperable si esta limpio y seco.',
+  vidrio: 'Vidrio recuperable en circuito industrial.',
+  metal: 'Metal valorizable en planta.',
+  descarte: 'Material que no debe mezclarse con reciclables secos.',
+};
+
+function industrialItemCategory(item: GameItem): IndustrialItemCategory {
+  const id = item.id;
+
+  if (id.startsWith('no-reciclables-')) {
+    return 'descarte';
+  }
+
+  if (id.includes('vidrio')) {
+    return 'vidrio';
+  }
+
+  if (id.includes('lata')) {
+    return 'metal';
+  }
+
+  if (
+    id.includes('carton') ||
+    id.includes('diario') ||
+    id.includes('papel') ||
+    id.includes('revista') ||
+    id.includes('tetra') ||
+    id.includes('tubo-de-carton')
+  ) {
+    return 'papel-carton';
+  }
+
+  if (
+    id.includes('plastico') ||
+    id.includes('pet') ||
+    id.includes('bidon') ||
+    id.includes('bolsa') ||
+    id.includes('detergente') ||
+    id.includes('pomo') ||
+    id.includes('sachet') ||
+    id.includes('shampoo') ||
+    id.includes('tapitas') ||
+    id.includes('telgopor')
+  ) {
+    return 'plastico';
+  }
+
+  return 'descarte';
+}
+
+const INDUSTRIAL_ITEMS: readonly GameItem[] = GAME_ONE_ITEMS.filter(
+  (item) => item.category !== 'compostables',
+).map((item) => {
+  const category = industrialItemCategory(item);
+
+  return {
+    ...item,
+    category,
+    detail: INDUSTRIAL_ITEM_DETAILS[category],
+  };
+});
 
 export const CURRENT_USER: UserProfile = {
   id: 'demo-user',
@@ -70,7 +136,7 @@ export const GAME_STAGES: readonly GameStage[] = [
     scoring:
       'Los aciertos sostienen el flujo de la planta; los errores representan mezcla inadecuada.',
     kind: 'conveyor',
-    durationSeconds: 75,
+    durationSeconds: 200,
     accentColor: '#246a73',
     backgroundColor: '#dcecef',
     dropZones: [
@@ -110,56 +176,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         description: 'Residuos no valorizables que no deben contaminar la cinta.',
       },
     ],
-    items: [
-      {
-        id: 'pet-planta',
-        label: 'Botella',
-        symbol: 'PET',
-        category: 'plastico',
-        detail: 'Botella plastica limpia.',
-        points: 120,
-      },
-      {
-        id: 'caja',
-        label: 'Caja',
-        symbol: 'BOX',
-        category: 'papel-carton',
-        detail: 'Carton de embalaje.',
-        points: 120,
-      },
-      {
-        id: 'diario',
-        label: 'Diario',
-        symbol: 'PAP',
-        category: 'papel-carton',
-        detail: 'Papel seco.',
-        points: 110,
-      },
-      {
-        id: 'botella-vidrio',
-        label: 'Botella vidrio',
-        symbol: 'VID',
-        category: 'vidrio',
-        detail: 'Vidrio entero.',
-        points: 130,
-      },
-      {
-        id: 'lata',
-        label: 'Lata',
-        symbol: 'ALU',
-        category: 'metal',
-        detail: 'Aluminio valorizable.',
-        points: 130,
-      },
-      {
-        id: 'papel-sucio',
-        label: 'Papel sucio',
-        symbol: 'DSC',
-        category: 'descarte',
-        detail: 'No debe mezclarse con reciclables limpios.',
-        points: 100,
-      },
-    ],
+    items: INDUSTRIAL_ITEMS,
   },
   {
     id: 'compostaje-domiciliario',

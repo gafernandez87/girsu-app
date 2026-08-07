@@ -13,38 +13,41 @@
       alt=""
       draggable="false"
     />
-    <img
-      class="landfill-game__crane-trolley"
-      src="/assets/game-4/processed/crane/grua-carro-cable-gancho.png"
-      alt=""
-      draggable="false"
-    />
 
-    <aside class="landfill-game__next" aria-label="Proxima pieza">
-      <span>Proximo</span>
-      <div
-        class="landfill-game__preview"
-        [style.grid-template-columns]="previewGridColumns()"
-        [style.grid-template-rows]="previewGridRows()"
-        aria-hidden="true"
-      >
-        @for (cell of previewCells(); track cell.id) {
-          <span
-            class="landfill-game__preview-cell landfill-game__piece-cell"
-            [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
-            [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
-            [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
-            [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
-            [style.grid-column]="gridColumn(cell.x)"
-            [style.grid-row]="gridRow(cell.y)"
-          >
-            <span class="landfill-game__bag">
-              <img [src]="cell.bagImagePath" alt="" draggable="false" />
+    <div class="landfill-game__crane-motion">
+      <img
+        class="landfill-game__crane-trolley"
+        src="/assets/game-4/processed/crane/grua-carro-cable-gancho.png"
+        alt=""
+        draggable="false"
+      />
+
+      <aside class="landfill-game__next" aria-label="Proxima pieza">
+        <span>Proximo</span>
+        <div
+          class="landfill-game__preview"
+          [style.grid-template-columns]="previewGridColumns()"
+          [style.grid-template-rows]="previewGridRows()"
+          aria-hidden="true"
+        >
+          @for (cell of previewCells(); track cell.id) {
+            <span
+              class="landfill-game__preview-cell landfill-game__piece-cell"
+              [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
+              [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
+              [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
+              [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
+              [style.grid-column]="gridColumn(cell.x)"
+              [style.grid-row]="gridRow(cell.y)"
+            >
+              <span class="landfill-game__bag">
+                <img [src]="cell.bagImagePath" alt="" draggable="false" />
+              </span>
             </span>
-          </span>
-        }
-      </div>
-    </aside>
+          }
+        </div>
+      </aside>
+    </div>
   </div>
 
   <aside class="landfill-game__status" aria-live="polite">

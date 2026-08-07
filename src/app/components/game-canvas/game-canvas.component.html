@@ -130,9 +130,6 @@
     <div class="home-hud" aria-live="polite">
       <div class="home-hud__top">
         <strong class="home-hud__title">{{ stage.title }}</strong>
-        <div class="home-hud__score">
-          <span><i class="hud-icon hud-icon--score" aria-hidden="true"></i>{{ scoreRatio() }}</span>
-        </div>
         <div class="home-hud__timer" [class.is-low]="remainingSeconds() <= 10">
           <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
           <span>Tiempo</span>
@@ -152,7 +149,7 @@
         <div class="home-complete__panel">
           <img src="/assets/game-1/effects/processed/medal.png" alt="" />
           <strong>Separacion lograda</strong>
-          <span>{{ result.score }}/{{ stageScoreTotal }} puntos</span>
+          <span>{{ result.score }} puntos</span>
           <small>
             Tiempo +{{ result.remainingSeconds * 10 }} | Bonus por aciertos +{{
               homeAccuracyBonus(result)
@@ -178,18 +175,13 @@
     <div class="industrial-hud" aria-live="polite">
       <div class="industrial-hud__top">
         <strong class="industrial-hud__title">{{ stage.title }}</strong>
-        <div class="industrial-hud__score">
-          <span><i class="hud-icon hud-icon--score" aria-hidden="true"></i>{{ scoreRatio() }}</span>
-        </div>
         <div class="industrial-hud__timer" [class.is-low]="remainingSeconds() <= 10">
           <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
           <span>Tiempo</span>
           <strong>{{ remainingSeconds() }}s</strong>
         </div>
-        <div class="industrial-hud__progress" aria-hidden="true">
-          @for (item of stage.items; track item.id; let index = $index) {
-            <span [class.is-complete]="index < completedItems()"></span>
-          }
+        <div class="industrial-hud__progress industrial-hud__progress--count" aria-hidden="true">
+          <span>{{ completedItems() }} / {{ stage.items.length }}</span>
         </div>
       </div>
     </div>
@@ -199,12 +191,27 @@
         <div class="industrial-complete__panel">
           <img src="/assets/game-1/effects/processed/medal.png" alt="" />
           <strong>Planta en marcha</strong>
-          <span>{{ result.score }}/{{ stageScoreTotal }} puntos</span>
+          <span>{{ result.score }} puntos</span>
           <small>
             Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{
               industrialAccuracyBonus(result)
             }}
           </small>
+          <div class="industrial-complete__actions">
+            <button
+              type="button"
+              class="industrial-complete__action"
+              (click)="restartCurrentGame()"
+            >
+              &iexcl;Jugar de nuevo!
+            </button>
+            <a
+              routerLink="/juego/compostaje-domiciliario"
+              class="industrial-complete__action industrial-complete__action--secondary"
+            >
+              Proximo juego
+            </a>
+          </div>
         </div>
       </div>
     }
@@ -215,17 +222,16 @@
       <div class="compost-hud__top">
         <strong class="compost-hud__title">{{ stage.title }}</strong>
         <div class="compost-hud__score">
-          <span><i class="hud-icon hud-icon--score" aria-hidden="true"></i>{{ scoreRatio() }}</span>
+          <span>Puntaje</span>
+          <strong>{{ score() }} pts</strong>
         </div>
         <div class="compost-hud__timer" [class.is-low]="remainingSeconds() <= 10">
           <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
           <span>Tiempo</span>
           <strong>{{ remainingSeconds() }}s</strong>
         </div>
-        <div class="compost-hud__progress" aria-hidden="true">
-          @for (item of stage.items; track item.id; let index = $index) {
-            <span [class.is-complete]="index < completedItems()"></span>
-          }
+        <div class="compost-hud__progress compost-hud__progress--count">
+          <span>{{ completedItems() }} / {{ stage.items.length }} capas</span>
         </div>
       </div>
     </div>
@@ -239,11 +245,9 @@
               ? 'Abono desbloqueado'
               : 'Compost en proceso'
           }}</strong>
-          <span>{{ result.score }}/{{ stageScoreTotal }} puntos</span>
+          <span>{{ result.score }} puntos</span>
           <small>
-            Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{
-              compostAccuracyBonus(result)
-            }}
+            Tiempo +{{ result.remainingSeconds * 10 }} | Balance +{{ compostAccuracyBonus(result) }}
           </small>
         </div>
       </div>
@@ -254,9 +258,6 @@
     <div class="landfill-hud" aria-live="polite">
       <div class="landfill-hud__top">
         <strong class="landfill-hud__title">{{ stage.title }}</strong>
-        <div class="landfill-hud__score">
-          <span><i class="hud-icon hud-icon--score" aria-hidden="true"></i>{{ scoreRatio() }}</span>
-        </div>
         <div class="landfill-hud__timer" [class.is-low]="remainingSeconds() <= 10">
           <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
           <span>Tiempo</span>
@@ -275,7 +276,7 @@
           <strong>{{
             result.remainingSeconds === 0 ? 'Fosa sostenida' : 'Relleno estabilizado'
           }}</strong>
-          <span>{{ result.score }}/{{ stageScoreTotal }} puntos</span>
+          <span>{{ result.score }} puntos</span>
           <small>
             Vida util +{{ landfillDurabilityBonus(result) }} | Compactacion +{{
               landfillCompactionBonus(result)

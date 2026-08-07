@@ -34,7 +34,8 @@
 
 .industrial-game__stations,
 .industrial-game__conveyor,
-.industrial-game__item {
+.industrial-game__item,
+.industrial-game__effect {
   position: absolute;
 }
 
@@ -367,6 +368,44 @@
   text-align: center;
 }
 
+.industrial-game__effect {
+  z-index: 44;
+  display: grid;
+  place-items: center;
+  min-width: 4.8rem;
+  min-height: 3.1rem;
+  padding: 0.42rem 0.78rem;
+  border: 3px solid rgba(255, 255, 255, 0.94);
+  border-radius: 8px;
+  font-family: Inter, Arial, sans-serif;
+  font-size: clamp(1.65rem, 5.2vw, 2.75rem);
+  font-weight: 950;
+  line-height: 1;
+  pointer-events: none;
+  text-align: center;
+  text-shadow: 0 1px 0 #fff;
+  transform: translate(-50%, -50%);
+  will-change: opacity, transform;
+}
+
+.industrial-game__effect--score {
+  background: rgba(236, 255, 225, 0.96);
+  box-shadow:
+    0 0 0 4px rgba(72, 205, 96, 0.42),
+    0 1rem 2.3rem rgba(9, 28, 15, 0.26);
+  color: #21814a;
+  animation: industrial-score-pop 1040ms cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
+}
+
+.industrial-game__effect--error {
+  background: rgba(255, 239, 231, 0.96);
+  box-shadow:
+    0 0 0 4px rgba(232, 63, 48, 0.42),
+    0 1rem 2.35rem rgba(34, 13, 8, 0.3);
+  color: #e83f30;
+  animation: industrial-error-pop 1040ms cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
+}
+
 @keyframes industrial-station-shake {
   0%,
   100% {
@@ -382,6 +421,56 @@
   }
 }
 
+@keyframes industrial-score-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -20%) scale(0.72);
+  }
+
+  16% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.08);
+  }
+
+  72% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -150%) scale(1.16);
+  }
+}
+
+@keyframes industrial-error-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -30%) scale(0.76);
+  }
+
+  18% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.06);
+  }
+
+  30% {
+    transform: translate(calc(-50% - 0.36rem), -50%) scale(1.06);
+  }
+
+  42% {
+    transform: translate(calc(-50% + 0.34rem), -50%) scale(1.06);
+  }
+
+  74% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -138%) scale(1.1);
+  }
+}
+
 @keyframes industrial-belt-motion {
   to {
     background-position: var(--belt-tile-width) 50%;
@@ -389,7 +478,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .industrial-game__asset--conveyor-belt {
+  .industrial-game__asset--conveyor-belt,
+  .industrial-game__effect {
     animation: none;
   }
 }
@@ -490,5 +580,11 @@
   .industrial-game__item-label {
     max-width: 5rem;
     font-size: 0.66rem;
+  }
+
+  .industrial-game__effect {
+    min-width: 4rem;
+    min-height: 2.7rem;
+    font-size: 1.55rem;
   }
 }

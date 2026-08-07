@@ -12,13 +12,17 @@ La escena usa como fondo principal `public/assets/game-3/backgrounds/fondo-compo
 
 La compostera mantiene la segunda iteracion visual tomada como referencia de `Fondo Compostera 2.png`: una estructura ancha, con laterales de piedra, marco de madera y un frente vidriado grande. La tapa se retiro para que el foco quede en el vidrio frontal y en la evolucion del material interno.
 
-El juego reutiliza assets del juego 1 para mantener continuidad visual:
+El juego reutiliza assets del juego 1 para mantener continuidad visual. Los residuos organicos del juego 3 apuntan a la carpeta `public/assets/game-1/products/compostables`:
 
-- `public/assets/game-1/products/processed/cascaras.png` para restos vegetales.
-- `public/assets/game-1/products/processed/yerba.png` para yerba.
-- `public/assets/game-1/products/processed/caja-carton.png` para carton sin tinta.
+- `compostables-restos-de-verduras.png` para verduras y como aproximacion visual de lechuga.
+- `compostables-cascara-banana.png` para cascaras de fruta.
+- `compostables-yerba-mate-usada.png` para yerba.
+- `compostables-saquitos-de-te.png` para saquitos de te.
+- `compostables-hojas-secas.png` para hojas secas.
+- `compostables-ramas-pequenas.png` para ramas.
+- `compostables-cesped-cortado.png` para cesped.
 
-Los materiales sin asset especifico, como hojas secas, ramas y saquito de te, se dibujan con CSS dentro del componente para evitar sumar imagenes temporales.
+Para los materiales de carton, que no tienen equivalente en la carpeta compostable, se usan assets de `public/assets/game-1/products/reciclables`: `reciclables-caja-de-carton.png` y `reciclables-carton-de-embalaje.png`.
 
 ## Logica de juego
 
@@ -41,12 +45,20 @@ Cada material aceptado dispara una lluvia breve de particulas dentro de la venta
 
 ## Puntuacion
 
-Cada capa correcta suma los puntos definidos en `GAME_STAGES` y agrega bonus de racha. Los errores restan puntos y cortan la racha. Al finalizar se suman:
+El puntaje se calcula en tres momentos para que el juego premie el balance sin impedir que el estudiante se equivoque:
+
+- Capa correcta: suma los puntos base definidos en `GAME_STAGES` para ese material.
+- Racha de balance: cada capa correcta consecutiva agrega `+16` puntos extra por paso de racha despues de la primera. Por ejemplo, la segunda correcta seguida suma `+16`, la tercera `+32`, y asi sucesivamente.
+- Capa desbalanceada: se acepta visualmente en la compostera, pero resta `-35` puntos y corta la racha.
+
+Al finalizar se suman dos bonus:
 
 - Bonus por tiempo restante: `remainingSeconds * 10`.
-- Bonus de precision: `(correct - mistakes) * 22`, sin bajar de cero.
+- Bonus de balance: `(correct - mistakes) * 22`, sin bajar de cero.
 
 El panel final muestra "Abono desbloqueado" cuando se completan todas las capas sin errores. En cualquier otro cierre muestra "Compost en proceso".
+
+Para que la regla sea mas clara en la interfaz, el HUD del juego 3 muestra durante toda la partida el puntaje acumulado, el tiempo restante y el avance `capas colocadas / capas totales`. Cada acierto dispara un indicador flotante `+puntos`; cada error dispara `-35`. Estos indicadores explican el impacto en el marcador sin sugerir cual es el proximo material correcto.
 
 ## Implementacion tecnica
 

@@ -52,6 +52,15 @@
   transform: translateX(-50%);
 }
 
+.landfill-game__crane-motion {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--landfill-board-width);
+  height: 100%;
+  transform: translateX(-50%);
+}
+
 .landfill-game__crane-trolley {
   position: absolute;
   top: 0;
@@ -557,13 +566,6 @@
   white-space: nowrap;
 }
 
-.landfill-hud__score {
-  position: absolute;
-  top: max(3.82rem, calc(env(safe-area-inset-top) + 3.82rem));
-  left: max(1.3rem, calc(env(safe-area-inset-left) + 1.3rem));
-}
-
-.landfill-hud__score span,
 .landfill-hud__timer,
 .landfill-hud__progress {
   border: 1px solid rgba(255, 255, 255, 0.28);
@@ -571,21 +573,6 @@
   background: rgba(42, 31, 29, 0.66);
   box-shadow: 0 10px 24px rgba(35, 24, 19, 0.22);
   backdrop-filter: blur(12px);
-}
-
-.landfill-hud__score span {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.36rem;
-  min-width: 5.25rem;
-  min-height: 2.32rem;
-  padding: 0.3rem 0.62rem;
-  color: #f5d67b;
-  font-size: 1.08rem;
-  font-weight: 950;
-  line-height: 1;
-  text-align: center;
 }
 
 .landfill-hud__timer {
@@ -811,18 +798,6 @@
     overflow: visible;
     text-overflow: clip;
     white-space: normal;
-  }
-
-  .landfill-hud__score {
-    top: max(3.34rem, calc(env(safe-area-inset-top) + 3.34rem));
-    left: max(0.85rem, calc(env(safe-area-inset-left) + 0.85rem));
-  }
-
-  .landfill-hud__score span {
-    min-width: 5.8rem;
-    min-height: 2.08rem;
-    padding: 0.22rem 0.44rem;
-    font-size: 0.76rem;
   }
 
   .landfill-hud__timer {

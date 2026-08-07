@@ -15,7 +15,7 @@ import {
 import { RouterLink } from '@angular/router';
 
 import { DropZone, GameItem, GameStage, StageResult } from '../../core/app.models';
-import { normalizeRawStageScore, STAGE_SCORE_TOTAL } from '../../core/scoring';
+import { normalizeRawStageScore } from '../../core/scoring';
 import {
   HOME_BACKGROUND_ASSET,
   HOME_BIN_ASSETS,
@@ -76,7 +76,6 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   readonly homeReviewGroups = signal<readonly HomeReviewGroup[]>([]);
   readonly introState = signal<GameIntroState>('intro');
   readonly countdownSeconds = signal(3);
-  readonly stageScoreTotal = STAGE_SCORE_TOTAL;
 
   private resizeTimer?: ReturnType<typeof setTimeout>;
   private countdownTimer?: ReturnType<typeof setInterval>;
@@ -239,10 +238,6 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
     const target = event.currentTarget as HTMLElement | null;
     target?.setPointerCapture?.(event.pointerId);
-  }
-
-  scoreRatio(score = this.score()): string {
-    return `${this.visibleStageScore(score)}/${this.stageScoreTotal}`;
   }
 
   homeReviewDelay(zoneIndex: number, itemIndex: number): string {

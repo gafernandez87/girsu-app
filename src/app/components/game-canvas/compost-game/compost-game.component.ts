@@ -58,6 +58,7 @@ interface CompostParticle {
 
 interface CompostEffect {
   readonly id: number;
+  readonly type: 'score' | 'penalty';
   readonly text: string;
   readonly x: number;
   readonly y: number;
@@ -369,13 +370,14 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     const comboBonus = Math.max(0, this.streak - 1) * 16;
     const points = item.points + comboBonus;
     this.score += points;
-    this.spawnEffect(`+${points}`, this.tokenPosition());
+    this.spawnEffect('score', `+${points}`, this.tokenPosition());
   }
 
   private handleUnbalancedLayer(): void {
     this.mistakes += 1;
     this.streak = 0;
     this.score = Math.max(0, this.score - 35);
+    this.spawnEffect('penalty', '-35', this.tokenPosition());
   }
 
   private createLayerFragments(
@@ -543,11 +545,16 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     return category === 'marrones' ? 'marrones' : 'verdes';
   }
 
-  private spawnEffect(text: string, position: { x: number; y: number }): void {
+  private spawnEffect(
+    type: CompostEffect['type'],
+    text: string,
+    position: { x: number; y: number },
+  ): void {
     const id = this.effectId;
     this.effectId += 1;
     const effect: CompostEffect = {
       id,
+      type,
       text,
       x: position.x,
       y: position.y,

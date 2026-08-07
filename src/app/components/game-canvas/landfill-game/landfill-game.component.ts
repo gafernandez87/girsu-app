@@ -322,7 +322,11 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
     const piece = this.activePiece();
     const cells = piece?.cells ?? this.nextPiece().cells;
     const pieceX = piece?.x ?? Math.floor((BOARD_COLUMNS - this.pieceWidth(cells)) / 2);
-    const center = pieceX + this.pieceWidth(cells) / 2;
+    const targetCenter = pieceX + this.pieceWidth(cells) / 2;
+    const carriedPieceWidth = this.previewShape().columns;
+    const minCenter = carriedPieceWidth / 2;
+    const maxCenter = BOARD_COLUMNS - carriedPieceWidth / 2;
+    const center = Math.min(maxCenter, Math.max(minCenter, targetCenter));
 
     return `${Number(((center / BOARD_COLUMNS) * 100).toFixed(2))}%`;
   }

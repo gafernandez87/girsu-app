@@ -204,7 +204,9 @@
 
   @for (effect of effects(); track effect.id) {
     <span
-      class="compost-game__effect compost-game__effect--score"
+      class="compost-game__effect"
+      [class.compost-game__effect--score]="effect.type === 'score'"
+      [class.compost-game__effect--penalty]="effect.type === 'penalty'"
       [style.left.px]="effect.x"
       [style.top.px]="effect.y"
       aria-hidden="true"

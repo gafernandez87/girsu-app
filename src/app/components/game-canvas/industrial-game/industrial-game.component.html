@@ -51,17 +51,17 @@
     ></span>
   </div>
 
-  @if (activeItem(); as item) {
+  @for (token of activeTokens(); track token.tokenId) {
     <button
       type="button"
       class="industrial-game__item"
-      [class.is-dragging]="dragging()"
-      [style.transform]="tokenTransform()"
-      [attr.aria-label]="'Arrastrar ' + item.label"
-      (pointerdown)="startDrag($event)"
+      [class.is-dragging]="isTokenDragging(token.tokenId)"
+      [style.transform]="tokenTransform(token)"
+      [attr.aria-label]="'Arrastrar ' + token.item.label"
+      (pointerdown)="startDrag($event, token.tokenId)"
     >
       <span class="industrial-game__product-plate" aria-hidden="true">
-        @if (productAsset(item.id); as product) {
+        @if (productAsset(token.item.id); as product) {
           <img
             class="industrial-game__product-image"
             [src]="product.path"
@@ -73,13 +73,26 @@
         } @else {
           <span
             class="industrial-game__product-art"
-            [class.industrial-game__product-art--diario]="item.id === 'diario'"
-            [class.industrial-game__product-art--lata]="item.id === 'lata'"
-            [class.industrial-game__product-art--papel-sucio]="item.id === 'papel-sucio'"
+            [class.industrial-game__product-art--diario]="token.item.id === 'diario'"
+            [class.industrial-game__product-art--lata]="token.item.id === 'lata'"
+            [class.industrial-game__product-art--papel-sucio]="token.item.id === 'papel-sucio'"
           ></span>
         }
       </span>
-      <span class="industrial-game__item-label">{{ item.label }}</span>
+      <span class="industrial-game__item-label">{{ token.item.label }}</span>
     </button>
+  }
+
+  @for (effect of effects(); track effect.id) {
+    <span
+      class="industrial-game__effect"
+      [class.industrial-game__effect--score]="effect.type === 'score'"
+      [class.industrial-game__effect--error]="effect.type === 'error'"
+      [style.left.px]="effect.x"
+      [style.top.px]="effect.y"
+      aria-hidden="true"
+    >
+      {{ effect.text }}
+    </span>
   }
 </div>

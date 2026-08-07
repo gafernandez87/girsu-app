@@ -16,6 +16,15 @@ export const HOME_PRODUCT_ASSETS: Record<string, ProductAsset> = Object.fromEntr
 );
 
 export const INDUSTRIAL_PRODUCT_ASSETS: Record<string, ProductAsset> = {
+  ...Object.fromEntries(
+    GAME_ONE_PRODUCTS.map((product) => [
+      product.id,
+      {
+        path: product.path,
+        size: 76,
+      },
+    ]),
+  ),
   'pet-planta': {
     path: '/assets/game-1/products/processed/botella.png',
     size: 82,
@@ -32,24 +41,44 @@ export const INDUSTRIAL_PRODUCT_ASSETS: Record<string, ProductAsset> = {
 
 export const COMPOST_PRODUCT_ASSETS: Record<string, ProductAsset> = {
   'restos-verdura': {
-    path: '/assets/game-1/products/processed/cascaras.png',
-    size: 58,
+    path: '/assets/game-1/products/compostables/compostables-restos-de-verduras.png',
+    size: 60,
   },
   'cascaras-fruta': {
-    path: '/assets/game-1/products/processed/cascaras.png',
-    size: 58,
+    path: '/assets/game-1/products/compostables/compostables-cascara-banana.png',
+    size: 60,
+  },
+  'hojas-lechuga': {
+    path: '/assets/game-1/products/compostables/compostables-restos-de-verduras.png',
+    size: 60,
   },
   'yerba-compost': {
-    path: '/assets/game-1/products/processed/yerba.png',
+    path: '/assets/game-1/products/compostables/compostables-yerba-mate-usada.png',
     size: 58,
   },
+  te: {
+    path: '/assets/game-1/products/compostables/compostables-saquitos-de-te.png',
+    size: 58,
+  },
+  'hojas-secas': {
+    path: '/assets/game-1/products/compostables/compostables-hojas-secas.png',
+    size: 60,
+  },
+  ramas: {
+    path: '/assets/game-1/products/compostables/compostables-ramas-pequenas.png',
+    size: 60,
+  },
+  'cesped-seco': {
+    path: '/assets/game-1/products/compostables/compostables-cesped-cortado.png',
+    size: 60,
+  },
   'carton-sin-tinta': {
-    path: '/assets/game-1/products/processed/caja-carton.png',
-    size: 56,
+    path: '/assets/game-1/products/reciclables/reciclables-caja-de-carton.png',
+    size: 58,
   },
   'carton-trocitos': {
-    path: '/assets/game-1/products/processed/caja-carton.png',
-    size: 54,
+    path: '/assets/game-1/products/reciclables/reciclables-carton-de-embalaje.png',
+    size: 58,
   },
 };
 

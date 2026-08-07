@@ -24,6 +24,31 @@ import {
 import type { ImageAsset, ProductAsset, StageTick } from '../game-canvas.types';
 
 type IndustrialZoneState = 'normal' | 'hover' | 'open' | 'error';
+type IndustrialPoint = { readonly x: number; readonly y: number };
+
+interface IndustrialActiveToken {
+  readonly tokenId: number;
+  readonly item: GameItem;
+  readonly progress: number;
+  readonly position: IndustrialPoint;
+  readonly rotation: number;
+}
+
+type IndustrialEffectType = 'score' | 'error';
+
+interface IndustrialEffect {
+  readonly id: number;
+  readonly type: IndustrialEffectType;
+  readonly text: string;
+  readonly x: number;
+  readonly y: number;
+}
+
+const INDUSTRIAL_SPAWN_INTERVAL_MS = 5000;
+const INDUSTRIAL_MOVE_INTERVAL_MS = 40;
+const INDUSTRIAL_START_PROGRESS = 0.08;
+const INDUSTRIAL_END_PROGRESS = 0.96;
+const INDUSTRIAL_PROGRESS_STEP = 0.0048;
 
 @Component({
   selector: 'app-industrial-game',
@@ -42,10 +67,9 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   readonly backgroundImage = `url("${INDUSTRIAL_BACKGROUND_ASSET.path}")`;
   readonly conveyorBaseAsset = INDUSTRIAL_CONVEYOR_ASSETS.base;
   readonly conveyorBeltPattern = `url("${INDUSTRIAL_CONVEYOR_ASSETS.belt.path}")`;
-  readonly activeItem = signal<GameItem | null>(null);
-  readonly dragging = signal(false);
-  readonly tokenPosition = signal({ x: 0, y: 0 });
-  readonly tokenAngle = signal(0);
+  readonly activeTokens = signal<readonly IndustrialActiveToken[]>([]);
+  readonly effects = signal<readonly IndustrialEffect[]>([]);
+  readonly draggingTokenId = signal<number | null>(null);
   readonly zoneStates = signal<Record<string, IndustrialZoneState>>({});
 
   private viewReady = false;
@@ -57,11 +81,13 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   private streak = 0;
   private remainingSeconds = 0;
   private finished = false;
+  private nextTokenId = 0;
+  private effectId = 0;
   private dragPointerId?: number;
   private dragOffset = { x: 0, y: 0 };
-  private conveyorProgress = 0.12;
   private stageTimer?: ReturnType<typeof setInterval>;
   private conveyorTimer?: ReturnType<typeof setInterval>;
+  private spawnTimer?: ReturnType<typeof setTimeout>;
   private timeouts: Array<ReturnType<typeof setTimeout>> = [];
 
   ngAfterViewInit(): void {
@@ -81,51 +107,57 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
 
   @HostListener('window:pointermove', ['$event'])
   handlePointerMove(event: PointerEvent): void {
-    if (!this.dragging() || event.pointerId !== this.dragPointerId) {
+    const tokenId = this.draggingTokenId();
+
+    if (tokenId === null || event.pointerId !== this.dragPointerId) {
       return;
     }
 
     event.preventDefault();
-    this.moveToken(event);
+    this.moveToken(event, tokenId);
     this.updateHoverState(event.clientX, event.clientY);
   }
 
   @HostListener('window:pointerup', ['$event'])
   handlePointerUp(event: PointerEvent): void {
-    if (!this.dragging() || event.pointerId !== this.dragPointerId) {
+    const tokenId = this.draggingTokenId();
+
+    if (tokenId === null || event.pointerId !== this.dragPointerId) {
       return;
     }
 
     event.preventDefault();
-    this.finishDrag(event.clientX, event.clientY);
+    this.finishDrag(event.clientX, event.clientY, tokenId);
   }
 
   @HostListener('window:pointercancel', ['$event'])
   handlePointerCancel(event: PointerEvent): void {
-    if (!this.dragging() || event.pointerId !== this.dragPointerId) {
+    const tokenId = this.draggingTokenId();
+
+    if (tokenId === null || event.pointerId !== this.dragPointerId) {
       return;
     }
 
-    this.cancelDrag();
+    this.cancelDrag(tokenId);
   }
 
-  startDrag(event: PointerEvent): void {
-    if (this.finished || !this.activeItem()) {
+  startDrag(event: PointerEvent, tokenId: number): void {
+    const token = this.activeToken(tokenId);
+
+    if (this.finished || !token) {
       return;
     }
 
     event.preventDefault();
-    this.stopConveyorTimer();
 
     const localPoint = this.getLocalPoint(event.clientX, event.clientY);
-    const position = this.tokenPosition();
 
     this.dragPointerId = event.pointerId;
     this.dragOffset = {
-      x: localPoint.x - position.x,
-      y: localPoint.y - position.y,
+      x: localPoint.x - token.position.x,
+      y: localPoint.y - token.position.y,
     };
-    this.dragging.set(true);
+    this.draggingTokenId.set(tokenId);
 
     const target = event.currentTarget as HTMLElement | null;
     target?.setPointerCapture?.(event.pointerId);
@@ -171,16 +203,19 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     return this.zoneStates()[zoneId] ?? 'normal';
   }
 
-  tokenTransform(): string {
-    const position = this.tokenPosition();
-    const scale = this.dragging() ? 1.08 : 1;
+  isTokenDragging(tokenId: number): boolean {
+    return this.draggingTokenId() === tokenId;
+  }
 
-    return `translate3d(${position.x - 45}px, ${position.y - 45}px, 0) rotate(${this.tokenAngle()}deg) scale(${scale})`;
+  tokenTransform(token: IndustrialActiveToken): string {
+    const scale = this.isTokenDragging(token.tokenId) ? 1.08 : 1;
+
+    return `translate3d(${token.position.x - 45}px, ${token.position.y - 45}px, 0) rotate(${token.rotation}deg) scale(${scale})`;
   }
 
   private startGame(): void {
     this.clearTimers();
-    this.pendingItems = [...this.stage.items];
+    this.pendingItems = this.shuffleItems(this.stage.items);
     this.correct = 0;
     this.processed = 0;
     this.mistakes = 0;
@@ -188,15 +223,21 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     this.streak = 0;
     this.remainingSeconds = this.stage.durationSeconds;
     this.finished = false;
+    this.nextTokenId = 0;
+    this.effectId = 0;
     this.dragPointerId = undefined;
-    this.dragging.set(false);
-    this.activeItem.set(null);
+    this.draggingTokenId.set(null);
+    this.activeTokens.set([]);
+    this.effects.set([]);
     this.zoneStates.set(this.createZoneStates());
     this.emitTick();
 
     this.schedule(() => {
       this.spawnNextItem();
       this.startStageTimer();
+      this.startConveyorTimer();
+      this.startSpawnTimer();
+      this.finishIfDeckComplete();
     }, 80);
   }
 
@@ -215,55 +256,102 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     }, 1000);
   }
 
-  private spawnNextItem(): void {
-    if (this.finished || this.activeItem() || this.pendingItems.length === 0) {
+  private startSpawnTimer(): void {
+    this.scheduleNextSpawn();
+  }
+
+  private scheduleNextSpawn(): void {
+    clearTimeout(this.spawnTimer);
+    this.spawnTimer = undefined;
+
+    if (this.finished || this.pendingItems.length === 0) {
       return;
+    }
+
+    this.spawnTimer = setTimeout(() => {
+      this.spawnTimer = undefined;
+      this.spawnNextItem();
+      this.finishIfDeckComplete();
+    }, INDUSTRIAL_SPAWN_INTERVAL_MS);
+  }
+
+  private startConveyorTimer(): void {
+    this.conveyorTimer = setInterval(() => {
+      if (this.finished) {
+        return;
+      }
+
+      const draggingId = this.draggingTokenId();
+      const lostTokens: IndustrialActiveToken[] = [];
+      const nextTokens: IndustrialActiveToken[] = [];
+
+      for (const token of this.activeTokens()) {
+        if (token.tokenId === draggingId) {
+          nextTokens.push(token);
+          continue;
+        }
+
+        const progress = token.progress + INDUSTRIAL_PROGRESS_STEP;
+
+        if (progress >= INDUSTRIAL_END_PROGRESS) {
+          lostTokens.push(token);
+          continue;
+        }
+
+        nextTokens.push({
+          ...token,
+          progress,
+          position: this.beltPosition(progress),
+        });
+      }
+
+      this.activeTokens.set(nextTokens);
+
+      for (const token of lostTokens) {
+        this.handleItemLost(token);
+      }
+
+      this.ensureActiveItem();
+      this.finishIfDeckComplete();
+    }, INDUSTRIAL_MOVE_INTERVAL_MS);
+  }
+
+  private spawnNextItem(): boolean {
+    if (this.finished || this.pendingItems.length === 0) {
+      return false;
     }
 
     const item = this.pendingItems.shift();
 
     if (!item) {
-      return;
+      return false;
     }
 
-    this.conveyorProgress = 0.12;
-    this.activeItem.set(item);
-    this.tokenAngle.set(Math.floor(Math.random() * 7) - 3);
-    this.positionTokenOnBelt();
-    this.startConveyorTimer();
+    const token: IndustrialActiveToken = {
+      tokenId: this.nextTokenId,
+      item,
+      progress: INDUSTRIAL_START_PROGRESS,
+      position: this.beltPosition(INDUSTRIAL_START_PROGRESS),
+      rotation: Math.floor(Math.random() * 7) - 3,
+    };
+
+    this.nextTokenId += 1;
+    this.activeTokens.update((tokens) => [...tokens, token]);
+    this.scheduleNextSpawn();
+
+    return true;
   }
 
-  private startConveyorTimer(): void {
-    this.stopConveyorTimer();
-    this.conveyorTimer = setInterval(() => {
-      if (this.finished || this.dragging() || !this.activeItem()) {
-        return;
-      }
-
-      this.conveyorProgress += 0.0048;
-      this.positionTokenOnBelt();
-
-      if (this.conveyorProgress >= 0.96) {
-        this.handleItemLost();
-      }
-    }, 40);
-  }
-
-  private stopConveyorTimer(): void {
-    clearInterval(this.conveyorTimer);
-    this.conveyorTimer = undefined;
-  }
-
-  private positionTokenOnBelt(): void {
+  private beltPosition(progress: number): IndustrialPoint {
     const stageRect = this.industrialStage.nativeElement.getBoundingClientRect();
     const beltRect = this.beltTrack.nativeElement.getBoundingClientRect();
-    const x = beltRect.left - stageRect.left + beltRect.width * this.conveyorProgress;
+    const x = beltRect.left - stageRect.left + beltRect.width * progress;
     const y = beltRect.top - stageRect.top + beltRect.height * 0.45;
 
-    this.tokenPosition.set({ x, y });
+    return { x, y };
   }
 
-  private moveToken(event: PointerEvent): void {
+  private moveToken(event: PointerEvent, tokenId: number): void {
     const stage = this.industrialStage.nativeElement;
     const rect = stage.getBoundingClientRect();
     const localPoint = this.getLocalPoint(event.clientX, event.clientY);
@@ -271,99 +359,108 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     const x = Math.min(rect.width - radius, Math.max(radius, localPoint.x - this.dragOffset.x));
     const y = Math.min(rect.height - radius, Math.max(radius, localPoint.y - this.dragOffset.y));
 
-    this.tokenPosition.set({ x, y });
+    this.updateToken(tokenId, (token) => ({
+      ...token,
+      position: { x, y },
+    }));
   }
 
-  private finishDrag(clientX: number, clientY: number): void {
-    const item = this.activeItem();
+  private finishDrag(clientX: number, clientY: number, tokenId: number): void {
+    const token = this.activeToken(tokenId);
 
-    this.dragging.set(false);
+    this.draggingTokenId.set(null);
     this.dragPointerId = undefined;
     this.zoneStates.set(this.createZoneStates());
 
-    if (!item || this.finished) {
+    if (!token || this.finished) {
       return;
     }
 
     const dropZone = this.getDropZoneAt(clientX, clientY);
 
     if (!dropZone) {
-      this.returnToBelt();
+      this.returnTokenToBelt(tokenId);
       return;
     }
 
-    if (dropZone.id === item.category) {
-      this.handleCorrectDrop(item, dropZone);
+    if (dropZone.id === token.item.category) {
+      this.handleCorrectDrop(token, dropZone);
       return;
     }
 
-    this.handleWrongDrop(dropZone);
+    this.handleWrongDrop(token, dropZone);
   }
 
-  private cancelDrag(): void {
-    this.dragging.set(false);
+  private cancelDrag(tokenId: number): void {
+    this.draggingTokenId.set(null);
     this.dragPointerId = undefined;
     this.zoneStates.set(this.createZoneStates());
-    this.returnToBelt();
+    this.returnTokenToBelt(tokenId);
   }
 
-  private handleCorrectDrop(item: GameItem, dropZone: DropZone): void {
+  private handleCorrectDrop(token: IndustrialActiveToken, dropZone: DropZone): void {
     this.correct += 1;
     this.processed += 1;
     this.streak += 1;
 
     const comboBonus = Math.max(0, this.streak - 1) * 18;
-    this.score += item.points + comboBonus;
-    this.activeItem.set(null);
+    const points = token.item.points + comboBonus;
+    this.score += points;
+    this.removeToken(token.tokenId);
     this.setZoneState(dropZone.id, 'open');
+    this.spawnEffect('score', `+${points}`, this.getZoneCenter(dropZone.id));
     this.emitTick();
+    this.ensureActiveItem();
 
     this.schedule(() => {
       this.setZoneState(dropZone.id, 'normal');
-
-      if (this.processed === this.stage.items.length) {
-        this.finishLevel();
-      } else {
-        this.spawnNextItem();
-      }
+      this.finishIfDeckComplete();
     }, 520);
   }
 
-  private handleWrongDrop(dropZone: DropZone): void {
+  private handleWrongDrop(token: IndustrialActiveToken, dropZone: DropZone): void {
     this.mistakes += 1;
+    this.processed += 1;
     this.streak = 0;
     this.score = Math.max(0, this.score - 40);
+    this.removeToken(token.tokenId);
     this.setZoneState(dropZone.id, 'error');
+    this.spawnEffect('error', '-40', this.getZoneCenter(dropZone.id));
     this.emitTick();
-    this.returnToBelt();
-    this.schedule(() => this.setZoneState(dropZone.id, 'normal'), 520);
+    this.ensureActiveItem();
+
+    this.schedule(() => {
+      this.setZoneState(dropZone.id, 'normal');
+      this.finishIfDeckComplete();
+    }, 520);
   }
 
-  private handleItemLost(): void {
-    if (!this.activeItem() || this.finished) {
-      return;
-    }
-
-    this.stopConveyorTimer();
+  private handleItemLost(token: IndustrialActiveToken): void {
     this.mistakes += 1;
     this.processed += 1;
     this.streak = 0;
     this.score = Math.max(0, this.score - 60);
-    this.activeItem.set(null);
+    this.spawnEffect('error', '-60', token.position);
     this.emitTick();
-
-    this.schedule(() => {
-      if (this.processed === this.stage.items.length) {
-        this.finishLevel();
-      } else {
-        this.spawnNextItem();
-      }
-    }, 360);
   }
 
-  private returnToBelt(): void {
-    this.positionTokenOnBelt();
-    this.schedule(() => this.startConveyorTimer(), 180);
+  private returnTokenToBelt(tokenId: number): void {
+    this.updateToken(tokenId, (token) => ({
+      ...token,
+      position: this.beltPosition(token.progress),
+    }));
+  }
+
+  private ensureActiveItem(): void {
+    if (!this.finished && this.activeTokens().length === 0 && this.pendingItems.length > 0) {
+      this.spawnNextItem();
+    }
+  }
+
+  private finishIfDeckComplete(): void {
+    if (!this.finished && this.pendingItems.length === 0 && this.activeTokens().length === 0) {
+      this.finishLevel();
+    }
   }
 
   private finishLevel(): void {
@@ -373,7 +470,9 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
 
     this.finished = true;
     this.clearTimers();
-    this.activeItem.set(null);
+    this.activeTokens.set([]);
+    this.draggingTokenId.set(null);
+    this.dragPointerId = undefined;
 
     const timeBonus = this.remainingSeconds * 10;
     const accuracyBonus = Math.max(0, this.correct - this.mistakes) * 18;
@@ -432,13 +531,66 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     return undefined;
   }
 
-  private getLocalPoint(clientX: number, clientY: number): { x: number; y: number } {
+  private getLocalPoint(clientX: number, clientY: number): IndustrialPoint {
     const rect = this.industrialStage.nativeElement.getBoundingClientRect();
 
     return {
       x: clientX - rect.left,
       y: clientY - rect.top,
     };
+  }
+
+  private getZoneCenter(zoneId: string): IndustrialPoint {
+    const stage = this.industrialStage.nativeElement;
+    const stageRect = stage.getBoundingClientRect();
+    const zoneElement = stage.querySelector<HTMLElement>(
+      `[data-industrial-zone-id="${zoneId}"]`,
+    );
+
+    if (!zoneElement) {
+      return {
+        x: stageRect.width / 2,
+        y: stageRect.height / 2,
+      };
+    }
+
+    const rect = zoneElement.getBoundingClientRect();
+
+    return {
+      x: rect.left - stageRect.left + rect.width / 2,
+      y: rect.top - stageRect.top + rect.height * 0.42,
+    };
+  }
+
+  private activeToken(tokenId: number): IndustrialActiveToken | undefined {
+    return this.activeTokens().find((token) => token.tokenId === tokenId);
+  }
+
+  private updateToken(
+    tokenId: number,
+    updater: (token: IndustrialActiveToken) => IndustrialActiveToken,
+  ): void {
+    this.activeTokens.update((tokens) =>
+      tokens.map((token) => (token.tokenId === tokenId ? updater(token) : token)),
+    );
+  }
+
+  private removeToken(tokenId: number): void {
+    this.activeTokens.update((tokens) => tokens.filter((token) => token.tokenId !== tokenId));
+  }
+
+  private shuffleItems(items: readonly GameItem[]): GameItem[] {
+    const shuffledItems = [...items];
+
+    for (let index = shuffledItems.length - 1; index > 0; index -= 1) {
+      const swapIndex = Math.floor(Math.random() * (index + 1));
+      [shuffledItems[index], shuffledItems[swapIndex]] = [
+        shuffledItems[swapIndex],
+        shuffledItems[index],
+      ];
+    }
+
+    return shuffledItems;
   }
 
   private createZoneStates(): Record<string, IndustrialZoneState> {
@@ -450,6 +602,29 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
       ...states,
       [zoneId]: state,
     }));
+  }
+
+  private spawnEffect(
+    type: IndustrialEffectType,
+    text: string,
+    position: IndustrialPoint,
+  ): void {
+    const id = this.effectId;
+    this.effectId += 1;
+
+    this.effects.update((effects) => [
+      ...effects,
+      {
+        id,
+        type,
+        text,
+        x: position.x,
+        y: position.y,
+      },
+    ]);
+    this.schedule(() => {
+      this.effects.update((effects) => effects.filter((current) => current.id !== id));
+    }, 1100);
   }
 
   private schedule(callback: () => void, delay: number): void {
@@ -464,8 +639,10 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   private clearTimers(): void {
     clearInterval(this.stageTimer);
     clearInterval(this.conveyorTimer);
+    clearTimeout(this.spawnTimer);
     this.stageTimer = undefined;
     this.conveyorTimer = undefined;
+    this.spawnTimer = undefined;
     this.timeouts.forEach((timeout) => clearTimeout(timeout));
     this.timeouts = [];
   }
