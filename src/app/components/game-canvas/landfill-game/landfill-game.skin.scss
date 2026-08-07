@@ -22,6 +22,7 @@
 .landfill-game__controls,
 .landfill-game__status,
 .landfill-game__next,
+.landfill-game__recycle-bin,
 .landfill-game__effect {
   position: absolute;
 }
@@ -262,6 +263,86 @@
   pointer-events: none;
 }
 
+.landfill-game__recycle-bin {
+  --recycle-bin-size: clamp(4.25rem, 9dvh, 5.7rem);
+
+  top: 6.2%;
+  left: calc((var(--recycle-bin-size) + 0.5rem) * -1);
+  z-index: 16;
+  display: grid;
+  justify-items: center;
+  width: var(--recycle-bin-size);
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: rgba(222, 255, 221, 0.78);
+  cursor: default;
+  font-family: Inter, Arial, sans-serif;
+  line-height: 1;
+  text-align: center;
+  text-shadow: 0 0.1rem 0.28rem rgba(7, 28, 16, 0.42);
+  transform-origin: center bottom;
+  transition:
+    filter 160ms ease,
+    transform 160ms ease,
+    color 160ms ease;
+  pointer-events: auto;
+  touch-action: manipulation;
+}
+
+.landfill-game__recycle-bin img {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 0.34rem 0.5rem rgba(17, 28, 16, 0.24));
+  pointer-events: none;
+  user-select: none;
+  -webkit-user-drag: none;
+}
+
+.landfill-game__recycle-bin strong,
+.landfill-game__recycle-bin small {
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(209, 255, 207, 0.18);
+  border-radius: 999px;
+  background: rgba(23, 60, 34, 0.58);
+  backdrop-filter: blur(8px);
+}
+
+.landfill-game__recycle-bin strong {
+  margin-top: -0.58rem;
+  padding: 0.14rem 0.36rem 0.16rem;
+  font-size: 0.46rem;
+  font-weight: 950;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.landfill-game__recycle-bin small {
+  margin-top: 0.12rem;
+  min-width: 1.38rem;
+  padding: 0.08rem 0.32rem 0.1rem;
+  color: #dfffd9;
+  font-size: 0.58rem;
+  font-weight: 950;
+  line-height: 1;
+}
+
+.landfill-game__recycle-bin.is-active {
+  cursor: pointer;
+}
+
+.landfill-game__recycle-bin.is-ready {
+  color: #e8ffe1;
+  filter: drop-shadow(0 0 0.66rem rgba(113, 255, 113, 0.56));
+  transform: translateX(-0.12rem) scale(1.05);
+}
+
+.landfill-game__recycle-bin.is-ready:active {
+  transform: translateX(-0.12rem) translateY(0.08rem) scale(1.02);
+}
+
 .landfill-game__grid {
   position: relative;
   z-index: 4;
@@ -359,6 +440,24 @@
   background: rgba(255, 244, 216, 0.12);
 }
 
+.landfill-game__piece-cell--recyclable {
+  --piece-border-color: rgba(15, 83, 42, 0.8);
+  --piece-edge-color: rgba(183, 255, 166, 0.92);
+
+  background: rgba(63, 181, 86, 0.12);
+}
+
+.landfill-game__block--active.landfill-game__piece-cell--recyclable {
+  filter: drop-shadow(0 0.3rem 0.34rem rgba(26, 99, 44, 0.3));
+}
+
+.landfill-game__preview-cell.landfill-game__piece-cell--recyclable {
+  --piece-border-color: rgba(19, 104, 49, 0.82);
+  --piece-edge-color: rgba(196, 255, 176, 0.96);
+
+  background: rgba(65, 205, 88, 0.14);
+}
+
 .landfill-game__piece-cell--edge-top {
   --piece-shadow-top: inset 0 var(--piece-edge-size, 0.14rem) 0
     var(--piece-edge-color, rgba(255, 231, 166, 0.7));
@@ -399,6 +498,7 @@
   transform: none;
   user-select: none;
   -webkit-user-drag: none;
+  filter: drop-shadow(1px 1px 2px white);
 }
 
 .landfill-game__controls {
@@ -504,27 +604,52 @@
 }
 
 .landfill-game__effect {
-  z-index: 28;
+  z-index: 30;
   display: grid;
   place-items: center;
-  min-width: 2.5rem;
-  min-height: 2.35rem;
-  color: #f7d76f;
-  font-size: 1.12rem;
+  min-width: 4.8rem;
+  min-height: 3.1rem;
+  max-width: min(13rem, 72vw);
+  padding: 0.42rem 0.78rem;
+  border: 3px solid rgba(255, 255, 255, 0.94);
+  border-radius: 8px;
+  background: rgba(255, 248, 220, 0.96);
+  box-shadow:
+    0 0 0 4px rgba(65, 203, 101, 0.44),
+    0 1rem 2.3rem rgba(28, 16, 9, 0.28);
+  color: #237447;
+  font-size: clamp(1.48rem, 5.4vw, 2.7rem);
   font-weight: 950;
   line-height: 1;
   pointer-events: none;
   text-align: center;
+  text-wrap: balance;
   text-shadow:
-    0 1px 0 rgba(38, 27, 21, 0.8),
-    0 0.42rem 0.9rem rgba(20, 14, 10, 0.36);
+    0 1px 0 #fff,
+    0 8px 18px rgba(36, 24, 12, 0.2);
   transform: translate(-50%, -50%);
-  animation: landfill-score-pop 820ms ease-out forwards;
+  will-change: opacity, transform;
+  animation: landfill-score-pop 1120ms cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
 }
 
 .landfill-game__effect--warning {
-  color: #ffac78;
-  font-size: 0.78rem;
+  background: rgba(255, 239, 231, 0.96);
+  box-shadow:
+    0 0 0 4px rgba(232, 63, 48, 0.42),
+    0 1rem 2.35rem rgba(34, 13, 8, 0.3);
+  color: #e83f30;
+  font-size: clamp(0.92rem, 4.2vw, 1.45rem);
+  text-shadow: 0 1px 0 #fff;
+  animation: landfill-error-pop 1080ms cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
+}
+
+.landfill-game__effect--recycle {
+  background: rgba(236, 255, 225, 0.96);
+  box-shadow:
+    0 0 0 4px rgba(72, 205, 96, 0.46),
+    0 1rem 2.3rem rgba(35, 20, 11, 0.26);
+  color: #21814a;
+  font-size: clamp(1rem, 4.6vw, 1.7rem);
 }
 
 .landfill-hud,
@@ -567,12 +692,28 @@
 }
 
 .landfill-hud__timer,
+.landfill-hud__score,
 .landfill-hud__progress {
   border: 1px solid rgba(255, 255, 255, 0.28);
   border-radius: 8px;
   background: rgba(42, 31, 29, 0.66);
   box-shadow: 0 10px 24px rgba(35, 24, 19, 0.22);
   backdrop-filter: blur(12px);
+}
+
+.landfill-hud__score {
+  position: absolute;
+  top: max(3.58rem, calc(env(safe-area-inset-top) + 3.58rem));
+  left: max(1.3rem, calc(env(safe-area-inset-left) + 1.3rem));
+  display: grid;
+  gap: 0.16rem;
+  justify-items: center;
+  min-width: 6.25rem;
+  min-height: 2.72rem;
+  padding: 0.42rem 0.66rem 0.48rem;
+  color: #fff8df;
+  line-height: 1;
+  text-align: center;
 }
 
 .landfill-hud__timer {
@@ -590,7 +731,8 @@
   transform: translateX(-50%);
 }
 
-.landfill-hud__timer span {
+.landfill-hud__timer span,
+.landfill-hud__score span {
   color: rgba(255, 222, 151, 0.78);
   font-size: 0.78rem;
   font-weight: 950;
@@ -599,12 +741,22 @@
   text-transform: uppercase;
 }
 
-.landfill-hud__timer strong {
+.landfill-hud__timer strong,
+.landfill-hud__score strong {
   margin-top: 0.16rem;
   color: #f5d67b;
   font-size: clamp(1.92rem, 4.8vw, 2.45rem);
   font-weight: 950;
   line-height: 0.95;
+}
+
+.landfill-hud__score span {
+  font-size: 0.58rem;
+}
+
+.landfill-hud__score strong {
+  margin-top: 0;
+  font-size: 1.22rem;
 }
 
 .landfill-hud__timer.is-low strong {
@@ -628,26 +780,28 @@
   display: grid;
   justify-items: center;
   width: min(100%, 22rem);
+  max-height: calc(100dvh - 2.5rem);
   padding: 1rem 1.2rem 1.1rem;
   border: 2px solid rgba(114, 81, 163, 0.28);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: 0 18px 48px rgba(35, 24, 19, 0.32);
   color: #1e2a22;
+  overflow: visible;
   text-align: center;
   text-shadow: none;
   backdrop-filter: blur(12px);
 }
 
 .landfill-complete__panel img {
-  width: 5.1rem;
-  height: 5rem;
-  margin-top: -3.55rem;
+  width: 4.9rem;
+  height: 4.8rem;
+  margin-top: -3.42rem;
   object-fit: contain;
   filter: drop-shadow(0 10px 18px rgba(44, 24, 12, 0.2));
 }
 
-.landfill-complete__panel strong {
+.landfill-complete__panel > strong {
   margin-top: 0.25rem;
   color: #1f2725;
   font-size: 1.55rem;
@@ -655,7 +809,7 @@
   line-height: 1.05;
 }
 
-.landfill-complete__panel span {
+.landfill-complete__panel > span {
   margin-top: 0.45rem;
   color: #7251a3;
   font-size: 2rem;
@@ -663,12 +817,74 @@
   line-height: 1;
 }
 
-.landfill-complete__panel small {
+.landfill-complete__panel > small {
   margin-top: 0.62rem;
   color: #5f6f64;
   font-size: 0.82rem;
   font-weight: 850;
   line-height: 1.25;
+}
+
+.landfill-complete__breakdown {
+  display: grid;
+  gap: 0.18rem;
+  width: 100%;
+  margin-top: 0.82rem;
+  padding: 0.48rem;
+  border: 1px solid rgba(114, 81, 163, 0.16);
+  border-radius: 8px;
+  background: rgba(244, 240, 250, 0.72);
+}
+
+.landfill-complete__breakdown > div {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 1.58rem;
+  padding: 0.18rem 0.34rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.58);
+}
+
+.landfill-complete__breakdown span,
+.landfill-complete__breakdown strong {
+  margin: 0;
+  line-height: 1;
+}
+
+.landfill-complete__breakdown span {
+  color: #4f5f56;
+  font-size: 0.72rem;
+  font-weight: 850;
+  text-align: left;
+}
+
+.landfill-complete__breakdown strong {
+  color: #2f7d57;
+  font-size: 0.82rem;
+  font-weight: 950;
+  white-space: nowrap;
+}
+
+.landfill-complete__breakdown .is-negative strong {
+  color: #d34d3f;
+}
+
+.landfill-complete__breakdown > .landfill-complete__breakdown-total {
+  min-height: 1.84rem;
+  margin-top: 0.16rem;
+  background: rgba(114, 81, 163, 0.1);
+}
+
+.landfill-complete__breakdown-total span {
+  color: #352d3d;
+  font-weight: 950;
+}
+
+.landfill-complete__breakdown-total strong {
+  color: #7251a3;
+  font-size: 1rem;
 }
 
 @keyframes landfill-block-settle {
@@ -686,16 +902,49 @@
 @keyframes landfill-score-pop {
   0% {
     opacity: 0;
-    transform: translate(-50%, -10%) scale(0.72);
+    transform: translate(-50%, -22%) scale(0.62) rotate(-2deg);
   }
 
-  18% {
+  16% {
     opacity: 1;
+    transform: translate(-50%, -58%) scale(1.16) rotate(1deg);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate(-50%, -76%) scale(1.02) rotate(0deg);
   }
 
   100% {
     opacity: 0;
-    transform: translate(-50%, -132%) scale(1.1);
+    transform: translate(-50%, -136%) scale(1.24) rotate(2deg);
+  }
+}
+
+@keyframes landfill-error-pop {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -38%) scale(0.56) rotate(-7deg);
+  }
+
+  14% {
+    opacity: 1;
+    transform: translate(-50%, -56%) scale(1.14) rotate(5deg);
+  }
+
+  34% {
+    opacity: 1;
+    transform: translate(-50%, -62%) scale(0.98) rotate(-3deg);
+  }
+
+  58% {
+    opacity: 1;
+    transform: translate(-50%, -78%) scale(1.04) rotate(1deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -126%) scale(1.12) rotate(0deg);
   }
 }
 
@@ -754,6 +1003,22 @@
     gap: var(--landfill-grid-gap);
   }
 
+  .landfill-game__recycle-bin {
+    --recycle-bin-size: clamp(2.72rem, 6.25dvh, 3.38rem);
+
+    top: 6%;
+    left: calc((var(--recycle-bin-size) + 0.42rem) * -1);
+  }
+
+  .landfill-game__recycle-bin strong {
+    font-size: 0.38rem;
+  }
+
+  .landfill-game__recycle-bin small {
+    min-width: 1.12rem;
+    font-size: 0.5rem;
+  }
+
   .landfill-game__well {
     bottom: max(5.96rem, calc(env(safe-area-inset-bottom) + 5.96rem));
     width: var(--landfill-board-width);
@@ -800,6 +1065,22 @@
     white-space: normal;
   }
 
+  .landfill-hud__score {
+    top: max(3.18rem, calc(env(safe-area-inset-top) + 3.18rem));
+    left: max(0.85rem, calc(env(safe-area-inset-left) + 0.85rem));
+    min-width: 5.08rem;
+    min-height: 2.12rem;
+    padding: 0.32rem 0.46rem 0.36rem;
+  }
+
+  .landfill-hud__score span {
+    font-size: 0.48rem;
+  }
+
+  .landfill-hud__score strong {
+    font-size: 0.98rem;
+  }
+
   .landfill-hud__timer {
     top: max(0.74rem, calc(env(safe-area-inset-top) + 0.74rem));
     min-width: 5.22rem;
@@ -824,12 +1105,35 @@
     width: min(100%, 19rem);
   }
 
-  .landfill-complete__panel strong {
+  .landfill-complete__panel > strong {
     font-size: 1.34rem;
   }
 
-  .landfill-complete__panel span {
+  .landfill-complete__panel > span {
     font-size: 1.72rem;
+  }
+
+  .landfill-complete__breakdown {
+    gap: 0.14rem;
+    margin-top: 0.68rem;
+    padding: 0.4rem;
+  }
+
+  .landfill-complete__breakdown > div {
+    min-height: 1.42rem;
+    padding: 0.14rem 0.26rem;
+  }
+
+  .landfill-complete__breakdown span {
+    font-size: 0.64rem;
+  }
+
+  .landfill-complete__breakdown strong {
+    font-size: 0.74rem;
+  }
+
+  .landfill-complete__breakdown-total strong {
+    font-size: 0.9rem;
   }
 }
 

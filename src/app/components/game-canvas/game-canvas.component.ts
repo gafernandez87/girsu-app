@@ -14,7 +14,13 @@ import {
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { DropZone, GameItem, GameStage, StageResult } from '../../core/app.models';
+import {
+  DropZone,
+  GameItem,
+  GameStage,
+  StageResult,
+  StageScoreBreakdownItem,
+} from '../../core/app.models';
 import { normalizeRawStageScore } from '../../core/scoring';
 import {
   HOME_BACKGROUND_ASSET,
@@ -261,12 +267,16 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     return Math.max(0, result.correct - result.mistakes) * 22;
   }
 
-  landfillDurabilityBonus(result: StageResult): number {
-    return Math.max(0, this.stage.durationSeconds - result.remainingSeconds) * 6;
+  landfillRawTotal(result: StageResult): number {
+    return Math.round(result.rawScore ?? result.score);
   }
 
-  landfillCompactionBonus(result: StageResult): number {
-    return Math.max(0, result.correct - result.mistakes) * 20;
+  landfillScoreBreakdown(result: StageResult): readonly StageScoreBreakdownItem[] {
+    return result.scoreBreakdown ?? [];
+  }
+
+  signedScore(score: number): string {
+    return score > 0 ? `+${score}` : `${score}`;
   }
 
   isUnsupportedStage(): boolean {

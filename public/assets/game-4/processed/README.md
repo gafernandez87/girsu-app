@@ -15,12 +15,13 @@ Es una copia del fondo original con nombre sin espacios para usarlo desde CSS.
 Ubicacion: `bags/`
 
 - `bolsa-azul.png`
+- `bolsa-negra.png`
 - `bolsa-naranja.png`
 - `bolsa-verde.png`
 - `bolsa-roja.png`
 - `bolsa-violeta.png`
 
-Cada bolsa esta centrada en un lienzo transparente cuadrado de 512 x 512 px y fue reencuadrada con una escala visual pareja para que todas ocupen un tamano similar dentro de las celdas del Tetris.
+Cada bolsa esta centrada en un lienzo transparente cuadrado de 512 x 512 px y fue reencuadrada con una escala visual pareja para que todas ocupen un tamano similar dentro de las celdas del Tetris. `bolsa-negra.png` es una variante derivada con fondo transparente para representar residuos no reciclables.
 
 ## Botones
 

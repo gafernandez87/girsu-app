@@ -258,6 +258,10 @@
     <div class="landfill-hud" aria-live="polite">
       <div class="landfill-hud__top">
         <strong class="landfill-hud__title">{{ stage.title }}</strong>
+        <div class="landfill-hud__score">
+          <span>Puntaje</span>
+          <strong>{{ score() }} pts</strong>
+        </div>
         <div class="landfill-hud__timer" [class.is-low]="remainingSeconds() <= 10">
           <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
           <span>Tiempo</span>
@@ -276,12 +280,22 @@
           <strong>{{
             result.remainingSeconds === 0 ? 'Fosa sostenida' : 'Relleno estabilizado'
           }}</strong>
-          <span>{{ result.score }} puntos</span>
-          <small>
-            Vida util +{{ landfillDurabilityBonus(result) }} | Compactacion +{{
-              landfillCompactionBonus(result)
-            }}
-          </small>
+          <span>{{ landfillRawTotal(result) }} puntos totales</span>
+          @if (landfillScoreBreakdown(result).length > 0) {
+            <div class="landfill-complete__breakdown" aria-label="Detalle de puntos">
+              @for (item of landfillScoreBreakdown(result); track item.id) {
+                <div [class.is-negative]="item.score < 0">
+                  <span>{{ item.label }}</span>
+                  <strong>{{ signedScore(item.score) }}</strong>
+                </div>
+              }
+              <div class="landfill-complete__breakdown-total">
+                <span>Total final</span>
+                <strong>{{ landfillRawTotal(result) }}</strong>
+              </div>
+            </div>
+          }
+          <small>Puntaje para ranking: {{ result.score }} / 1000</small>
         </div>
       </div>
     }

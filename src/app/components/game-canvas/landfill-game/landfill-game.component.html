@@ -33,6 +33,7 @@
           @for (cell of previewCells(); track cell.id) {
             <span
               class="landfill-game__preview-cell landfill-game__piece-cell"
+              [class.landfill-game__piece-cell--recyclable]="cell.wasteKind === 'recyclable'"
               [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
               [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
               [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
@@ -57,6 +58,34 @@
   </aside>
 
   <section class="landfill-game__well" [class.is-danger]="dangerActive()">
+    <button
+      type="button"
+      class="landfill-game__recycle-bin"
+      [class.is-active]="recycleBinCanReceive()"
+      [class.is-ready]="recycleBinReady()"
+      [attr.aria-disabled]="!recycleBinCanReceive()"
+      [attr.aria-label]="
+        recycleBinReady()
+          ? 'Reciclar pieza verde'
+          : recycleBinCanReceive()
+            ? 'Error: la pieza negra no va al tacho verde'
+            : 'Tacho verde de reciclaje'
+      "
+      [attr.title]="
+        recycleBinReady()
+          ? 'Reciclar pieza verde'
+          : recycleBinCanReceive()
+            ? 'La pieza negra no va al tacho verde'
+            : 'Tacho verde de reciclaje'
+      "
+      (pointerdown)="stopRecycleBinGesture($event)"
+      (click)="recycleFromBin($event)"
+    >
+      <img [src]="recycleBinImagePath()" alt="" draggable="false" />
+      <strong>Reciclaje</strong>
+      <small>{{ recycledPieces() }}</small>
+    </button>
+
     <span class="landfill-game__liner landfill-game__liner--left" aria-hidden="true"></span>
     <span class="landfill-game__liner landfill-game__liner--right" aria-hidden="true"></span>
     <span class="landfill-game__liner landfill-game__liner--bottom" aria-hidden="true"></span>
@@ -73,6 +102,7 @@
       @for (cell of ghostCells(); track cell.id) {
         <span
           class="landfill-game__block landfill-game__piece-cell landfill-game__block--ghost"
+          [class.landfill-game__piece-cell--recyclable]="cell.wasteKind === 'recyclable'"
           [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
           [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
           [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
@@ -90,6 +120,7 @@
       @for (cell of boardCells(); track cell.id) {
         <span
           class="landfill-game__block landfill-game__piece-cell landfill-game__block--placed"
+          [class.landfill-game__piece-cell--recyclable]="cell.wasteKind === 'recyclable'"
           [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
           [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
           [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
@@ -107,6 +138,7 @@
       @for (cell of activeCells(); track cell.id) {
         <span
           class="landfill-game__block landfill-game__piece-cell landfill-game__block--active"
+          [class.landfill-game__piece-cell--recyclable]="cell.wasteKind === 'recyclable'"
           [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
           [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
           [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
@@ -184,6 +216,7 @@
     <span
       class="landfill-game__effect"
       [class.landfill-game__effect--warning]="effect.type === 'warning'"
+      [class.landfill-game__effect--recycle]="effect.type === 'recycle'"
       [style.left.%]="effect.x"
       [style.top.%]="effect.y"
       aria-hidden="true"

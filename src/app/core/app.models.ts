@@ -49,10 +49,18 @@ export interface GameStage {
 export interface StageResult {
   readonly stageId: string;
   readonly score: number;
+  readonly rawScore?: number;
+  readonly scoreBreakdown?: readonly StageScoreBreakdownItem[];
   readonly correct: number;
   readonly mistakes: number;
   readonly remainingSeconds: number;
   readonly completedAt: string;
+}
+
+export interface StageScoreBreakdownItem {
+  readonly id: string;
+  readonly label: string;
+  readonly score: number;
 }
 
 export interface LeaderboardEntry {
