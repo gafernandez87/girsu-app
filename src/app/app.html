@@ -12,9 +12,19 @@
       </a>
 
       <nav class="top-nav" aria-label="Principal">
-        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-          Inicio
-        </a>
+        @if (auth.isAuthenticated()) {
+          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+            Inicio
+          </a>
+          <a routerLink="/ranking" routerLinkActive="active">Ranking</a>
+          @if (auth.isAdmin()) {
+            <a routerLink="/admin" routerLinkActive="active">Admin</a>
+          }
+          <button type="button" (click)="signOut()">Salir</button>
+        } @else {
+          <a routerLink="/login" routerLinkActive="active">Ingresar</a>
+          <a routerLink="/registro" routerLinkActive="active">Registro</a>
+        }
       </nav>
     </header>
   }

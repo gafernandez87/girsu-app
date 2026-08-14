@@ -9,37 +9,39 @@
       </p>
     </div>
 
-    <aside class="journey-panel" aria-label="Perfil y progreso">
-      <div class="profile-line">
-        <div>
-          <span class="label">Participante</span>
-          <strong>{{ user.name }}</strong>
-          <small>{{ user.course }} - {{ user.school }}</small>
+    @if (user(); as user) {
+      <aside class="journey-panel" aria-label="Perfil y progreso">
+        <div class="profile-line">
+          <div>
+            <span class="label">Participante</span>
+            <strong>{{ user.name }}</strong>
+            <small>{{ user.course }} - {{ user.school }}</small>
+          </div>
+          <div class="score-badge">
+            <small><span class="score-badge__icon" aria-hidden="true"></span>Puntaje</small>
+            <span>{{ totalScore() }} pts</span>
+          </div>
         </div>
-        <div class="score-badge">
-          <small><span class="score-badge__icon" aria-hidden="true"></span>Puntaje</small>
-          <span>{{ totalScore() }} pts</span>
-        </div>
-      </div>
 
-      <div class="hero-progress">
-        <div>
-          <span class="label">Recorrido</span>
-          <strong>{{ progressPercent() }}%</strong>
+        <div class="hero-progress">
+          <div>
+            <span class="label">Recorrido</span>
+            <strong>{{ progressPercent() }}%</strong>
+          </div>
+          <div class="progress-track" aria-hidden="true">
+            <span [style.width.%]="progressPercent()"></span>
+          </div>
         </div>
-        <div class="progress-track" aria-hidden="true">
-          <span [style.width.%]="progressPercent()"></span>
-        </div>
-      </div>
 
-      @if (nextStage(); as stage) {
-        <a [routerLink]="['/juego', stage.id]" class="next-stage">
-          <span>Proxima parada</span>
-          <strong>{{ stage.shortTitle }}</strong>
-          <small>{{ stage.subtitle }}</small>
-        </a>
-      }
-    </aside>
+        @if (nextStage(); as stage) {
+          <a [routerLink]="['/juego', stage.id]" class="next-stage">
+            <span>Proxima parada</span>
+            <strong>{{ stage.shortTitle }}</strong>
+            <small>{{ stage.subtitle }}</small>
+          </a>
+        }
+      </aside>
+    }
   </section>
 
   <!-- <section class="summary-strip" aria-label="Resumen del recorrido">
@@ -122,7 +124,9 @@
           <span class="position">{{ entry.position }}</span>
           <div class="ranking-person">
             <strong>{{ entry.name }}</strong>
-            <small><span class="school-icon" aria-hidden="true"></span>{{ entry.school }}</small>
+            <small class="ranking-meta">
+              {{ entry.school || 'Sin escuela' }}{{ entry.course ? ' / ' + entry.course : '' }}
+            </small>
           </div>
           <strong class="ranking-score">{{ entry.score }}</strong>
         </article>

@@ -1,13 +1,17 @@
-export type UserRole = 'student' | 'teacher';
+export type UserRole = 'player' | 'admin';
 
 export type StageKind = 'sorting' | 'conveyor' | 'compost' | 'landfill';
 
 export interface UserProfile {
   readonly id: string;
+  readonly email: string;
   readonly name: string;
   readonly role: UserRole;
   readonly school: string;
   readonly course: string;
+  readonly isActive: boolean;
+  readonly createdAt?: string;
+  readonly updatedAt?: string;
 }
 
 export interface DropZone {
@@ -65,8 +69,12 @@ export interface StageScoreBreakdownItem {
 
 export interface LeaderboardEntry {
   readonly position: number;
+  readonly userId: string;
   readonly name: string;
   readonly school: string;
+  readonly course?: string;
   readonly score: number;
+  readonly completedStages?: number;
+  readonly lastPlayedAt?: string | null;
   readonly isCurrentUser?: boolean;
 }

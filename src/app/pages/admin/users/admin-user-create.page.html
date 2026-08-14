@@ -1,0 +1,96 @@
+<section class="admin-entity">
+  <section class="admin-hero" aria-labelledby="create-user-title">
+    <div>
+      <span class="label">Usuarios</span>
+      <h1 id="create-user-title">Crear usuario</h1>
+    </div>
+
+    <a class="admin-secondary-action" routerLink="/admin/users">Volver al listado</a>
+  </section>
+
+  @if (error(); as message) {
+    <p class="admin-message">{{ message }}</p>
+  }
+
+  <form class="entity-form" (ngSubmit)="submit()" #userForm="ngForm">
+    <div class="form-grid">
+      <label class="field">
+        Nombre
+        <input type="text" name="name" required [(ngModel)]="name" />
+      </label>
+
+      <label class="field">
+        Email
+        <input type="email" name="email" autocomplete="email" required [(ngModel)]="email" />
+      </label>
+
+      <label class="field">
+        Escuela
+        <input type="text" name="school" required [(ngModel)]="school" />
+      </label>
+
+      <label class="field">
+        Curso
+        <input type="text" name="course" required [(ngModel)]="course" />
+      </label>
+
+      <label class="field">
+        Rol
+        <select name="role" required [(ngModel)]="role">
+          <option value="player">Jugador</option>
+          <option value="admin">Admin</option>
+        </select>
+      </label>
+
+      <label class="field">
+        Password
+        <span class="password-field">
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            name="password"
+            autocomplete="new-password"
+            required
+            minlength="6"
+            [(ngModel)]="password"
+          />
+          <button
+            type="button"
+            class="password-field__toggle"
+            [attr.aria-label]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
+            [attr.title]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
+            (click)="togglePasswordVisibility()"
+          >
+            @if (showPassword()) {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m2 2 20 20" />
+                <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                <path d="M6.7 6.8C4.8 7.9 3.2 9.6 2 12c2.4 4.8 5.7 7 10 7 1.7 0 3.2-.3 4.5-1" />
+                <path d="M19.5 15.6c1-.9 1.8-2.1 2.5-3.6-2.4-4.8-5.7-7-10-7-.8 0-1.6.1-2.3.3" />
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            }
+          </button>
+        </span>
+      </label>
+
+      <label class="checkbox-field field--full">
+        <input type="checkbox" name="isActive" [(ngModel)]="isActive" />
+        Usuario activo
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <span></span>
+      <div class="form-actions__primary">
+        <a class="admin-secondary-action" routerLink="/admin/users">Cancelar</a>
+        <button class="admin-primary-action" type="submit" [disabled]="userForm.invalid || saving()">
+          {{ saving() ? 'Creando...' : 'Crear usuario' }}
+        </button>
+      </div>
+    </div>
+  </form>
+</section>

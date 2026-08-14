@@ -1,0 +1,36 @@
+<main class="ranking-page">
+  <section class="ranking-hero" aria-labelledby="ranking-title">
+    <span class="label">Ranking</span>
+    <h1 id="ranking-title">Ranking provincial</h1>
+    <p>El tablero ordena a cada participante por su mejor puntaje en cada juego.</p>
+  </section>
+
+  <section class="ranking-board">
+    @if (progress.loading()) {
+      <p class="empty-state">Cargando ranking...</p>
+    } @else if (progress.leaderboard().length) {
+      <div class="ranking-list">
+        @for (entry of progress.leaderboard(); track entry.userId) {
+          <article class="ranking-row" [class.current]="entry.isCurrentUser">
+            <span class="position">{{ entry.position }}</span>
+            <div class="ranking-person">
+              <strong>{{ entry.name }}</strong>
+              <small class="ranking-meta">
+                {{ entry.school || 'Sin escuela' }}{{ entry.course ? ' / ' + entry.course : '' }}
+              </small>
+            </div>
+            <div class="ranking-detail">
+              <strong class="ranking-score">{{ entry.score }}</strong>
+              <small>{{ entry.completedStages || 0 }} juegos</small>
+            </div>
+          </article>
+        }
+      </div>
+    } @else {
+      <div class="empty-state">
+        <p>Todavia no hay puntajes guardados.</p>
+        <a routerLink="/">Volver al recorrido</a>
+      </div>
+    }
+  </section>
+</main>

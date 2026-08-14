@@ -1,7 +1,8 @@
 import { Component, computed, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { CURRENT_USER, GAME_STAGES } from '../../core/app-content';
+import { GAME_STAGES } from '../../core/app-content';
+import { AuthService } from '../../core/auth.service';
 import { GameProgressService } from '../../core/game-progress.service';
 
 const STAGE_IMAGES: Record<string, string> = {
@@ -18,9 +19,10 @@ const STAGE_IMAGES: Record<string, string> = {
   styleUrl: './home.page.scss',
 })
 export class HomePage {
+  private readonly auth = inject(AuthService);
   private readonly progress = inject(GameProgressService);
 
-  readonly user = CURRENT_USER;
+  readonly user = this.auth.profile;
   readonly stages = GAME_STAGES;
   readonly totalScore = this.progress.totalScore;
   readonly completedStages = this.progress.completedStages;

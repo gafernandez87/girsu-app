@@ -35,8 +35,7 @@ export class GamePage implements OnInit, OnDestroy {
   }
 
   saveResult(result: StageResult): void {
-    this.progress.recordResult(result);
+    void this.progress.recordResult(result);
     this.lastResult.set(result);
   }
 }
-

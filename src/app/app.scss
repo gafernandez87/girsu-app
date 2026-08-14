@@ -67,18 +67,30 @@
   font-size: 0.78rem;
 }
 
-.top-nav a {
+.top-nav {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+  justify-content: end;
+}
+
+.top-nav a,
+.top-nav button {
   display: inline-flex;
   align-items: center;
   min-height: 2.25rem;
   padding: 0 0.85rem;
+  border: 0;
   border-radius: 0.5rem;
+  background: transparent;
   color: #4f443a;
   font-weight: 700;
   text-decoration: none;
 }
 
-.top-nav a.active {
+.top-nav a.active,
+.top-nav button:hover {
   background: rgba(47, 125, 87, 0.13);
   color: #245c40;
 }

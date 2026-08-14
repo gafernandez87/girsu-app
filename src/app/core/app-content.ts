@@ -1,4 +1,4 @@
-import { GameItem, GameStage, LeaderboardEntry, UserProfile } from './app.models';
+import { GameItem, GameStage } from './app.models';
 import { GAME_ONE_ITEMS } from './game-1-products';
 
 type IndustrialItemCategory = 'plastico' | 'papel-carton' | 'vidrio' | 'metal' | 'descarte';
@@ -66,14 +66,6 @@ const INDUSTRIAL_ITEMS: readonly GameItem[] = GAME_ONE_ITEMS.filter(
     detail: INDUSTRIAL_ITEM_DETAILS[category],
   };
 });
-
-export const CURRENT_USER: UserProfile = {
-  id: 'demo-user',
-  name: 'Sofia',
-  role: 'student',
-  school: 'Escuela Ambiental Jujuy',
-  course: '6to grado',
-};
 
 export const GAME_STAGES: readonly GameStage[] = [
   {
@@ -367,34 +359,6 @@ export const GAME_STAGES: readonly GameStage[] = [
         points: 140,
       },
     ],
-  },
-];
-
-export const MOCK_LEADERBOARD: readonly LeaderboardEntry[] = [
-  {
-    position: 1,
-    name: 'Camila',
-    school: 'Esc. N 12 San Salvador',
-    score: 3920,
-  },
-  {
-    position: 2,
-    name: 'Mateo',
-    school: 'Colegio Secundario Purmamarca',
-    score: 3640,
-  },
-  {
-    position: 3,
-    name: CURRENT_USER.name,
-    school: CURRENT_USER.school,
-    score: 0,
-    isCurrentUser: true,
-  },
-  {
-    position: 4,
-    name: 'Lucia',
-    school: 'Esc. Rural Tilcara',
-    score: 2780,
   },
 ];
 

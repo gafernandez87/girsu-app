@@ -1,0 +1,84 @@
+<section class="admin-entity">
+  <section class="admin-hero" aria-labelledby="edit-score-title">
+    <div>
+      <span class="label">Puntos</span>
+      <h1 id="edit-score-title">Editar puntaje</h1>
+    </div>
+
+    <a class="admin-secondary-action" routerLink="/admin/puntos">Volver al listado</a>
+  </section>
+
+  @if (error(); as message) {
+    <p class="admin-message">{{ message }}</p>
+  }
+
+  @if (success(); as message) {
+    <p class="admin-message admin-message--success">{{ message }}</p>
+  }
+
+  @if (loading()) {
+    <p class="admin-message admin-message--success">Cargando puntaje...</p>
+  } @else {
+    @if (scoreRecord(); as record) {
+      <form class="entity-form" (ngSubmit)="submit()" #scoreForm="ngForm">
+        <div class="form-grid">
+          <div class="readonly-panel field--full">
+            <div>
+              <span>Usuario</span>
+              <strong>{{ record.userName }}</strong>
+              <small>{{ record.userEmail || 'Sin email' }}</small>
+            </div>
+            <div>
+              <span>Juego</span>
+              <strong>{{ record.stageTitle }}</strong>
+              <small>{{ record.stageId }}</small>
+            </div>
+          </div>
+
+          <label class="field">
+            Puntos
+            <input type="number" name="score" required min="0" max="1000" [(ngModel)]="score" />
+          </label>
+
+          <label class="field">
+            Fecha
+            <input type="datetime-local" name="completedAt" required [(ngModel)]="completedAt" />
+          </label>
+
+          <label class="field">
+            Correctas
+            <input type="number" name="correct" required min="0" [(ngModel)]="correct" />
+          </label>
+
+          <label class="field">
+            Errores
+            <input type="number" name="mistakes" required min="0" [(ngModel)]="mistakes" />
+          </label>
+
+          <label class="field">
+            Segundos restantes
+            <input type="number" name="remainingSeconds" required min="0" [(ngModel)]="remainingSeconds" />
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button
+            class="admin-danger-action"
+            type="button"
+            (click)="deleteScore()"
+            [disabled]="deleting() || saving()"
+          >
+            {{ deleting() ? 'Eliminando...' : 'Eliminar' }}
+          </button>
+
+          <div class="form-actions__primary">
+            <a class="admin-secondary-action" routerLink="/admin/puntos">Cancelar</a>
+            <button class="admin-primary-action" type="submit" [disabled]="scoreForm.invalid || saving()">
+              {{ saving() ? 'Guardando...' : 'Guardar cambios' }}
+            </button>
+          </div>
+        </div>
+      </form>
+    }
+  }
+</section>

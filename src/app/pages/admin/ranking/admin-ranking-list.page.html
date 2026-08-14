@@ -1,0 +1,72 @@
+<section class="admin-entity">
+  <section class="admin-hero" aria-labelledby="ranking-admin-title">
+    <div>
+      <span class="label">Ranking</span>
+      <h1 id="ranking-admin-title">Ranking cargado</h1>
+    </div>
+
+    <button class="admin-primary-action" type="button" (click)="reload()" [disabled]="loading()">
+      {{ loading() ? 'Actualizando...' : 'Actualizar' }}
+    </button>
+  </section>
+
+  @if (error(); as message) {
+    <p class="admin-message">{{ message }}</p>
+  }
+
+  <section class="admin-section">
+    <div class="admin-section__heading">
+      <h2>Participantes en ranking</h2>
+      <p>Vista general de puntajes y juegos completados.</p>
+    </div>
+
+    <div class="admin-table-scroll">
+      <table class="admin-table admin-table--ranking">
+        <thead>
+          <tr>
+            <th scope="col">Posicion</th>
+            <th scope="col">Participante</th>
+            <th scope="col">Escuela</th>
+            <th scope="col">Curso</th>
+            <th scope="col">Puntos</th>
+            <th scope="col">Juegos</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (entry of rows(); track entry.userId) {
+            <tr [class.is-current]="entry.isCurrentUser">
+              <td>
+                <span class="rank-pill">{{ entry.position }}</span>
+              </td>
+              <td>
+                <strong class="row-title">{{ entry.name }}</strong>
+              </td>
+              <td>{{ entry.school || 'Sin escuela' }}</td>
+              <td>{{ entry.course || '-' }}</td>
+              <td>
+                <strong class="score-value">{{ entry.score }}</strong>
+              </td>
+              <td>{{ entry.completedStages || 0 }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-cell">
+                {{ loading() ? 'Cargando ranking...' : 'Todavia no hay ranking.' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="pagination" aria-label="Paginacion de ranking">
+      <p class="pagination__detail">Total de registros: {{ total() }}</p>
+      <app-admin-pagination
+        [page]="page()"
+        [totalPages]="totalPages()"
+        [loading]="loading()"
+        (pageChange)="goToPage($event)"
+      />
+    </footer>
+  </section>
+</section>

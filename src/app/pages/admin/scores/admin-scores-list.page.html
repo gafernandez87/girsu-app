@@ -1,0 +1,84 @@
+<section class="admin-entity">
+  <section class="admin-hero" aria-labelledby="scores-title">
+    <div>
+      <span class="label">Puntos</span>
+      <h1 id="scores-title">Administrar puntos</h1>
+    </div>
+
+    <a class="admin-primary-action" routerLink="/admin/puntos/new">Crear puntaje</a>
+  </section>
+
+  @if (error(); as message) {
+    <p class="admin-message">{{ message }}</p>
+  }
+
+  <section class="admin-section">
+    <div class="admin-section__heading">
+      <h2>Puntajes registrados</h2>
+      <p>Vista de puntos guardados por usuario y juego.</p>
+    </div>
+
+    <div class="admin-table-scroll">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">Usuario</th>
+            <th scope="col">Juego</th>
+            <th scope="col">Escuela</th>
+            <th scope="col">Puntos</th>
+            <th scope="col">Detalle</th>
+            <th scope="col">Fecha</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (score of result().rows; track score.id) {
+            <tr>
+              <td>
+                <strong class="row-title">{{ score.userName }}</strong>
+                <small>{{ score.userEmail || 'Sin email' }}</small>
+              </td>
+              <td>
+                <strong class="row-title">{{ score.stageTitle }}</strong>
+                <small>{{ score.stageId }}</small>
+              </td>
+              <td>
+                {{ score.school || '-' }}
+                <small>{{ score.course || '-' }}</small>
+              </td>
+              <td>
+                <strong class="score-value">{{ score.score }}</strong>
+              </td>
+              <td>
+                {{ score.correct }} correctas
+                <small>{{ score.mistakes }} errores</small>
+              </td>
+              <td>{{ score.completedAt | date: 'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <a class="row-action" [routerLink]="['/admin/puntos', score.id, 'edit']">
+                  Editar
+                </a>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="7" class="empty-cell">
+                {{ loading() ? 'Cargando puntajes...' : 'Todavia no hay puntajes registrados.' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="pagination" aria-label="Paginacion de puntajes">
+      <p class="pagination__detail">Total de registros: {{ result().total }}</p>
+      <app-admin-pagination
+        [page]="result().page"
+        [totalPages]="totalPages()"
+        [loading]="loading()"
+        (pageChange)="loadPage($event)"
+      />
+    </footer>
+  </section>
+</section>

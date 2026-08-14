@@ -1,0 +1,67 @@
+<main class="auth-page">
+  <section class="auth-panel" aria-labelledby="login-title">
+    <div class="auth-copy">
+      <span class="label">GIRSU Jujuy</span>
+      <h1 id="login-title">Ingresar</h1>
+      <p>Guarda tus puntos, continua el recorrido y mira tu posicion en el ranking.</p>
+    </div>
+
+    <form class="auth-form" (ngSubmit)="submit()" #loginForm="ngForm">
+      <label>
+        Email
+        <input
+          type="email"
+          name="email"
+          autocomplete="email"
+          required
+          [(ngModel)]="email"
+        />
+      </label>
+
+      <label>
+        Password
+        <span class="password-field">
+          <input
+            [type]="showPassword() ? 'text' : 'password'"
+            name="password"
+            autocomplete="current-password"
+            required
+            minlength="6"
+            [(ngModel)]="password"
+          />
+          <button
+            type="button"
+            class="password-field__toggle"
+            [attr.aria-label]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
+            [attr.title]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
+            (click)="togglePasswordVisibility()"
+          >
+            @if (showPassword()) {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="m2 2 20 20" />
+                <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                <path d="M6.7 6.8C4.8 7.9 3.2 9.6 2 12c2.4 4.8 5.7 7 10 7 1.7 0 3.2-.3 4.5-1" />
+                <path d="M19.5 15.6c1-.9 1.8-2.1 2.5-3.6-2.4-4.8-5.7-7-10-7-.8 0-1.6.1-2.3.3" />
+              </svg>
+            } @else {
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                <circle cx="12" cy="12" r="3" />
+              </svg>
+            }
+          </button>
+        </span>
+      </label>
+
+      @if (error(); as message) {
+        <p class="form-message form-message--error">{{ message }}</p>
+      }
+
+      <button type="submit" [disabled]="loginForm.invalid || loading()">
+        {{ loading() ? 'Ingresando...' : 'Ingresar' }}
+      </button>
+    </form>
+
+    <p class="auth-link">No tenes cuenta? <a routerLink="/registro">Registrate</a></p>
+  </section>
+</main>

@@ -52,8 +52,7 @@ svg {
 }
 
 .score-badge__icon,
-.stage-meta__icon,
-.school-icon {
+.stage-meta__icon {
   position: relative;
   display: inline-block;
   flex: 0 0 auto;
@@ -113,55 +112,22 @@ svg {
 
 .ranking-person strong,
 .ranking-person small {
-  display: flex;
+  display: block;
   min-width: 0;
 }
 
-.ranking-person strong {
+.ranking-person strong,
+.ranking-person small {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .ranking-person small {
-  align-items: center;
-  gap: 0.38rem;
-  margin-top: 0.18rem;
-}
-
-.school-icon {
-  width: 1.22rem;
-  height: 1rem;
-  border: 2px solid #7d684e;
-  border-top: 0;
-  border-radius: 0 0 0.18rem 0.18rem;
-}
-
-.school-icon::before,
-.school-icon::after {
-  position: absolute;
-  content: '';
-}
-
-.school-icon::before {
-  right: -0.13rem;
-  bottom: 0.8rem;
-  left: -0.13rem;
-  height: 0.58rem;
-  border-top: 2px solid #7d684e;
-  border-left: 2px solid #7d684e;
-  transform: skewY(-17deg);
-  transform-origin: left bottom;
-}
-
-.school-icon::after {
-  bottom: 0;
-  left: 50%;
-  width: 0.2rem;
-  height: 0.54rem;
-  border-right: 2px solid #7d684e;
-  border-left: 2px solid #7d684e;
-  transform: translateX(-50%);
+  margin-top: 0.2rem;
+  color: #6d604f;
+  font-weight: 800;
+  line-height: 1.28;
 }
 
 .ranking-score {
@@ -210,4 +176,15 @@ svg {
   background: #2f7d57;
   color: #fffaf0;
   font-weight: 950;
+}
+
+@media (max-width: 520px) {
+  .ranking-row {
+    grid-template-columns: auto minmax(0, 1fr);
+  }
+
+  .ranking-score {
+    grid-column: 2;
+    justify-self: start;
+  }
 }

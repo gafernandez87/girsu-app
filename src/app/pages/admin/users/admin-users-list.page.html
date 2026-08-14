@@ -1,0 +1,75 @@
+<section class="admin-entity">
+  <section class="admin-hero" aria-labelledby="users-title">
+    <div>
+      <span class="label">Usuarios</span>
+      <h1 id="users-title">Administrar usuarios</h1>
+    </div>
+
+    <a class="admin-primary-action" routerLink="/admin/users/new">Crear usuario</a>
+  </section>
+
+  @if (error(); as message) {
+    <p class="admin-message">{{ message }}</p>
+  }
+
+  <section class="admin-section">
+    <div class="admin-section__heading">
+      <h2>Usuarios registrados</h2>
+      <p>Vista general de perfiles, permisos y estado de acceso.</p>
+    </div>
+
+    <div class="admin-table-scroll">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">Usuario</th>
+            <th scope="col">Escuela</th>
+            <th scope="col">Curso</th>
+            <th scope="col">Rol</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (user of result().rows; track user.id) {
+            <tr [class.is-inactive]="!user.isActive">
+              <td>
+                <strong class="row-title">{{ user.name }}</strong>
+                <small>{{ user.email }}</small>
+              </td>
+              <td>{{ user.school || '-' }}</td>
+              <td>{{ user.course || '-' }}</td>
+              <td>{{ user.role === 'admin' ? 'Admin' : 'Jugador' }}</td>
+              <td>
+                <span class="status-pill" [class.status-pill--muted]="!user.isActive">
+                  {{ user.isActive ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+              <td>
+                <a class="row-action" [routerLink]="['/admin/users', user.id, 'edit']">
+                  Editar
+                </a>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-cell">
+                {{ loading() ? 'Cargando usuarios...' : 'Todavia no hay usuarios registrados.' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="pagination" aria-label="Paginacion de usuarios">
+      <p class="pagination__detail">Total de registros: {{ result().total }}</p>
+      <app-admin-pagination
+        [page]="result().page"
+        [totalPages]="totalPages()"
+        [loading]="loading()"
+        (pageChange)="loadPage($event)"
+      />
+    </footer>
+  </section>
+</section>
