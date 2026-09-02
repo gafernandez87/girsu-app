@@ -1,0 +1,108 @@
+<section class="admin-entity">
+  <section class="admin-hero" aria-labelledby="create-school-title">
+    <div>
+      <span class="label">Escuelas</span>
+      <h1 id="create-school-title">Crear escuela</h1>
+    </div>
+
+    <a class="admin-secondary-action" routerLink="/admin/escuelas">Volver al listado</a>
+  </section>
+
+  @if (error(); as message) {
+    <p class="admin-message">{{ message }}</p>
+  }
+
+  <form class="entity-form" (ngSubmit)="submit()" #schoolForm="ngForm">
+    <div class="form-grid">
+      <label class="field">
+        CUEANEXO
+        <input type="text" name="sourceCode" required [(ngModel)]="sourceCode" />
+      </label>
+
+      <label class="field">
+        Nombre
+        <input type="text" name="name" required [(ngModel)]="name" />
+      </label>
+
+      <label class="field">
+        Localidad
+        <input type="text" name="locality" required [(ngModel)]="locality" />
+      </label>
+
+      <label class="field">
+        Departamento
+        <input type="text" name="department" required [(ngModel)]="department" />
+      </label>
+
+      <label class="field">
+        Calle
+        <input type="text" name="street" [(ngModel)]="street" />
+      </label>
+
+      <label class="field">
+        Numero
+        <input type="text" name="streetNumber" [(ngModel)]="streetNumber" />
+      </label>
+
+      <label class="field">
+        Barrio
+        <input type="text" name="neighborhood" [(ngModel)]="neighborhood" />
+      </label>
+
+      <label class="field">
+        Telefono
+        <input type="text" name="phone" [(ngModel)]="phone" />
+      </label>
+
+      <label class="field">
+        Region
+        <input type="text" name="region" [(ngModel)]="region" />
+      </label>
+
+      <label class="field">
+        Sector
+        <input type="text" name="sector" [(ngModel)]="sector" />
+      </label>
+
+      <label class="field">
+        Ambito
+        <input type="text" name="scope" [(ngModel)]="scope" />
+      </label>
+
+      <label class="field">
+        Categoria
+        <input type="text" name="category" [(ngModel)]="category" />
+      </label>
+
+      <label class="field">
+        Permanencia
+        <input type="text" name="permanence" [(ngModel)]="permanence" />
+      </label>
+
+      <label class="field">
+        Periodo
+        <input type="text" name="operatingPeriod" [(ngModel)]="operatingPeriod" />
+      </label>
+
+      <label class="field field--full">
+        Email
+        <input type="email" name="email" [(ngModel)]="email" />
+      </label>
+
+      <label class="checkbox-field field--full">
+        <input type="checkbox" name="isActive" [(ngModel)]="isActive" />
+        Escuela activa
+      </label>
+    </div>
+
+    <div class="form-actions">
+      <span></span>
+      <div class="form-actions__primary">
+        <a class="admin-secondary-action" routerLink="/admin/escuelas">Cancelar</a>
+        <button class="admin-primary-action" type="submit" [disabled]="schoolForm.invalid || saving()">
+          {{ saving() ? 'Creando...' : 'Crear escuela' }}
+        </button>
+      </div>
+    </div>
+  </form>
+</section>

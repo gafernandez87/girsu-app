@@ -2,7 +2,24 @@
   <section class="ranking-hero" aria-labelledby="ranking-title">
     <span class="label">Ranking</span>
     <h1 id="ranking-title">Ranking provincial</h1>
-    <p>El tablero ordena a cada participante por su mejor puntaje en cada juego.</p>
+    <p>El tablero ordena participantes y escuelas con datos normalizados del padron provincial.</p>
+
+    <div class="ranking-stats" aria-label="Resumen del ranking">
+      <article>
+        <span>Participantes</span>
+        <strong>{{ progress.leaderboard().length }}</strong>
+      </article>
+      <article>
+        <span>Escuelas en ranking</span>
+        <strong>{{ representedSchoolsCount() }}</strong>
+      </article>
+      @if (officialSchoolsCount()) {
+        <article>
+          <span>Escuelas cargadas</span>
+          <strong>{{ officialSchoolsCount() }}</strong>
+        </article>
+      }
+    </div>
   </section>
 
   <section class="ranking-board">

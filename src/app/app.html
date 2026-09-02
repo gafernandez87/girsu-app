@@ -11,19 +11,175 @@
         </span>
       </a>
 
-      <nav class="top-nav" aria-label="Principal">
+      <button
+        type="button"
+        class="menu-toggle"
+        aria-controls="primary-navigation"
+        [attr.aria-expanded]="mobileMenuOpen()"
+        [attr.aria-label]="mobileMenuOpen() ? 'Cerrar menu' : 'Abrir menu'"
+        (click)="toggleMobileMenu()"
+      >
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+        <span aria-hidden="true"></span>
+      </button>
+
+      <nav
+        id="primary-navigation"
+        class="top-nav"
+        [class.is-open]="mobileMenuOpen()"
+        aria-label="Principal"
+      >
         @if (auth.isAuthenticated()) {
-          <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
-            Inicio
+          <a
+            routerLink="/"
+            routerLinkActive="active"
+            [routerLinkActiveOptions]="{ exact: true }"
+            (click)="closeMobileMenu()"
+          >
+            <span class="top-nav__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="m3 11 9-8 9 8" />
+                <path d="M5 10v10h14V10" />
+                <path d="M10 20v-6h4v6" />
+              </svg>
+            </span>
+            <span>Inicio</span>
           </a>
-          <a routerLink="/ranking" routerLinkActive="active">Ranking</a>
+          <a routerLink="/ranking" routerLinkActive="active" (click)="closeMobileMenu()">
+            <span class="top-nav__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M8 21h8" />
+                <path d="M12 17v4" />
+                <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" />
+                <path d="M5 5H3v3a4 4 0 0 0 4 4" />
+                <path d="M19 5h2v3a4 4 0 0 1-4 4" />
+              </svg>
+            </span>
+            <span>Ranking</span>
+          </a>
           @if (auth.isAdmin()) {
-            <a routerLink="/admin" routerLinkActive="active">Admin</a>
+            <a routerLink="/admin" routerLinkActive="active" (click)="closeMobileMenu()">
+              <span class="top-nav__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 21h18" />
+                  <path d="M4 10h16" />
+                  <path d="M6 10V5h12v5" />
+                  <path d="M7 14h3" />
+                  <path d="M14 14h3" />
+                  <path d="M7 18h3" />
+                  <path d="M14 18h3" />
+                </svg>
+              </span>
+              <span>Backoffice</span>
+            </a>
           }
-          <button type="button" (click)="signOut()">Salir</button>
+
+          @if (auth.isAdmin() && router.url.startsWith('/admin')) {
+            <span class="top-nav__mobile-section-label">Secciones del backoffice</span>
+            <a
+              class="top-nav__mobile-subitem"
+              routerLink="/admin/users"
+              routerLinkActive="active"
+              (click)="closeMobileMenu()"
+            >
+              <span class="top-nav__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                </svg>
+              </span>
+              <span>Usuarios</span>
+            </a>
+            <a
+              class="top-nav__mobile-subitem"
+              routerLink="/admin/ranking"
+              routerLinkActive="active"
+              (click)="closeMobileMenu()"
+            >
+              <span class="top-nav__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M8 21h8" />
+                  <path d="M12 17v4" />
+                  <path d="M7 4h10v5a5 5 0 0 1-10 0V4Z" />
+                  <path d="M5 5H3v3a4 4 0 0 0 4 4" />
+                  <path d="M19 5h2v3a4 4 0 0 1-4 4" />
+                </svg>
+              </span>
+              <span>Ranking</span>
+            </a>
+            <a
+              class="top-nav__mobile-subitem"
+              routerLink="/admin/puntos"
+              routerLinkActive="active"
+              (click)="closeMobileMenu()"
+            >
+              <span class="top-nav__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M21 13a9 9 0 0 0-18 0" />
+                  <path d="M5 19h14" />
+                  <path d="m13.8 10.2-3.2 3.2" />
+                  <path d="M12 16a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+                  <path d="M7.5 13h.01" />
+                  <path d="M16.5 13h.01" />
+                </svg>
+              </span>
+              <span>Puntos</span>
+            </a>
+            <a
+              class="top-nav__mobile-subitem"
+              routerLink="/admin/escuelas"
+              routerLinkActive="active"
+              (click)="closeMobileMenu()"
+            >
+              <span class="top-nav__icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24">
+                  <path d="M3 21h18" />
+                  <path d="M5 21V7l8-4v18" />
+                  <path d="M19 21V11l-6-4" />
+                  <path d="M9 10h1" />
+                  <path d="M9 14h1" />
+                  <path d="M9 18h1" />
+                </svg>
+              </span>
+              <span>Escuelas</span>
+            </a>
+          }
+
+          <button type="button" (click)="signOut()">
+            <span class="top-nav__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M10 17l5-5-5-5" />
+                <path d="M15 12H3" />
+                <path d="M21 19V5" />
+              </svg>
+            </span>
+            <span>Salir</span>
+          </button>
         } @else {
-          <a routerLink="/login" routerLinkActive="active">Ingresar</a>
-          <a routerLink="/registro" routerLinkActive="active">Registro</a>
+          <a routerLink="/login" routerLinkActive="active" (click)="closeMobileMenu()">
+            <span class="top-nav__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                <path d="M10 17l5-5-5-5" />
+                <path d="M15 12H3" />
+              </svg>
+            </span>
+            <span>Ingresar</span>
+          </a>
+          <a routerLink="/registro" routerLinkActive="active" (click)="closeMobileMenu()">
+            <span class="top-nav__icon" aria-hidden="true">
+              <svg viewBox="0 0 24 24">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M19 8v6" />
+                <path d="M22 11h-6" />
+              </svg>
+            </span>
+            <span>Registro</span>
+          </a>
         }
       </nav>
     </header>

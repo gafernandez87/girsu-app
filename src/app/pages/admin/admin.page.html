@@ -39,12 +39,31 @@
       <a routerLink="/admin/puntos" routerLinkActive="is-active">
         <span class="nav-icon" aria-hidden="true">
           <svg viewBox="0 0 24 24">
-            <path d="M12 2v20" />
-            <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7H14a3.5 3.5 0 0 1 0 7H6" />
+            <path d="M21 13a9 9 0 0 0-18 0" />
+            <path d="M5 19h14" />
+            <path d="m13.8 10.2-3.2 3.2" />
+            <path d="M12 16a2 2 0 1 0 0-4 2 2 0 0 0 0 4Z" />
+            <path d="M7.5 13h.01" />
+            <path d="M16.5 13h.01" />
           </svg>
         </span>
         <span>Puntos</span>
         <strong>{{ scoreCount() }}</strong>
+      </a>
+
+      <a routerLink="/admin/escuelas" routerLinkActive="is-active">
+        <span class="nav-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24">
+            <path d="M3 21h18" />
+            <path d="M5 21V7l8-4v18" />
+            <path d="M19 21V11l-6-4" />
+            <path d="M9 10h1" />
+            <path d="M9 14h1" />
+            <path d="M9 18h1" />
+          </svg>
+        </span>
+        <span>Escuelas</span>
+        <strong>{{ schoolCount() }}</strong>
       </a>
     </nav>
 

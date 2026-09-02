@@ -1,98 +1,332 @@
-<main class="auth-page">
-  <section class="auth-panel auth-panel--wide" aria-labelledby="register-title">
-    <div class="auth-copy">
-      <span class="label">Nuevo participante</span>
-      <h1 id="register-title">Registro</h1>
-      <p>Crea tu perfil para que tus partidas queden guardadas en el ranking.</p>
-    </div>
+<main class="auth-page auth-page--signup">
+  <section class="signup-layout" aria-labelledby="register-title">
+    <aside class="signup-intro">
+      <h1 id="register-title">¡Comenzá tu camino!</h1>
+      <p>
+        <strong>El Camino de los Residuos</strong> es una aplicación educativa interactiva
+        creada para estudiantes y docentes de <strong>Jujuy</strong>, que te invita a aprender jugando sobre qué pasa con nuestros residuos desde el momento en que los generamos hasta su reciclaje, compostaje o disposición final.
+      </p>
+      <p>
+        A través de distintos juegos, vas a poder poner a prueba tus conocimientos, aprender nuevas formas de separar y gestionar los residuos y sumar puntos para el <strong>ranking provincial de
+        Jujuy</strong>.
+      </p>
+      <p>
+        Antes de comenzar, queremos conocer un poco más sobre vos y sobre los hábitos de gestión de residuos que ya existen <strong>en tu escuela y en tu casa</strong>.
+      </p>
+      <p>
+        Completá este breve formulario con tus datos y respondé algunas preguntas sobre <strong>separacion
+        de residuos y compostaje</strong>.
+      </p>
+      <p>
+        ¡Prepará todo para empezar a recorrer <strong>El Camino de los Residuos</strong> y ser parte de una comunidad jujeña que apuesta por una provincia más sostenible!
+      </p>
+    </aside>
 
-    <form class="auth-form auth-form--grid" (ngSubmit)="submit()" #registerForm="ngForm">
-      <label>
-        Nombre
-        <input
-          type="text"
-          name="name"
-          autocomplete="name"
-          required
-          [(ngModel)]="name"
-        />
-      </label>
+    <section class="auth-panel auth-panel--signup">
+      <div class="auth-copy">
+        <span class="label">Formulario de inscripción</span>
+      </div>
 
-      <label>
-        Email
-        <input
-          type="email"
-          name="email"
-          autocomplete="email"
-          required
-          [(ngModel)]="email"
-        />
-      </label>
+      <form class="auth-form auth-form--signup" (ngSubmit)="submit()" #registerForm="ngForm" novalidate>
+        <fieldset class="form-section">
+          <legend>Datos personales</legend>
 
-      <label>
-        Escuela
-        <input
-          type="text"
-          name="school"
-          autocomplete="organization"
-          required
-          [(ngModel)]="school"
-        />
-      </label>
-
-      <label>
-        Curso
-        <input type="text" name="course" required [(ngModel)]="course" />
-      </label>
-
-      <label class="auth-form__full">
-        Password
-        <span class="password-field">
-          <input
-            [type]="showPassword() ? 'text' : 'password'"
-            name="password"
-            autocomplete="new-password"
-            required
-            minlength="6"
-            [(ngModel)]="password"
-          />
-          <button
-            type="button"
-            class="password-field__toggle"
-            [attr.aria-label]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
-            [attr.title]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
-            (click)="togglePasswordVisibility()"
-          >
-            @if (showPassword()) {
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m2 2 20 20" />
-                <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
-                <path d="M6.7 6.8C4.8 7.9 3.2 9.6 2 12c2.4 4.8 5.7 7 10 7 1.7 0 3.2-.3 4.5-1" />
-                <path d="M19.5 15.6c1-.9 1.8-2.1 2.5-3.6-2.4-4.8-5.7-7-10-7-.8 0-1.6.1-2.3.3" />
-              </svg>
-            } @else {
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
+          <label class="form-field" [class.form-field--invalid]="hasRequiredTextError(nameControl, name)">
+            <span class="field-label">Nombre y apellido <span class="required-indicator" aria-hidden="true">*</span></span>
+            <input #nameControl="ngModel" type="text" name="name" autocomplete="name" required [(ngModel)]="name" />
+            @if (hasRequiredTextError(nameControl, name)) {
+              <small class="field-error" role="alert">Este campo es obligatorio.</small>
             }
-          </button>
-        </span>
-      </label>
+          </label>
 
-      @if (error(); as message) {
-        <p class="form-message form-message--error auth-form__full">{{ message }}</p>
-      }
+          <label class="form-field" [class.form-field--invalid]="hasBirthDateError(birthDateControl)">
+            <span class="field-label">Fecha de nacimiento <span class="required-indicator" aria-hidden="true">*</span></span>
+            <input
+              #birthDateControl="ngModel"
+              type="date"
+              name="birthDate"
+              required
+              [max]="maxBirthDate"
+              [(ngModel)]="birthDate"
+            />
+            @if (hasBirthDateError(birthDateControl)) {
+              <small class="field-error" role="alert">
+                {{ birthDate ? 'La fecha no puede ser futura.' : 'Este campo es obligatorio.' }}
+              </small>
+            }
+          </label>
 
-      @if (notice(); as message) {
-        <p class="form-message auth-form__full">{{ message }}</p>
-      }
+          <label class="form-field" [class.form-field--invalid]="hasEmailError(emailControl)">
+            <span class="field-label">Correo electrónico <span class="required-indicator" aria-hidden="true">*</span></span>
+            <input #emailControl="ngModel" type="email" name="email" autocomplete="email" required [(ngModel)]="email" />
+            @if (hasEmailError(emailControl)) {
+              <small class="field-error" role="alert">
+                {{ email.trim() ? 'Ingresa un correo electrónico válido.' : 'Este campo es obligatorio.' }}
+              </small>
+            }
+          </label>
 
-      <button type="submit" class="auth-form__full" [disabled]="registerForm.invalid || loading()">
-        {{ loading() ? 'Creando...' : 'Crear cuenta' }}
-      </button>
-    </form>
+          <fieldset class="choice-group choice-group--inline">
+            <legend>Provincia <span class="required-indicator" aria-hidden="true">*</span></legend>
+            <div class="choice-options choice-options--inline">
+              <label class="choice-option">
+                <input
+                  type="radio"
+                  name="province"
+                  value="Jujuy"
+                  required
+                  [ngModel]="province"
+                  (ngModelChange)="onProvinceChange($event)"
+                />
+                Jujuy
+              </label>
+              <label class="choice-option">
+                <input
+                  type="radio"
+                  name="province"
+                  value="Otra"
+                  required
+                  [ngModel]="province"
+                  (ngModelChange)="onProvinceChange($event)"
+                />
+                Otra
+              </label>
+            </div>
+          </fieldset>
 
-    <p class="auth-link">Ya tenes cuenta? <a routerLink="/login">Ingresa</a></p>
+          @if (province === 'Jujuy') {
+            <div class="form-field" [class.form-field--invalid]="hasLocalityError(localityControl)">
+              <span class="field-label">Localidad <span class="required-indicator" aria-hidden="true">*</span></span>
+              <app-locality-combobox
+                #localityControl="ngModel"
+                name="localityId"
+                required
+                [invalid]="hasLocalityError(localityControl)"
+                [loading]="localitiesLoading()"
+                [localities]="localities()"
+                placeholder="Buscar localidad"
+                [(ngModel)]="localityId"
+              />
+              @if (hasLocalityError(localityControl)) {
+                <small class="field-error" role="alert">Selecciona una localidad.</small>
+              }
+            </div>
+          } @else {
+            <label class="form-field" [class.form-field--invalid]="hasLocalityError(manualLocalityControl)">
+              <span class="field-label">Localidad <span class="required-indicator" aria-hidden="true">*</span></span>
+              <input
+                #manualLocalityControl="ngModel"
+                type="text"
+                name="manualLocality"
+                autocomplete="address-level2"
+                placeholder="Escribi tu localidad"
+                required
+                [(ngModel)]="manualLocality"
+              />
+              @if (hasLocalityError(manualLocalityControl)) {
+                <small class="field-error" role="alert">Escribe tu localidad.</small>
+              }
+            </label>
+          }
+
+          <fieldset class="choice-group choice-group--wide auth-form__full">
+            <legend>Institución educativa <span class="required-indicator" aria-hidden="true">*</span></legend>
+            <div class="choice-options choice-options--two-columns">
+              <label class="choice-option">
+                <input
+                  type="radio"
+                  name="schoolMembership"
+                  value="jujuy_school"
+                  required
+                  [ngModel]="schoolMembership"
+                  (ngModelChange)="onSchoolMembershipChange($event)"
+                />
+                Escuela de Jujuy
+              </label>
+              <label class="choice-option">
+                <input
+                  type="radio"
+                  name="schoolMembership"
+                  value="no_jujuy_school"
+                  required
+                  [ngModel]="schoolMembership"
+                  (ngModelChange)="onSchoolMembershipChange($event)"
+                />
+                Otra institucion o sin escuela
+              </label>
+            </div>
+          </fieldset>
+
+          @if (schoolMembership === 'jujuy_school') {
+            <div class="form-field auth-form__full" [class.form-field--invalid]="hasSchoolError(schoolControl)">
+              <span class="field-label">Seleccionar escuela <span class="required-indicator" aria-hidden="true">*</span></span>
+              <app-school-combobox
+                #schoolControl="ngModel"
+                name="schoolId"
+                required
+                [invalid]="hasSchoolError(schoolControl)"
+                placeholder="Buscar por nombre o localidad"
+                [loading]="schoolsLoading()"
+                [schools]="schools()"
+                [(ngModel)]="schoolId"
+                (schoolSelect)="onSchoolSelected($event)"
+              />
+              @if (hasSchoolError(schoolControl)) {
+                <small class="field-error" role="alert">Selecciona una escuela.</small>
+              }
+            </div>
+          }
+
+          <label class="form-field" [class.form-field--invalid]="isFieldInvalid(schoolRoleControl)">
+            <span class="field-label">Rol en la escuela <span class="required-indicator" aria-hidden="true">*</span></span>
+            <select #schoolRoleControl="ngModel" name="schoolRole" required [(ngModel)]="schoolRole">
+              <option value="" disabled>Seleccionar rol</option>
+              <option value="Estudiante">Estudiante</option>
+              <option value="Docente">Docente</option>
+              <option value="Directivo/a">Directivo/a</option>
+              <option value="Personal no docente">Personal no docente</option>
+              <option value="Otro">Otro</option>
+            </select>
+            @if (isFieldInvalid(schoolRoleControl)) {
+              <small class="field-error" role="alert">Selecciona un rol.</small>
+            }
+          </label>
+
+          <label class="form-field" [class.form-field--invalid]="isFieldInvalid(passwordControl)">
+            <span class="field-label">Contraseña <span class="required-indicator" aria-hidden="true">*</span></span>
+            <span class="password-field">
+              <input
+                #passwordControl="ngModel"
+                [type]="showPassword() ? 'text' : 'password'"
+                name="password"
+                autocomplete="new-password"
+                required
+                minlength="6"
+                [(ngModel)]="password"
+              />
+              <button
+                type="button"
+                class="password-field__toggle"
+                [attr.aria-label]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
+                [attr.title]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
+                (click)="togglePasswordVisibility()"
+              >
+                @if (showPassword()) {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="m2 2 20 20" />
+                    <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                    <path d="M6.7 6.8C4.8 7.9 3.2 9.6 2 12c2.4 4.8 5.7 7 10 7 1.7 0 3.2-.3 4.5-1" />
+                    <path d="M19.5 15.6c1-.9 1.8-2.1 2.5-3.6-2.4-4.8-5.7-7-10-7-.8 0-1.6.1-2.3.3" />
+                  </svg>
+                } @else {
+                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                    <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                    <circle cx="12" cy="12" r="3" />
+                  </svg>
+                }
+              </button>
+            </span>
+            @if (isFieldInvalid(passwordControl)) {
+              <small class="field-error" role="alert">
+                {{ passwordControl.hasError('required') ? 'Este campo es obligatorio.' : 'Usa al menos 6 caracteres.' }}
+              </small>
+            }
+          </label>
+        </fieldset>
+
+        <fieldset class="form-section">
+          <legend>Hábitos relacionados con la gestión de residuos</legend>
+
+          <fieldset class="choice-group choice-group--wide auth-form__full" [class.choice-group--invalid]="hasChoiceError(wasteSeparation)">
+            <legend>¿Realizan separación de residuos reciclables? <span class="required-indicator" aria-hidden="true">*</span></legend>
+            <p>
+              La clasificación de residuos reciclables consiste en separar materiales como plástico,
+              papel, cartón, vidrio y metales para que puedan ser recuperados.
+            </p>
+            <div class="choice-options choice-options--three-columns">
+              <label class="choice-option">
+                <input
+                  type="checkbox"
+                  [checked]="wasteSeparation.includes('school')"
+                  (change)="toggleWasteSeparation('school')"
+                />
+                En la escuela
+              </label>
+              <label class="choice-option">
+                <input
+                  type="checkbox"
+                  [checked]="wasteSeparation.includes('home')"
+                  (change)="toggleWasteSeparation('home')"
+                />
+                En casa
+              </label>
+              <label class="choice-option">
+                <input
+                  type="checkbox"
+                  [checked]="wasteSeparation.includes('none')"
+                  (change)="toggleWasteSeparation('none')"
+                />
+                No separamos
+              </label>
+            </div>
+            @if (hasChoiceError(wasteSeparation)) {
+              <small class="field-error" role="alert">Selecciona al menos una opción.</small>
+            }
+          </fieldset>
+
+          <fieldset class="choice-group choice-group--wide auth-form__full" [class.choice-group--invalid]="hasChoiceError(composting)">
+            <legend>¿Realizan compostaje? <span class="required-indicator" aria-hidden="true">*</span></legend>
+            <p>El compostaje es el proceso de transformar residuos orgánicos en abono natural para el suelo.</p>
+            <div class="choice-options choice-options--three-columns">
+              <label class="choice-option">
+                <input
+                  type="checkbox"
+                  [checked]="composting.includes('school')"
+                  (change)="toggleComposting('school')"
+                />
+                En la escuela
+              </label>
+              <label class="choice-option">
+                <input
+                  type="checkbox"
+                  [checked]="composting.includes('home')"
+                  (change)="toggleComposting('home')"
+                />
+                En casa
+              </label>
+              <label class="choice-option">
+                <input
+                  type="checkbox"
+                  [checked]="composting.includes('none')"
+                  (change)="toggleComposting('none')"
+                />
+                No compostamos
+              </label>
+            </div>
+            @if (hasChoiceError(composting)) {
+              <small class="field-error" role="alert">Selecciona al menos una opción.</small>
+            }
+          </fieldset>
+        </fieldset>
+
+        @if (error(); as message) {
+          <p class="form-message form-message--error auth-form__full">{{ message }}</p>
+        }
+
+        @if (notice(); as message) {
+          <p class="form-message auth-form__full">{{ message }}</p>
+        }
+
+        <button
+          type="submit"
+          class="auth-form__full"
+          [disabled]="!canSubmit() || formLoading()"
+        >
+          {{ schoolsLoading() ? 'Cargando escuelas...' : loading() ? 'Creando...' : 'Crear cuenta' }}
+        </button>
+      </form>
+
+      <p class="auth-link">Ya tenes cuenta? <a routerLink="/login">Ingresa</a></p>
+    </section>
   </section>
 </main>

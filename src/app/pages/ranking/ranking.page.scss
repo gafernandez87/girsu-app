@@ -35,6 +35,35 @@
   line-height: 1.55;
 }
 
+.ranking-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+.ranking-stats article {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 9.2rem;
+  padding: 0.7rem 0.82rem;
+  border: 1px solid rgba(61, 43, 29, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 253, 244, 0.76);
+}
+
+.ranking-stats span {
+  color: #6d604f;
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+.ranking-stats strong {
+  color: #2f7d57;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
 .ranking-board {
   border: 1px solid rgba(61, 43, 29, 0.12);
   border-radius: 8px;

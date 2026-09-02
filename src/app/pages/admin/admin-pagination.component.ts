@@ -71,25 +71,25 @@ type PageItem =
         align-items: center;
         gap: 0.28rem;
         max-width: 100%;
-        padding: 0.34rem;
+        padding: 0.28rem;
         border: 1px solid rgba(61, 43, 29, 0.12);
         border-radius: 999px;
         background: #fffdf7;
-        box-shadow: 0 0.7rem 1.6rem rgba(45, 28, 18, 0.08);
+        box-shadow: 0 0.45rem 1.2rem rgba(45, 28, 18, 0.06);
       }
 
       .page-button {
         display: inline-grid;
-        width: 2rem;
-        height: 2rem;
+        width: 1.8rem;
+        height: 1.8rem;
         border: 0;
         border-radius: 8px;
         place-items: center;
         background: transparent;
         color: #26352c;
         cursor: pointer;
-        font-size: 0.82rem;
-        font-weight: 900;
+        font-size: 0.78rem;
+        font-weight: 700;
       }
 
       .page-button:not(:disabled):hover,
@@ -116,8 +116,8 @@ type PageItem =
       }
 
       .page-button svg {
-        width: 1rem;
-        height: 1rem;
+        width: 0.9rem;
+        height: 0.9rem;
         fill: none;
         stroke: currentColor;
         stroke-linecap: round;
@@ -127,12 +127,12 @@ type PageItem =
 
       .page-ellipsis {
         display: inline-grid;
-        width: 1.45rem;
-        height: 2rem;
+        width: 1.25rem;
+        height: 1.8rem;
         place-items: center;
         color: #7a857d;
-        font-size: 0.82rem;
-        font-weight: 900;
+        font-size: 0.78rem;
+        font-weight: 700;
       }
 
       @media (max-width: 560px) {

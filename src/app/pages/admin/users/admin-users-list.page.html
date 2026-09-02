@@ -15,7 +15,7 @@
   <section class="admin-section">
     <div class="admin-section__heading">
       <h2>Usuarios registrados</h2>
-      <p>Vista general de perfiles, permisos y estado de acceso.</p>
+      <p>Vista general de perfiles, ubicación, escuela y estado de acceso.</p>
     </div>
 
     <div class="admin-table-scroll">
@@ -23,8 +23,8 @@
         <thead>
           <tr>
             <th scope="col">Usuario</th>
+            <th scope="col">Ubicación</th>
             <th scope="col">Escuela</th>
-            <th scope="col">Curso</th>
             <th scope="col">Rol</th>
             <th scope="col">Estado</th>
             <th scope="col">Acciones</th>
@@ -37,8 +37,14 @@
                 <strong class="row-title">{{ user.name }}</strong>
                 <small>{{ user.email }}</small>
               </td>
-              <td>{{ user.school || '-' }}</td>
-              <td>{{ user.course || '-' }}</td>
+              <td>
+                {{ user.locality || '-' }}
+                <small>{{ user.province || '-' }}</small>
+              </td>
+              <td>
+                {{ user.school || (user.schoolMembership === 'no_jujuy_school' ? 'Sin escuela de Jujuy' : '-') }}
+                <small>{{ user.schoolRole || '-' }}</small>
+              </td>
               <td>{{ user.role === 'admin' ? 'Admin' : 'Jugador' }}</td>
               <td>
                 <span class="status-pill" [class.status-pill--muted]="!user.isActive">

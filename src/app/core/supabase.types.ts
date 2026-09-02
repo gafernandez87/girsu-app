@@ -3,14 +3,105 @@ export type Json = boolean | number | string | null | { [key: string]: Json | un
 export interface Database {
   public: {
     Tables: {
+      schools: {
+        Row: {
+          id: string;
+          source_code: string;
+          name: string;
+          street: string;
+          street_number: string;
+          neighborhood: string;
+          locality: string;
+          department: string;
+          phone: string;
+          region: string;
+          sector: string;
+          scope: string;
+          category: string;
+          permanence: string;
+          operating_period: string;
+          email: string;
+          is_active: boolean;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          source_code: string;
+          name: string;
+          street?: string;
+          street_number?: string;
+          neighborhood?: string;
+          locality?: string;
+          department?: string;
+          phone?: string;
+          region?: string;
+          sector?: string;
+          scope?: string;
+          category?: string;
+          permanence?: string;
+          operating_period?: string;
+          email?: string;
+          is_active?: boolean;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: {
+          source_code?: string;
+          name?: string;
+          street?: string;
+          street_number?: string;
+          neighborhood?: string;
+          locality?: string;
+          department?: string;
+          phone?: string;
+          region?: string;
+          sector?: string;
+          scope?: string;
+          category?: string;
+          permanence?: string;
+          operating_period?: string;
+          email?: string;
+          is_active?: boolean;
+          updated_at?: string;
+        };
+        Relationships: [];
+      };
+      jujuy_localities: {
+        Row: {
+          id: string;
+          name: string;
+          normalized_name: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          name: string;
+          created_at?: string;
+        };
+        Update: {
+          name?: string;
+        };
+        Relationships: [];
+      };
       profiles: {
         Row: {
           id: string;
           email: string;
           name: string;
           role: 'player' | 'admin';
+          birth_date: string | null;
+          province: string;
+          locality: string;
+          locality_id: string | null;
+          locality_source: 'jujuy_catalog' | 'manual' | 'legacy';
+          school_id: string | null;
+          school_membership: string;
+          school_role: string;
           school: string;
           course: string;
+          waste_separation: string[];
+          composting: string[];
           is_active: boolean;
           created_at: string;
           updated_at: string;
@@ -20,8 +111,18 @@ export interface Database {
           email: string;
           name?: string;
           role?: 'player' | 'admin';
+          birth_date?: string | null;
+          province?: string;
+          locality?: string;
+          locality_id?: string | null;
+          locality_source?: 'jujuy_catalog' | 'manual' | 'legacy';
+          school_id?: string | null;
+          school_membership?: string;
+          school_role?: string;
           school?: string;
           course?: string;
+          waste_separation?: string[];
+          composting?: string[];
           is_active?: boolean;
           created_at?: string;
           updated_at?: string;
@@ -30,8 +131,18 @@ export interface Database {
           email?: string;
           name?: string;
           role?: 'player' | 'admin';
+          birth_date?: string | null;
+          province?: string;
+          locality?: string;
+          locality_id?: string | null;
+          locality_source?: 'jujuy_catalog' | 'manual' | 'legacy';
+          school_id?: string | null;
+          school_membership?: string;
+          school_role?: string;
           school?: string;
           course?: string;
+          waste_separation?: string[];
+          composting?: string[];
           is_active?: boolean;
           updated_at?: string;
         };
@@ -40,6 +151,7 @@ export interface Database {
       public_profiles: {
         Row: {
           user_id: string;
+          school_id: string | null;
           name: string;
           school: string;
           course: string;
@@ -48,6 +160,7 @@ export interface Database {
         };
         Insert: {
           user_id: string;
+          school_id?: string | null;
           name: string;
           school?: string;
           course?: string;
@@ -55,6 +168,7 @@ export interface Database {
           updated_at?: string;
         };
         Update: {
+          school_id?: string | null;
           name?: string;
           school?: string;
           course?: string;
@@ -108,6 +222,7 @@ export interface Database {
           position: number | null;
           user_id: string | null;
           name: string | null;
+          school_id: string | null;
           school: string | null;
           course: string | null;
           score: number | null;
@@ -123,6 +238,9 @@ export interface Database {
   };
 }
 
+export type SchoolInsert = Database['public']['Tables']['schools']['Insert'];
+export type SchoolRow = Database['public']['Tables']['schools']['Row'];
+export type SchoolUpdate = Database['public']['Tables']['schools']['Update'];
 export type ProfileRow = Database['public']['Tables']['profiles']['Row'];
 export type ProfileUpdate = Database['public']['Tables']['profiles']['Update'];
 export type GameResultInsert = Database['public']['Tables']['game_results']['Insert'];

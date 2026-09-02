@@ -1,0 +1,104 @@
+<section class="admin-entity">
+  <section class="admin-hero" aria-labelledby="schools-title">
+    <div>
+      <span class="label">Escuelas</span>
+      <h1 id="schools-title">Administrar escuelas</h1>
+    </div>
+
+    <a class="admin-primary-action" routerLink="/admin/escuelas/new">Crear escuela</a>
+  </section>
+
+  @if (error(); as message) {
+    <p class="admin-message">{{ message }}</p>
+  }
+
+  <section class="admin-section">
+    <div class="admin-section__heading">
+      <h2>Padron cargado</h2>
+      <p>Escuelas normalizadas para registro, usuarios y ranking.</p>
+    </div>
+
+    <form class="admin-filters" (ngSubmit)="applyFilters()" aria-label="Filtros de escuelas">
+      <label class="filter-field">
+        Nombre
+        <input
+          type="search"
+          name="search"
+          placeholder="Buscar escuela, CUE o localidad"
+          [(ngModel)]="search"
+        />
+      </label>
+
+      <label class="filter-field filter-field--compact">
+        Estado
+        <select name="status" [(ngModel)]="status">
+          <option value="all">Todas</option>
+          <option value="active">Activas</option>
+          <option value="inactive">Inactivas</option>
+        </select>
+      </label>
+
+      <div class="filter-actions">
+        <button class="admin-secondary-action" type="button" (click)="clearFilters()">Limpiar</button>
+        <button class="admin-primary-action" type="submit" [disabled]="loading()">Filtrar</button>
+      </div>
+    </form>
+
+    <div class="admin-table-scroll">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th scope="col">Escuela</th>
+            <th scope="col">Ubicacion</th>
+            <th scope="col">Sector</th>
+            <th scope="col">Ambito</th>
+            <th scope="col">Estado</th>
+            <th scope="col">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (school of result().rows; track school.id) {
+            <tr [class.is-inactive]="!school.isActive">
+              <td>
+                <strong class="row-title">{{ school.name }}</strong>
+                <small>CUEANEXO {{ school.sourceCode }}</small>
+              </td>
+              <td>
+                {{ school.locality || '-' }}
+                <small>{{ school.department || '-' }}</small>
+              </td>
+              <td>{{ school.sector || '-' }}</td>
+              <td>{{ school.scope || '-' }}</td>
+              <td>
+                <span class="status-pill" [class.status-pill--muted]="!school.isActive">
+                  {{ school.isActive ? 'Activa' : 'Inactiva' }}
+                </span>
+              </td>
+              <td>
+                <a class="row-action" [routerLink]="['/admin/escuelas', school.id, 'edit']">
+                  Editar
+                </a>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="6" class="empty-cell">
+                {{ loading() ? 'Cargando escuelas...' : 'Todavia no hay escuelas cargadas.' }}
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <footer class="pagination" aria-label="Paginacion de escuelas">
+      <p class="pagination__detail">Total filtrado: {{ result().total }}</p>
+      <app-admin-pagination
+        [page]="result().page"
+        [totalPages]="totalPages()"
+        [loading]="loading()"
+        (pageChange)="loadPage($event)"
+      />
+    </footer>
+  </section>
+</section>

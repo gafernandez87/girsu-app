@@ -1,22 +1,52 @@
 import { createClient } from 'npm:@supabase/supabase-js@2.112.2';
 
 type UserRole = 'player' | 'admin';
+type Province = 'Jujuy' | 'Otra';
+type SchoolMembership = 'jujuy_school' | 'no_jujuy_school';
 
 interface AdminUserPayload {
+  readonly birthDate?: string;
+  readonly composting?: unknown;
   readonly course?: string;
   readonly email?: string;
   readonly id?: string;
   readonly isActive?: boolean;
+  readonly locality?: string;
+  readonly localityId?: string;
+  readonly localitySource?: string;
   readonly name?: string;
   readonly password?: string;
+  readonly province?: string;
   readonly role?: UserRole;
-  readonly school?: string;
+  readonly schoolId?: string;
+  readonly schoolMembership?: string;
+  readonly schoolRole?: string;
+  readonly wasteSeparation?: unknown;
+}
+
+interface NormalizedAdminUserPayload {
+  readonly birthDate: string;
+  readonly composting: readonly string[];
+  readonly course: string;
+  readonly email: string;
+  readonly isActive: boolean;
+  readonly locality: string;
+  readonly localityId: string | null;
+  readonly name: string;
+  readonly password: string;
+  readonly province: Province;
+  readonly role: UserRole;
+  readonly schoolId: string | null;
+  readonly schoolMembership: SchoolMembership;
+  readonly schoolRole: string;
+  readonly wasteSeparation: readonly string[];
 }
 
 const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
   'Access-Control-Allow-Origin': '*',
+  'Access-Control-Max-Age': '86400',
 };
 
 Deno.serve(async (request) => {
@@ -100,9 +130,18 @@ async function createUser(
     email_confirm: true,
     password: input.password,
     user_metadata: {
+      birth_date: input.birthDate,
+      composting: input.composting,
       course: input.course,
+      locality: input.locality,
+      locality_id: input.localityId ?? '',
+      locality_source: input.province === 'Jujuy' ? 'jujuy_catalog' : 'manual',
       name: input.name,
-      school: input.school,
+      province: input.province,
+      school_id: input.schoolId ?? '',
+      school_membership: input.schoolMembership,
+      school_role: input.schoolRole,
+      waste_separation: input.wasteSeparation,
     },
   });
 
@@ -126,14 +165,23 @@ async function updateUser(
     email: string;
     email_confirm: boolean;
     password?: string;
-    user_metadata: Record<string, string>;
+    user_metadata: Record<string, unknown>;
   } = {
     email: input.email,
     email_confirm: true,
     user_metadata: {
+      birth_date: input.birthDate,
+      composting: input.composting,
       course: input.course,
+      locality: input.locality,
+      locality_id: input.localityId ?? '',
+      locality_source: input.province === 'Jujuy' ? 'jujuy_catalog' : 'manual',
       name: input.name,
-      school: input.school,
+      province: input.province,
+      school_id: input.schoolId ?? '',
+      school_membership: input.schoolMembership,
+      school_role: input.schoolRole,
+      waste_separation: input.wasteSeparation,
     },
   };
 
@@ -172,21 +220,38 @@ async function deleteUser(
 
 async function upsertProfile(
   userId: string,
-  input: Required<Omit<AdminUserPayload, 'id'>>,
+  input: NormalizedAdminUserPayload,
   adminClient: ReturnType<typeof createAdminClient>,
 ) {
+  const [locality, school] = await Promise.all([
+    input.province === 'Jujuy' ? getLocality(input.localityId, adminClient) : Promise.resolve(null),
+    input.schoolMembership === 'jujuy_school' ? getSchool(input.schoolId, adminClient) : Promise.resolve(null),
+  ]);
+
   const { data, error } = await adminClient
     .from('profiles')
     .upsert({
+      birth_date: input.birthDate,
+      composting: input.composting,
       course: input.course,
       email: input.email,
       id: userId,
       is_active: input.isActive,
+      locality: locality?.name ?? input.locality,
+      locality_id: locality?.id ?? null,
+      locality_source: locality ? 'jujuy_catalog' : 'manual',
       name: input.name,
+      province: input.province,
       role: input.role,
-      school: input.school,
+      school_membership: input.schoolMembership,
+      school_role: input.schoolRole,
+      school: school?.name ?? '',
+      school_id: school?.id ?? null,
+      waste_separation: input.wasteSeparation,
     })
-    .select('id, email, name, role, school, course, is_active, created_at, updated_at')
+    .select(
+      'id, email, name, role, birth_date, province, locality, locality_id, locality_source, school_id, school_membership, school_role, school, course, waste_separation, composting, is_active, created_at, updated_at',
+    )
     .single();
 
   if (error) {
@@ -196,20 +261,86 @@ async function upsertProfile(
   return data;
 }
 
+async function getSchool(
+  schoolId: string | null,
+  adminClient: ReturnType<typeof createAdminClient>,
+): Promise<{ readonly id: string; readonly name: string } | null> {
+  if (!schoolId) {
+    return null;
+  }
+
+  const { data, error } = await adminClient
+    .from('schools')
+    .select('id, name')
+    .eq('id', schoolId)
+    .single();
+
+  if (error || !data) {
+    throw new HttpError('La escuela seleccionada no existe.', 400);
+  }
+
+  return data;
+}
+
+async function getLocality(
+  localityId: string | null,
+  adminClient: ReturnType<typeof createAdminClient>,
+): Promise<{ readonly id: string; readonly name: string } | null> {
+  if (!localityId) {
+    throw new HttpError('Selecciona una localidad de Jujuy.', 400);
+  }
+
+  const { data, error } = await adminClient
+    .from('jujuy_localities')
+    .select('id, name')
+    .eq('id', localityId)
+    .single();
+
+  if (error || !data) {
+    throw new HttpError('La localidad seleccionada no existe.', 400);
+  }
+
+  return data;
+}
+
 function normalizePayload(
   payload: AdminUserPayload,
   options: { readonly passwordRequired: boolean },
-): Required<Omit<AdminUserPayload, 'id'>> {
+): NormalizedAdminUserPayload {
   const email = payload.email?.trim().toLowerCase() ?? '';
   const password = payload.password?.trim() ?? '';
   const role = payload.role === 'admin' ? 'admin' : 'player';
+  const province = normalizeProvince(payload.province);
+  const schoolMembership = normalizeSchoolMembership(payload.schoolMembership);
+  const locality = payload.locality?.trim() ?? '';
+  const localityId = payload.localityId?.trim() || null;
+  const birthDate = normalizeBirthDate(payload.birthDate);
+  const schoolRole = payload.schoolRole?.trim() ?? '';
+  const wasteSeparation = normalizeHabitValues(payload.wasteSeparation, 'separación de residuos');
+  const composting = normalizeHabitValues(payload.composting, 'compostaje');
 
-  if (!email) {
-    throw new HttpError('El email es obligatorio.', 400);
+  if (!isEmail(email)) {
+    throw new HttpError('Ingresa un email válido.', 400);
   }
 
   if (!payload.name?.trim()) {
     throw new HttpError('El nombre es obligatorio.', 400);
+  }
+
+  if (!schoolRole) {
+    throw new HttpError('Selecciona el rol en la escuela.', 400);
+  }
+
+  if (province === 'Jujuy' && !localityId) {
+    throw new HttpError('Selecciona una localidad de Jujuy.', 400);
+  }
+
+  if (province === 'Otra' && !locality) {
+    throw new HttpError('Escribe la localidad.', 400);
+  }
+
+  if (schoolMembership === 'jujuy_school' && !payload.schoolId?.trim()) {
+    throw new HttpError('Selecciona una escuela de Jujuy.', 400);
   }
 
   if (options.passwordRequired && password.length < 6) {
@@ -221,14 +352,93 @@ function normalizePayload(
   }
 
   return {
+    birthDate,
+    composting,
     course: payload.course?.trim() ?? '',
     email,
     isActive: payload.isActive ?? true,
+    locality: province === 'Otra' ? locality : '',
+    localityId: province === 'Jujuy' ? localityId : null,
     name: payload.name.trim(),
     password,
+    province,
     role,
-    school: payload.school?.trim() ?? '',
+    schoolId: schoolMembership === 'jujuy_school' ? payload.schoolId?.trim() || null : null,
+    schoolMembership,
+    schoolRole,
+    wasteSeparation,
   };
+}
+
+function normalizeProvince(province: string | undefined): Province {
+  if (province === 'Jujuy' || province === 'Otra') {
+    return province;
+  }
+
+  throw new HttpError('Selecciona una provincia válida.', 400);
+}
+
+function normalizeSchoolMembership(value: string | undefined): SchoolMembership {
+  if (value === 'jujuy_school' || value === 'no_jujuy_school') {
+    return value;
+  }
+
+  throw new HttpError('Selecciona la relación con una institución educativa.', 400);
+}
+
+function normalizeBirthDate(value: string | undefined): string {
+  const birthDate = value?.trim() ?? '';
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate)) {
+    throw new HttpError('La fecha de nacimiento es obligatoria.', 400);
+  }
+
+  const parsedDate = new Date(`${birthDate}T00:00:00.000Z`);
+
+  if (Number.isNaN(parsedDate.getTime()) || parsedDate.toISOString().slice(0, 10) !== birthDate) {
+    throw new HttpError('La fecha de nacimiento no es válida.', 400);
+  }
+
+  if (birthDate > getTodayInArgentina()) {
+    throw new HttpError('La fecha de nacimiento no puede ser futura.', 400);
+  }
+
+  return birthDate;
+}
+
+function normalizeHabitValues(value: unknown, label: string): readonly string[] {
+  if (!Array.isArray(value)) {
+    throw new HttpError(`Selecciona una opción de ${label}.`, 400);
+  }
+
+  const values = [...new Set(value.filter((item): item is string => typeof item === 'string'))];
+  const allowedValues = new Set(['school', 'home', 'none']);
+
+  if (values.length === 0 || values.some((item) => !allowedValues.has(item))) {
+    throw new HttpError(`Selecciona una opción válida de ${label}.`, 400);
+  }
+
+  if (values.includes('none') && values.length > 1) {
+    throw new HttpError(`No combines "No" con otras opciones de ${label}.`, 400);
+  }
+
+  return values;
+}
+
+function isEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+function getTodayInArgentina(): string {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    day: '2-digit',
+    month: '2-digit',
+    timeZone: 'America/Argentina/Buenos_Aires',
+    year: 'numeric',
+  }).formatToParts();
+  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
+
+  return `${values.year}-${values.month}-${values.day}`;
 }
 
 function createAdminClient() {

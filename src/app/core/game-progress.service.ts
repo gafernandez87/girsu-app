@@ -154,7 +154,7 @@ export class GameProgressService {
   private async loadLeaderboard(runId: number): Promise<void> {
     const { data, error } = await this.supabase
       .from('leaderboard')
-      .select('position, user_id, name, school, course, score, completed_stages, last_played_at')
+      .select('position, user_id, name, school_id, school, course, score, completed_stages, last_played_at')
       .order('position', { ascending: true })
       .limit(50);
 
@@ -205,6 +205,7 @@ export class GameProgressService {
       position: row.position ?? 0,
       userId: row.user_id ?? '',
       name: row.name ?? 'Participante',
+      schoolId: row.school_id,
       school: row.school ?? '',
       course: row.course ?? '',
       score: row.score ?? 0,

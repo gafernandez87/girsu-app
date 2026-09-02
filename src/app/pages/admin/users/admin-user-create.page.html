@@ -12,85 +12,236 @@
     <p class="admin-message">{{ message }}</p>
   }
 
-  <form class="entity-form" (ngSubmit)="submit()" #userForm="ngForm">
-    <div class="form-grid">
-      <label class="field">
-        Nombre
-        <input type="text" name="name" required [(ngModel)]="name" />
-      </label>
+  @if (loading()) {
+    <p class="admin-message admin-message--success">Cargando datos del formulario...</p>
+  } @else {
+    <form class="entity-form entity-form--profile" (ngSubmit)="submit()" #userForm="ngForm" novalidate>
+      <div class="form-grid">
+        <section class="form-subsection field--full" aria-labelledby="create-user-personal-title">
+          <div class="form-subsection__heading">
+            <span class="label">Cuenta</span>
+            <h2 id="create-user-personal-title">Datos personales</h2>
+          </div>
 
-      <label class="field">
-        Email
-        <input type="email" name="email" autocomplete="email" required [(ngModel)]="email" />
-      </label>
+          <div class="form-grid">
+            <label class="field">
+              Nombre y apellido
+              <input type="text" name="name" autocomplete="name" required [(ngModel)]="name" />
+            </label>
 
-      <label class="field">
-        Escuela
-        <input type="text" name="school" required [(ngModel)]="school" />
-      </label>
+            <label class="field">
+              Correo electrónico
+              <input type="email" name="email" autocomplete="email" required [(ngModel)]="email" />
+            </label>
 
-      <label class="field">
-        Curso
-        <input type="text" name="course" required [(ngModel)]="course" />
-      </label>
+            <label class="field">
+              Fecha de nacimiento
+              <input type="date" name="birthDate" required [max]="maxBirthDate" [(ngModel)]="birthDate" />
+            </label>
 
-      <label class="field">
-        Rol
-        <select name="role" required [(ngModel)]="role">
-          <option value="player">Jugador</option>
-          <option value="admin">Admin</option>
-        </select>
-      </label>
+            <label class="field">
+              Tipo de usuario
+              <select name="role" required [(ngModel)]="role">
+                <option value="player">Jugador</option>
+                <option value="admin">Admin</option>
+              </select>
+            </label>
 
-      <label class="field">
-        Password
-        <span class="password-field">
-          <input
-            [type]="showPassword() ? 'text' : 'password'"
-            name="password"
-            autocomplete="new-password"
-            required
-            minlength="6"
-            [(ngModel)]="password"
-          />
-          <button
-            type="button"
-            class="password-field__toggle"
-            [attr.aria-label]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
-            [attr.title]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
-            (click)="togglePasswordVisibility()"
-          >
-            @if (showPassword()) {
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="m2 2 20 20" />
-                <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
-                <path d="M6.7 6.8C4.8 7.9 3.2 9.6 2 12c2.4 4.8 5.7 7 10 7 1.7 0 3.2-.3 4.5-1" />
-                <path d="M19.5 15.6c1-.9 1.8-2.1 2.5-3.6-2.4-4.8-5.7-7-10-7-.8 0-1.6.1-2.3.3" />
-              </svg>
+            <label class="field">
+              Contraseña
+              <span class="password-field">
+                <input
+                  [type]="showPassword() ? 'text' : 'password'"
+                  name="password"
+                  autocomplete="new-password"
+                  required
+                  minlength="6"
+                  [(ngModel)]="password"
+                />
+                <button
+                  type="button"
+                  class="password-field__toggle"
+                  [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                  [attr.title]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                  (click)="togglePasswordVisibility()"
+                >
+                  @if (showPassword()) {
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="m2 2 20 20" />
+                      <path d="M10.6 10.6a2 2 0 0 0 2.8 2.8" />
+                      <path d="M6.7 6.8C4.8 7.9 3.2 9.6 2 12c2.4 4.8 5.7 7 10 7 1.7 0 3.2-.3 4.5-1" />
+                      <path d="M19.5 15.6c1-.9 1.8-2.1 2.5-3.6-2.4-4.8-5.7-7-10-7-.8 0-1.6.1-2.3.3" />
+                    </svg>
+                  } @else {
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
+                      <circle cx="12" cy="12" r="3" />
+                    </svg>
+                  }
+                </button>
+              </span>
+            </label>
+
+            <label class="checkbox-field field--full">
+              <input type="checkbox" name="isActive" [(ngModel)]="isActive" />
+              Usuario activo
+            </label>
+          </div>
+        </section>
+
+        <section class="form-subsection field--full" aria-labelledby="create-user-school-title">
+          <div class="form-subsection__heading">
+            <span class="label">Ubicación y escuela</span>
+            <h2 id="create-user-school-title">Datos educativos</h2>
+          </div>
+
+          <div class="form-grid">
+            <fieldset class="choice-field">
+              <legend>Provincia</legend>
+              <div class="choice-field__options choice-field__options--inline">
+                <label>
+                  <input
+                    type="radio"
+                    name="province"
+                    value="Jujuy"
+                    required
+                    [ngModel]="province"
+                    (ngModelChange)="onProvinceChange($event)"
+                  />
+                  Jujuy
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="province"
+                    value="Otra"
+                    required
+                    [ngModel]="province"
+                    (ngModelChange)="onProvinceChange($event)"
+                  />
+                  Otra
+                </label>
+              </div>
+            </fieldset>
+
+            @if (province === 'Jujuy') {
+              <label class="field">
+                Localidad
+                <app-locality-combobox
+                  name="localityId"
+                  required
+                  [localities]="localities()"
+                  placeholder="Buscar localidad"
+                  [(ngModel)]="localityId"
+                />
+              </label>
             } @else {
-              <svg viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
+              <label class="field">
+                Localidad
+                <input name="manualLocality" required autocomplete="address-level2" [(ngModel)]="manualLocality" />
+              </label>
             }
-          </button>
-        </span>
-      </label>
 
-      <label class="checkbox-field field--full">
-        <input type="checkbox" name="isActive" [(ngModel)]="isActive" />
-        Usuario activo
-      </label>
-    </div>
+            <fieldset class="choice-field field--full">
+              <legend>Institución educativa</legend>
+              <div class="choice-field__options choice-field__options--two-columns">
+                <label>
+                  <input
+                    type="radio"
+                    name="schoolMembership"
+                    value="jujuy_school"
+                    required
+                    [ngModel]="schoolMembership"
+                    (ngModelChange)="onSchoolMembershipChange($event)"
+                  />
+                  Escuela de Jujuy
+                </label>
+                <label>
+                  <input
+                    type="radio"
+                    name="schoolMembership"
+                    value="no_jujuy_school"
+                    required
+                    [ngModel]="schoolMembership"
+                    (ngModelChange)="onSchoolMembershipChange($event)"
+                  />
+                  Otra institución o sin escuela
+                </label>
+              </div>
+            </fieldset>
 
-    <div class="form-actions">
-      <span></span>
-      <div class="form-actions__primary">
-        <a class="admin-secondary-action" routerLink="/admin/users">Cancelar</a>
-        <button class="admin-primary-action" type="submit" [disabled]="userForm.invalid || saving()">
-          {{ saving() ? 'Creando...' : 'Crear usuario' }}
-        </button>
+            @if (schoolMembership === 'jujuy_school') {
+              <label class="field field--full">
+                Escuela
+                <app-school-combobox
+                  name="schoolId"
+                  required
+                  placeholder="Buscar por nombre o localidad"
+                  [schools]="schools()"
+                  [(ngModel)]="schoolId"
+                  (schoolSelect)="onSchoolSelected($event)"
+                />
+              </label>
+            }
+
+            <label class="field">
+              Rol en la escuela
+              <select name="schoolRole" required [(ngModel)]="schoolRole">
+                <option value="" disabled>Seleccionar rol</option>
+                <option value="Estudiante">Estudiante</option>
+                <option value="Docente">Docente</option>
+                <option value="Directivo/a">Directivo/a</option>
+                <option value="Personal no docente">Personal no docente</option>
+                <option value="Otro">Otro</option>
+              </select>
+            </label>
+
+            <label class="field">
+              Curso <span class="field__optional">(opcional)</span>
+              <input type="text" name="course" [(ngModel)]="course" />
+            </label>
+          </div>
+        </section>
+
+        <section class="form-subsection field--full" aria-labelledby="create-user-habits-title">
+          <div class="form-subsection__heading">
+            <span class="label">Hábitos</span>
+            <h2 id="create-user-habits-title">Gestión de residuos</h2>
+          </div>
+
+          <div class="profile-habits">
+            <fieldset class="choice-field">
+              <legend>¿Realizan separación de residuos reciclables?</legend>
+              <p>Materiales como plástico, papel, cartón, vidrio y metales.</p>
+              <div class="choice-field__options choice-field__options--three-columns">
+                <label><input type="checkbox" [checked]="wasteSeparation.includes('school')" (change)="toggleWasteSeparation('school')" />En la escuela</label>
+                <label><input type="checkbox" [checked]="wasteSeparation.includes('home')" (change)="toggleWasteSeparation('home')" />En casa</label>
+                <label><input type="checkbox" [checked]="wasteSeparation.includes('none')" (change)="toggleWasteSeparation('none')" />No separamos</label>
+              </div>
+            </fieldset>
+
+            <fieldset class="choice-field">
+              <legend>¿Realizan compostaje?</legend>
+              <p>Transformar residuos orgánicos en abono natural para el suelo.</p>
+              <div class="choice-field__options choice-field__options--three-columns">
+                <label><input type="checkbox" [checked]="composting.includes('school')" (change)="toggleComposting('school')" />En la escuela</label>
+                <label><input type="checkbox" [checked]="composting.includes('home')" (change)="toggleComposting('home')" />En casa</label>
+                <label><input type="checkbox" [checked]="composting.includes('none')" (change)="toggleComposting('none')" />No compostamos</label>
+              </div>
+            </fieldset>
+          </div>
+        </section>
       </div>
-    </div>
-  </form>
+
+      <div class="form-actions">
+        <span></span>
+        <div class="form-actions__primary">
+          <a class="admin-secondary-action" routerLink="/admin/users">Cancelar</a>
+          <button class="admin-primary-action" type="submit" [disabled]="userForm.invalid || formLoading() || !canSubmit()">
+            {{ saving() ? 'Creando...' : 'Crear usuario' }}
+          </button>
+        </div>
+      </div>
+    </form>
+  }
 </section>

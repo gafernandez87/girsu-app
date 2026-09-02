@@ -16,6 +16,7 @@ export class AdminPage {
 
   readonly loading = signal(false);
   readonly stats = signal<AdminUserStats>({ active: 0, admins: 0, inactive: 0, total: 0 });
+  readonly schoolCount = signal(0);
   readonly scoreCount = signal(0);
   readonly rankingCount = computed(() => this.progress.leaderboard().length);
 
@@ -27,13 +28,15 @@ export class AdminPage {
     this.loading.set(true);
 
     try {
-      const [stats, scoreCount] = await Promise.all([
+      const [stats, scoreCount, schoolCount] = await Promise.all([
         this.admin.getUserStats(),
         this.admin.countGameScores(),
+        this.admin.countSchools(),
         this.progress.refresh(),
       ]);
       this.stats.set(stats);
       this.scoreCount.set(scoreCount);
+      this.schoolCount.set(schoolCount);
     } finally {
       this.loading.set(false);
     }

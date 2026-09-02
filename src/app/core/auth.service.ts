@@ -1,16 +1,24 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
 import { type AuthError, type Session, type User } from '@supabase/supabase-js';
 
-import { UserProfile } from './app.models';
+import { LocalitySource, UserProfile } from './app.models';
 import { SupabaseService } from './supabase.service';
 import { ProfileRow } from './supabase.types';
 
 export interface SignUpInput {
+  readonly birthDate: string;
+  readonly composting: readonly string[];
   readonly email: string;
-  readonly password: string;
+  readonly locality: string;
+  readonly localityId?: string;
+  readonly localitySource: Exclude<LocalitySource, 'legacy'>;
   readonly name: string;
-  readonly school: string;
-  readonly course: string;
+  readonly password: string;
+  readonly province: string;
+  readonly schoolId?: string;
+  readonly schoolMembership: string;
+  readonly schoolRole: string;
+  readonly wasteSeparation: readonly string[];
 }
 
 export interface SignInInput {
@@ -55,9 +63,19 @@ export class AuthService {
       password: input.password,
       options: {
         data: {
-          course: input.course.trim(),
+          birth_date: input.birthDate,
+          composting: input.composting,
+          course: input.schoolRole.trim(),
+          locality: input.locality.trim(),
+          locality_id: input.localityId ?? '',
+          locality_source: input.localitySource,
           name: input.name.trim(),
-          school: input.school.trim(),
+          province: input.province,
+          registration_flow: 'self_signup',
+          school_id: input.schoolId ?? '',
+          school_membership: input.schoolMembership,
+          school_role: input.schoolRole,
+          waste_separation: input.wasteSeparation,
         },
       },
     });
@@ -128,7 +146,9 @@ export class AuthService {
 
     const { data, error } = await this.supabase
       .from('profiles')
-      .select('id, email, name, role, school, course, is_active, created_at, updated_at')
+      .select(
+        'id, email, name, role, birth_date, province, locality, locality_id, locality_source, school_id, school_membership, school_role, school, course, waste_separation, composting, is_active, created_at, updated_at',
+      )
       .eq('id', user.id)
       .maybeSingle();
 
@@ -179,8 +199,18 @@ export class AuthService {
       email: row.email,
       name: row.name,
       role: row.role,
+      birthDate: row.birth_date,
+      province: row.province,
+      locality: row.locality,
+      localityId: row.locality_id,
+      localitySource: row.locality_source,
+      schoolId: row.school_id,
+      schoolMembership: row.school_membership,
+      schoolRole: row.school_role,
       school: row.school,
       course: row.course,
+      wasteSeparation: row.waste_separation,
+      composting: row.composting,
       isActive: row.is_active,
       createdAt: row.created_at,
       updatedAt: row.updated_at,

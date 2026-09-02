@@ -68,6 +68,21 @@ export const routes: Routes = [
         loadComponent: () =>
           import('./pages/admin/scores/admin-score-edit.page').then((m) => m.AdminScoreEditPage),
       },
+      {
+        path: 'escuelas',
+        loadComponent: () =>
+          import('./pages/admin/schools/admin-schools-list.page').then((m) => m.AdminSchoolsListPage),
+      },
+      {
+        path: 'escuelas/new',
+        loadComponent: () =>
+          import('./pages/admin/schools/admin-school-create.page').then((m) => m.AdminSchoolCreatePage),
+      },
+      {
+        path: 'escuelas/:id/edit',
+        loadComponent: () =>
+          import('./pages/admin/schools/admin-school-edit.page').then((m) => m.AdminSchoolEditPage),
+      },
     ],
   },
   {

@@ -1,6 +1,6 @@
 .admin-entity {
   display: grid;
-  gap: 1.75rem;
+  gap: 1.35rem;
   min-width: 0;
 }
 
@@ -8,20 +8,21 @@
   display: flex;
   align-items: start;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1.25rem;
 }
 
 .admin-hero h1 {
-  margin: 0.35rem 0 0;
+  margin: 0.3rem 0 0;
   color: #19231d;
-  font-size: clamp(2.35rem, 4vw, 3.55rem);
-  line-height: 0.98;
+  font-size: clamp(1.85rem, 3vw, 2.65rem);
+  font-weight: 760;
+  line-height: 1.04;
 }
 
 .label {
   color: #2f7d57;
-  font-size: 0.78rem;
-  font-weight: 950;
+  font-size: 0.72rem;
+  font-weight: 800;
   letter-spacing: 0;
   text-transform: uppercase;
 }
@@ -33,15 +34,16 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 2.9rem;
+  min-height: 2.55rem;
   border-radius: 8px;
-  font-weight: 950;
+  font-size: 0.92rem;
+  font-weight: 760;
   text-decoration: none;
 }
 
 .admin-primary-action {
-  min-width: 9.6rem;
-  padding: 0 1rem;
+  min-width: 8.6rem;
+  padding: 0 0.9rem;
   border: 0;
   background: #2f7d57;
   color: #fffaf0;
@@ -49,16 +51,16 @@
 
 .admin-secondary-action,
 .row-action {
-  min-width: 7rem;
-  padding: 0 0.9rem;
+  min-width: 6.2rem;
+  padding: 0 0.8rem;
   border: 1px solid rgba(61, 43, 29, 0.14);
   background: #fffdf7;
   color: #26352c;
 }
 
 .admin-danger-action {
-  min-width: 8rem;
-  padding: 0 1rem;
+  min-width: 7.2rem;
+  padding: 0 0.9rem;
   border: 1px solid rgba(178, 65, 48, 0.28);
   background: #fff1e9;
   color: #8b3327;
@@ -75,21 +77,22 @@
 .admin-metrics {
   display: flex;
   flex-wrap: wrap;
-  gap: 0.65rem;
-  padding-bottom: 1.6rem;
+  gap: 0.5rem;
+  padding-bottom: 1.25rem;
   border-bottom: 1px solid rgba(61, 43, 29, 0.12);
 }
 
 .admin-metrics span {
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
-  min-height: 2.25rem;
-  padding: 0 0.82rem;
+  gap: 0.38rem;
+  min-height: 2rem;
+  padding: 0 0.68rem;
   border-radius: 8px;
   background: #eef6ef;
   color: #65756b;
-  font-weight: 900;
+  font-size: 0.86rem;
+  font-weight: 720;
 }
 
 .admin-metrics strong {
@@ -98,12 +101,13 @@
 
 .admin-message {
   margin: 0;
-  padding: 0.9rem 1rem;
+  padding: 0.75rem 0.85rem;
   border: 1px solid rgba(178, 65, 48, 0.24);
   border-radius: 8px;
   background: rgba(255, 238, 229, 0.9);
   color: #8b3327;
-  font-weight: 800;
+  font-size: 0.92rem;
+  font-weight: 680;
 }
 
 .admin-message--success {
@@ -114,7 +118,7 @@
 
 .admin-section {
   display: grid;
-  gap: 1rem;
+  gap: 0.85rem;
   min-width: 0;
 }
 
@@ -125,14 +129,53 @@
 
 .admin-section__heading h2 {
   color: #19231d;
-  font-size: 1.55rem;
-  line-height: 1.15;
+  font-size: 1.25rem;
+  font-weight: 760;
+  line-height: 1.18;
 }
 
 .admin-section__heading p {
-  margin-top: 0.45rem;
+  margin-top: 0.3rem;
   color: #66736b;
-  font-weight: 750;
+  font-size: 0.95rem;
+  font-weight: 580;
+}
+
+.admin-filters {
+  display: grid;
+  grid-template-columns: minmax(14rem, 1fr) minmax(10rem, 13rem) auto;
+  gap: 0.75rem;
+  align-items: end;
+  padding: 0.8rem;
+  border: 1px solid rgba(61, 43, 29, 0.1);
+  border-radius: 8px;
+  background: rgba(255, 253, 244, 0.72);
+}
+
+.filter-field {
+  display: grid;
+  gap: 0.35rem;
+  color: #554839;
+  font-size: 0.78rem;
+  font-weight: 720;
+}
+
+.filter-field input,
+.filter-field select {
+  width: 100%;
+  min-height: 2.45rem;
+  padding: 0.58rem 0.68rem;
+  border: 1px solid rgba(61, 43, 29, 0.16);
+  border-radius: 8px;
+  background: #fffdf7;
+  color: #19231d;
+  font-size: 0.92rem;
+}
+
+.filter-actions {
+  display: inline-flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
 }
 
 .admin-table-scroll {
@@ -150,17 +193,18 @@
 
 .admin-table th,
 .admin-table td {
-  padding: 1rem 1.15rem;
+  padding: 0.8rem 0.95rem;
   border-bottom: 1px solid rgba(61, 43, 29, 0.12);
   text-align: left;
-  vertical-align: top;
+  vertical-align: middle;
+  font-size: 0.8rem;
 }
 
 .admin-table th {
   background: #eef5ef;
   color: #66736b;
-  font-size: 0.78rem;
-  font-weight: 950;
+  font-size: 0.72rem;
+  font-weight: 780;
   text-transform: uppercase;
 }
 
@@ -178,27 +222,32 @@
 
 .admin-table td small {
   display: block;
-  margin-top: 0.38rem;
+  margin-top: 0.28rem;
   color: #66736b;
-  font-weight: 750;
+  font-size: 0.6rem;
+  font-weight: 580;
+  line-height: 1.25;
 }
 
 .row-title {
   color: #19231d;
-  font-weight: 950;
+  font-size: 0.8rem;
+  font-weight: 680;
+  line-height: 1.2;
 }
 
 .status-pill,
 .rank-pill {
   display: inline-grid;
-  min-height: 2rem;
+  min-height: 1.78rem;
   place-items: center;
   border-radius: 8px;
-  font-weight: 950;
+  font-size: 0.88rem;
+  font-weight: 760;
 }
 
 .status-pill {
-  padding: 0 0.75rem;
+  padding: 0 0.65rem;
   background: #eef6ef;
   color: #245c40;
 }
@@ -209,8 +258,8 @@
 }
 
 .rank-pill {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: 2rem;
+  height: 2rem;
   background: #2f7d57;
   color: #fffaf0;
 }
@@ -222,7 +271,7 @@
 .empty-cell {
   height: 8rem;
   color: #66736b;
-  font-weight: 850;
+  font-weight: 650;
   text-align: center;
   vertical-align: middle;
 }
@@ -238,12 +287,12 @@
 .pagination p {
   margin: 0;
   color: #66736b;
-  font-weight: 850;
+  font-weight: 650;
 }
 
 .pagination__detail {
-  font-size: 0.78rem;
-  font-weight: 750;
+  font-size: 0.76rem;
+  font-weight: 560;
 }
 
 .pagination app-admin-pagination {
@@ -252,9 +301,9 @@
 
 .entity-form {
   display: grid;
-  gap: 1rem;
+  gap: 0.9rem;
   max-width: 54rem;
-  padding: 1rem;
+  padding: 0.95rem;
   border: 1px solid rgba(61, 43, 29, 0.12);
   border-radius: 8px;
   background: rgba(255, 253, 244, 0.82);
@@ -270,19 +319,138 @@
   display: grid;
   gap: 0.35rem;
   color: #554839;
-  font-size: 0.82rem;
-  font-weight: 900;
+  font-size: 0.8rem;
+  font-weight: 720;
+}
+
+.field__optional {
+  color: #788078;
+  font-weight: 560;
 }
 
 .field input,
 .field select {
   width: 100%;
-  min-height: 2.8rem;
+  min-height: 2.55rem;
   padding: 0.62rem 0.72rem;
   border: 1px solid rgba(61, 43, 29, 0.16);
   border-radius: 8px;
   background: #fffdf7;
   color: #19231d;
+  font-size: 0.95rem;
+}
+
+.entity-form--profile {
+  max-width: 58rem;
+}
+
+.form-subsection {
+  display: grid;
+  gap: 0.75rem;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgba(61, 43, 29, 0.1);
+}
+
+.form-subsection:first-child {
+  padding-top: 0;
+  border-top: 0;
+}
+
+.form-subsection__heading {
+  display: grid;
+  gap: 0.18rem;
+}
+
+.form-subsection__heading h2 {
+  margin: 0;
+  color: #19231d;
+  font-size: 1.08rem;
+  font-weight: 760;
+  line-height: 1.2;
+}
+
+.choice-field {
+  display: grid;
+  gap: 0.4rem;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.choice-field > legend {
+  color: #554839;
+  font-size: 0.8rem;
+  font-weight: 720;
+}
+
+.choice-field p {
+  margin: 0;
+  color: #66736b;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.choice-field__options {
+  display: grid;
+  width: 100%;
+  overflow: hidden;
+  border: 1px solid rgba(61, 43, 29, 0.14);
+  border-radius: 8px;
+  background: rgba(61, 43, 29, 0.12);
+  gap: 1px;
+}
+
+.choice-field__options--inline {
+  display: inline-grid;
+  width: fit-content;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.choice-field__options--two-columns {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.choice-field__options--three-columns {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.choice-field__options label {
+  display: flex;
+  align-items: center;
+  gap: 0.42rem;
+  min-width: 0;
+  min-height: 2.4rem;
+  padding: 0.5rem 0.66rem;
+  background: #fffdf7;
+  color: #26352c;
+  font-size: 0.82rem;
+  font-weight: 680;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.choice-field__options input {
+  width: 0.92rem;
+  height: 0.92rem;
+  flex: 0 0 auto;
+  accent-color: #2f7d57;
+}
+
+.choice-field__options label:has(input:checked) {
+  background: rgba(47, 125, 87, 0.1);
+  color: #245c40;
+}
+
+.choice-field__options label:focus-within {
+  position: relative;
+  z-index: 1;
+  box-shadow: inset 0 0 0 2px rgba(47, 125, 87, 0.46);
+}
+
+.profile-habits {
+  display: grid;
+  gap: 0.85rem;
 }
 
 .password-field {
@@ -337,7 +505,8 @@
   align-items: center;
   gap: 0.5rem;
   color: #554839;
-  font-weight: 900;
+  font-size: 0.9rem;
+  font-weight: 680;
 }
 
 .checkbox-field input {
@@ -365,15 +534,15 @@
 .readonly-panel span,
 .readonly-panel small {
   color: #66736b;
-  font-size: 0.78rem;
-  font-weight: 850;
+  font-size: 0.76rem;
+  font-weight: 680;
 }
 
 .readonly-panel strong {
   overflow-wrap: anywhere;
   color: #19231d;
-  font-size: 1rem;
-  font-weight: 950;
+  font-size: 0.95rem;
+  font-weight: 760;
 }
 
 .form-actions {
@@ -410,7 +579,21 @@
     grid-template-columns: 1fr;
   }
 
+  .choice-field__options--two-columns,
+  .choice-field__options--three-columns {
+    grid-template-columns: 1fr;
+  }
+
   .readonly-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-filters {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-actions {
+    display: grid;
     grid-template-columns: 1fr;
   }
 }
