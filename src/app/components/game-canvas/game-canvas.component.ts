@@ -8,6 +8,7 @@ import {
   OnChanges,
   OnDestroy,
   Output,
+  inject,
   signal,
   SimpleChanges,
   ViewChild,
@@ -21,6 +22,7 @@ import {
   StageResult,
   StageScoreBreakdownItem,
 } from '../../core/app.models';
+import { GameAudioService } from '../../core/game-audio.service';
 import { normalizeRawStageScore } from '../../core/scoring';
 import {
   HOME_BACKGROUND_ASSET,
@@ -68,6 +70,9 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   @Output() completed = new EventEmitter<StageResult>();
   @ViewChild('homeStage', { static: true }) private readonly homeStage!: ElementRef<HTMLDivElement>;
 
+  private readonly audio = inject(GameAudioService);
+
+  readonly audioMuted = this.audio.muted;
   readonly score = signal(0);
   readonly remainingSeconds = signal(0);
   readonly completedItems = signal(0);
@@ -113,6 +118,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     clearTimeout(this.resizeTimer);
     this.clearCountdownTimer();
     this.destroyGame();
+    this.audio.stopBackground();
   }
 
   @HostListener('window:resize')
@@ -166,6 +172,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
     this.clearCountdownTimer();
     this.destroyGame();
+    this.audio.stopBackground();
     this.resetSharedState();
     this.countdownSeconds.set(3);
 
@@ -255,6 +262,18 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.startIntroCountdown();
   }
 
+  audioToggleLabel(): string {
+    return this.audioMuted() ? 'Activar sonido' : 'Silenciar sonido';
+  }
+
+  toggleAudio(): void {
+    this.audio.toggleMuted();
+
+    if (!this.audioMuted() && this.gameplayActive() && !this.completedResult()) {
+      this.audio.startBackground(this.stage.id);
+    }
+  }
+
   homeAccuracyBonus(result: StageResult): number {
     return Math.max(0, result.correct - result.mistakes) * 20;
   }
@@ -309,6 +328,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   handleStageCompleted(result: StageResult): void {
     const visibleResult = this.withVisibleStageScore(result);
 
+    this.audio.playGameComplete();
     this.score.set(result.score);
     this.completedResult.set(visibleResult);
     this.completed.emit(visibleResult);
@@ -328,6 +348,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     }
 
     this.clearCountdownTimer();
+    this.audio.unlock();
     this.countdownSeconds.set(3);
     this.introState.set('countdown');
 
@@ -351,6 +372,10 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   private startPlayableGame(): void {
+    if (!this.isUnsupportedStage()) {
+      this.audio.startBackground(this.stage.id);
+    }
+
     if (this.stage.id === 'separacion-origen') {
       this.startHomeGame();
     }
@@ -551,6 +576,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.removeHomeSlot(slot.id);
     this.setHomeBinState(dropZone.id, 'open');
     const zoneCenter = this.getHomeZoneCenter(dropZone.id);
+    this.audio.playCorrectDrop();
     this.spawnHomeEffect('score', `+${points}`, zoneCenter);
     this.spawnHomeEffect('success', undefined, zoneCenter);
 
@@ -566,6 +592,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.completedItems.set(this.homeProcessed);
     this.removeHomeSlot(slot.id);
     this.setHomeBinState(dropZone.id, 'error');
+    this.audio.playWrongDrop();
     this.spawnHomeEffect('error', '-40', this.getHomeZoneCenter(dropZone.id));
 
     this.settleHomeDrop(dropZone.id);
@@ -600,6 +627,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.score.set(rawFinalScore);
     this.homeBinStates.set(this.createHomeBinStates('open'));
     this.homeReviewGroups.set(this.createHomeReviewGroups());
+    this.audio.playGameComplete();
     this.completedResult.set(result);
     this.completed.emit(result);
   }

@@ -9,12 +9,14 @@ import {
   OnChanges,
   OnDestroy,
   Output,
+  inject,
   signal,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 
 import { DropZone, GameItem, GameStage, StageResult } from '../../../core/app.models';
+import { GameAudioService } from '../../../core/game-audio.service';
 import {
   INDUSTRIAL_BACKGROUND_ASSET,
   INDUSTRIAL_BIN_ASSETS,
@@ -63,6 +65,8 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   @ViewChild('industrialStage', { static: true })
   private readonly industrialStage!: ElementRef<HTMLDivElement>;
   @ViewChild('beltTrack', { static: true }) private readonly beltTrack!: ElementRef<HTMLDivElement>;
+
+  private readonly audio = inject(GameAudioService);
 
   readonly backgroundImage = `url("${INDUSTRIAL_BACKGROUND_ASSET.path}")`;
   readonly conveyorBaseAsset = INDUSTRIAL_CONVEYOR_ASSETS.base;
@@ -408,6 +412,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     this.score += points;
     this.removeToken(token.tokenId);
     this.setZoneState(dropZone.id, 'open');
+    this.audio.playCorrectDrop();
     this.spawnEffect('score', `+${points}`, this.getZoneCenter(dropZone.id));
     this.emitTick();
     this.ensureActiveItem();
@@ -425,6 +430,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     this.score = Math.max(0, this.score - 40);
     this.removeToken(token.tokenId);
     this.setZoneState(dropZone.id, 'error');
+    this.audio.playWrongDrop();
     this.spawnEffect('error', '-40', this.getZoneCenter(dropZone.id));
     this.emitTick();
     this.ensureActiveItem();
@@ -440,6 +446,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     this.processed += 1;
     this.streak = 0;
     this.score = Math.max(0, this.score - 60);
+    this.audio.playWrongDrop();
     this.spawnEffect('error', '-60', token.position);
     this.emitTick();
   }
@@ -543,9 +550,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   private getZoneCenter(zoneId: string): IndustrialPoint {
     const stage = this.industrialStage.nativeElement;
     const stageRect = stage.getBoundingClientRect();
-    const zoneElement = stage.querySelector<HTMLElement>(
-      `[data-industrial-zone-id="${zoneId}"]`,
-    );
+    const zoneElement = stage.querySelector<HTMLElement>(`[data-industrial-zone-id="${zoneId}"]`);
 
     if (!zoneElement) {
       return {
@@ -604,11 +609,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     }));
   }
 
-  private spawnEffect(
-    type: IndustrialEffectType,
-    text: string,
-    position: IndustrialPoint,
-  ): void {
+  private spawnEffect(type: IndustrialEffectType, text: string, position: IndustrialPoint): void {
     const id = this.effectId;
     this.effectId += 1;
 

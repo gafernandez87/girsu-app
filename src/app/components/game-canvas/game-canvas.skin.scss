@@ -9,6 +9,78 @@
   background: #15110e;
 }
 
+.game-audio-toggle {
+  position: absolute;
+  top: max(3.55rem, calc(env(safe-area-inset-top) + 3.55rem));
+  right: max(1rem, calc(env(safe-area-inset-right) + 1rem));
+  z-index: 32;
+  display: inline-grid;
+  place-items: center;
+  width: 2.62rem;
+  height: 2.62rem;
+  border: 3px solid rgba(255, 255, 255, 0.5);
+  border-radius: 999rem;
+  background: rgba(44, 24, 15, 0.5);
+  box-shadow: 0 0.76rem 1.6rem rgba(20, 12, 8, 0.2);
+  color: #fff8df;
+  cursor: pointer;
+  backdrop-filter: blur(12px);
+}
+
+.game-audio-toggle:active {
+  transform: translateY(1px);
+}
+
+.game-audio-toggle.is-muted {
+  color: #ffdbc9;
+}
+
+.game-audio-toggle__speaker {
+  position: relative;
+  display: block;
+  width: 1.28rem;
+  height: 1.08rem;
+  color: currentColor;
+}
+
+.game-audio-toggle__speaker::before,
+.game-audio-toggle__speaker::after {
+  position: absolute;
+  content: '';
+}
+
+.game-audio-toggle__speaker::before {
+  top: 0.34rem;
+  left: 0;
+  width: 0.4rem;
+  height: 0.42rem;
+  border-radius: 0.14rem;
+  background: currentColor;
+  box-shadow: 0.35rem -0.24rem 0 0 currentColor;
+  transform: skewY(-28deg);
+}
+
+.game-audio-toggle__speaker::after {
+  top: 0.08rem;
+  left: 0.66rem;
+  width: 0.46rem;
+  height: 0.84rem;
+  border: 2px solid currentColor;
+  border-left: 0;
+  border-radius: 0 999rem 999rem 0;
+}
+
+.game-audio-toggle.is-muted .game-audio-toggle__speaker::after {
+  top: 0.52rem;
+  left: 0.18rem;
+  width: 1.08rem;
+  height: 0.14rem;
+  border: 0;
+  border-radius: 999rem;
+  background: currentColor;
+  transform: rotate(-42deg);
+}
+
 .game-intro {
   --intro-accent: #2f7d57;
   --intro-surface: #f3dfc1;
@@ -1233,6 +1305,14 @@
 }
 
 @media (max-width: 419px) {
+  .game-audio-toggle {
+    top: max(3.75rem, calc(env(safe-area-inset-top) + 3.75rem));
+    right: max(0.7rem, calc(env(safe-area-inset-right) + 0.7rem));
+    width: 2.46rem;
+    height: 2.46rem;
+    border-width: 3px;
+  }
+
   .home-game__bins {
     gap: 7px;
   }

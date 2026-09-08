@@ -8,12 +8,14 @@ import {
   OnChanges,
   OnDestroy,
   Output,
+  inject,
   signal,
   SimpleChanges,
   ViewChild,
 } from '@angular/core';
 
 import { GameItem, GameStage, StageResult } from '../../../core/app.models';
+import { GameAudioService } from '../../../core/game-audio.service';
 import { COMPOST_BACKGROUND_ASSET, COMPOST_PRODUCT_ASSETS } from '../game-canvas.assets';
 import type { ProductAsset, StageTick } from '../game-canvas.types';
 
@@ -79,6 +81,8 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
   @Output() completed = new EventEmitter<StageResult>();
   @ViewChild('compostStage', { static: true })
   private readonly compostStage!: ElementRef<HTMLDivElement>;
+
+  private readonly audio = inject(GameAudioService);
 
   readonly backgroundImage = `url("${COMPOST_BACKGROUND_ASSET.path}")`;
   readonly activeItem = signal<GameItem | null>(null);
@@ -370,6 +374,7 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     const comboBonus = Math.max(0, this.streak - 1) * 16;
     const points = item.points + comboBonus;
     this.score += points;
+    this.audio.playCorrectDrop();
     this.spawnEffect('score', `+${points}`, this.tokenPosition());
   }
 
@@ -377,6 +382,7 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     this.mistakes += 1;
     this.streak = 0;
     this.score = Math.max(0, this.score - 35);
+    this.audio.playWrongDrop();
     this.spawnEffect('penalty', '-35', this.tokenPosition());
   }
 

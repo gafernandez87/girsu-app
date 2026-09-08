@@ -7,12 +7,14 @@ import {
   OnChanges,
   OnDestroy,
   Output,
+  inject,
   SimpleChanges,
   computed,
   signal,
 } from '@angular/core';
 
 import { GameStage, StageResult, StageScoreBreakdownItem } from '../../../core/app.models';
+import { GameAudioService } from '../../../core/game-audio.service';
 import { HOME_BIN_ASSET_PATHS } from '../game-canvas.assets';
 import type { StageTick } from '../game-canvas.types';
 
@@ -219,6 +221,8 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
   @Input({ required: true }) stage!: GameStage;
   @Output() tick = new EventEmitter<StageTick>();
   @Output() completed = new EventEmitter<StageResult>();
+
+  private readonly audio = inject(GameAudioService);
 
   readonly safetyRows = SAFETY_ROWS;
   readonly gridCells = LANDFILL_GRID_CELLS;
@@ -655,6 +659,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
     this.activePiece.set(null);
     this.placedPieces.update((pieces) => pieces + 1);
     this.recycledPieces.update((pieces) => pieces + 1);
+    this.audio.playCorrectDrop();
     this.spawnEffect('Reciclado', 16, 33, 'recycle');
     this.spawnEffect(`+${recycledPoints}`, 16, 39, 'score');
     this.emitTick();
@@ -669,6 +674,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
     this.wrongRecyclePenalty += penalty;
     this.activePiece.set(null);
     this.placedPieces.update((pieces) => pieces + 1);
+    this.audio.playWrongDrop();
     this.spawnEffect('No reciclable', 16, 33, 'warning');
     if (penalty > 0) {
       this.spawnEffect(`-${penalty}`, 16, 39, 'warning');
@@ -731,6 +737,13 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
     this.activePiece.set(null);
     this.placedPieces.update((pieces) => pieces + 1);
     this.compactedLayers.update((layers) => layers + layerCount);
+
+    if (!recyclableMisplaced && efficientPlacement) {
+      this.audio.playCorrectDrop();
+    } else {
+      this.audio.playWrongDrop();
+    }
+
     if (recyclableMisplaced) {
       this.spawnEffect(
         'Reciclable al foso',

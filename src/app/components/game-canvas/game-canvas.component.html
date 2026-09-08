@@ -1,4 +1,16 @@
 <section class="game-card">
+  <button
+    type="button"
+    class="game-audio-toggle"
+    [class.is-muted]="audioMuted()"
+    [attr.aria-label]="audioToggleLabel()"
+    [attr.title]="audioToggleLabel()"
+    [attr.aria-pressed]="!audioMuted()"
+    (click)="toggleAudio()"
+  >
+    <span class="game-audio-toggle__speaker" aria-hidden="true"></span>
+  </button>
+
   @if (stage.id === 'valorizacion-industrial' && gameplayActive()) {
     <app-industrial-game
       [stage]="stage"
