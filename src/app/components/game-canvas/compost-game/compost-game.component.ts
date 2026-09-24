@@ -392,7 +392,7 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     layerId: number,
   ): readonly CompostLayerFragment[] {
     const fragmentTypes = this.fragmentTypesForItem(item, category);
-    const count = category === 'marrones' ? 16 : 14;
+    const count = category === 'marrones' ? 8 : 7;
 
     return Array.from({ length: count }, (_, index) => {
       const type = fragmentTypes[index % fragmentTypes.length];
@@ -467,7 +467,7 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   private spawnMaterialFall(item: GameItem, category: CompostCategory): void {
-    const particleCount = category === 'marrones' ? 13 : 11;
+    const particleCount = category === 'marrones' ? 8 : 7;
     const nextParticles = Array.from({ length: particleCount }, () => {
       const id = this.particleId;
       this.particleId += 1;

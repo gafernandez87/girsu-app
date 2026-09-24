@@ -21,12 +21,55 @@ interface NoiseOptions {
   readonly filterType?: BiquadFilterType;
 }
 
+const notes = {
+  F2: 87.31,
+  G2: 98,
+  A2: 110,
+  C3: 130.81,
+  A3: 220,
+  B3: 246.94,
+  C4: 261.63,
+  D4: 293.66,
+  E4: 329.63,
+  F4: 349.23,
+  G4: 392,
+  A4: 440,
+  B4: 493.88,
+  C5: 523.25,
+  D5: 587.33,
+  E5: 659.25,
+  F5: 698.46,
+  G5: 783.99,
+  A5: 880,
+} as const;
+
+const musicBars = [
+  {
+    chord: [notes.C4, notes.E4, notes.G4],
+    bass: notes.C3,
+    melody: [notes.E5, notes.G5, null, notes.E5, notes.D5, notes.C5, notes.D5, null],
+  },
+  {
+    chord: [notes.C4, notes.E4, notes.A4],
+    bass: notes.A2,
+    melody: [notes.E5, notes.A5, notes.G5, notes.E5, notes.C5, null, notes.B4, null],
+  },
+  {
+    chord: [notes.C4, notes.F4, notes.A4],
+    bass: notes.F2,
+    melody: [notes.A4, notes.C5, notes.F5, notes.E5, notes.C5, notes.A4, notes.G4, null],
+  },
+  {
+    chord: [notes.B3, notes.D4, notes.G4],
+    bass: notes.G2,
+    melody: [notes.B4, notes.D5, notes.G5, notes.F5, notes.D5, notes.B4, notes.D5, null],
+  },
+] as const;
+
 @Injectable({ providedIn: 'root' })
 export class GameAudioService {
   private static readonly mutedStorageKey = 'girsu-game-audio-muted';
-  private static readonly musicIntervalMs = 520;
-  private static readonly musicSequence = [392, 494, 587, 659, 587, 494, 440, 523] as const;
-  private static readonly bassSequence = [196, 247, 220, 262] as const;
+  private static readonly musicIntervalMs = 300;
 
   readonly muted = signal(this.readMutedPreference());
 
@@ -180,36 +223,49 @@ export class GameAudioService {
       return;
     }
 
-    const note =
-      GameAudioService.musicSequence[this.musicStep % GameAudioService.musicSequence.length];
-    const isDownbeat = this.musicStep % 4 === 0;
+    const stepsPerBar = musicBars[0].melody.length;
+    const stepInBar = this.musicStep % stepsPerBar;
+    const bar = musicBars[Math.floor(this.musicStep / stepsPerBar) % musicBars.length];
+    const melodyNote = bar.melody[stepInBar];
 
-    this.playTone({
-      frequency: note,
-      duration: 0.42,
-      gain: 0.04,
-      type: 'sine',
-      destination: this.musicGain,
-      attack: 0.035,
-      release: 0.24,
-      sustain: 0.26,
-    });
-
-    if (isDownbeat) {
-      const bass =
-        GameAudioService.bassSequence[
-          Math.floor(this.musicStep / 4) % GameAudioService.bassSequence.length
-        ];
-
+    if (melodyNote) {
       this.playTone({
-        frequency: bass,
-        duration: 0.62,
-        gain: 0.035,
+        frequency: melodyNote,
+        duration: stepInBar === 2 ? 0.26 : 0.38,
+        gain: 0.075,
         type: 'triangle',
         destination: this.musicGain,
-        attack: 0.055,
-        release: 0.34,
-        sustain: 0.3,
+        attack: 0.018,
+        release: 0.18,
+        sustain: 0.42,
+      });
+    }
+
+    if (stepInBar === 0) {
+      bar.chord.forEach((frequency) => {
+        this.playTone({
+          frequency,
+          duration: 2.35,
+          gain: 0.025,
+          type: 'sine',
+          destination: this.musicGain,
+          attack: 0.12,
+          release: 0.65,
+          sustain: 0.5,
+        });
+      });
+    }
+
+    if (stepInBar === 0 || stepInBar === 4) {
+      this.playTone({
+        frequency: bar.bass,
+        duration: stepInBar === 0 ? 1.1 : 0.7,
+        gain: 0.07,
+        type: 'triangle',
+        destination: this.musicGain,
+        attack: 0.025,
+        release: 0.35,
+        sustain: 0.32,
       });
     }
 
@@ -353,7 +409,7 @@ export class GameAudioService {
 
       this.masterGain.gain.value = this.muted() ? 0 : 0.78;
       this.sfxGain.gain.value = 0.9;
-      this.musicGain.gain.value = 0.12;
+      this.musicGain.gain.value = 0.32;
 
       this.sfxGain.connect(this.masterGain);
       this.musicGain.connect(this.masterGain);
