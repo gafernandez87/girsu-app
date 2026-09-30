@@ -31,3 +31,21 @@ Documentos especificos de mini juegos:
 La app usa Supabase para autenticacion, perfiles, resultados de juegos, ranking y backoffice.
 
 Los scripts `start` y `build` quedan disponibles para etapas posteriores, pero no deben ejecutarse en este flujo de trabajo.
+
+## Solicitudes de eliminacion de cuenta
+
+La ruta publica `/eliminar-cuenta` se abre sin iniciar sesion y tambien esta disponible en el menu de la app.
+Prepara un correo de solicitud; no elimina automaticamente la cuenta ni envia el correo por el usuario.
+La URL prevista para Play Console es `https://girsu-app.vercel.app/eliminar-cuenta`, una vez desplegada y configurada la pagina.
+
+Antes de publicar:
+
+- Completar `src/app/core/account-deletion.config.ts` con un correo monitoreado del cliente.
+- Confirmar y completar `retentionNotice`: indicar los datos conservados (incluidos backups, logs y correos de solicitudes), los motivos y los plazos adicionales; si no se conserva ninguno, declararlo solo tras verificarlo.
+- Publicar la web con soporte para rutas Angular y verificar `/eliminar-cuenta` sin iniciar sesion. Usar su URL HTTPS completa en Play Console.
+- Incorporar esta version al siguiente paquete Android para incluir el acceso desde la app.
+
+El equipo debe verificar la titularidad desde el correo registrado y procesar las solicitudes desde Backoffice > Usuarios > Editar > Eliminar usuario.
+La funcion existente `admin-users` elimina al usuario de Auth; las claves foraneas `ON DELETE CASCADE` eliminan el perfil, el perfil publico y los resultados asociados.
+Verificar el resultado en el entorno desplegado y confirmar la eliminacion al solicitante; no pedir contrasenas.
+Los administradores no pueden eliminar su propia cuenta desde el backoffice: otro administrador debe procesar esa solicitud.

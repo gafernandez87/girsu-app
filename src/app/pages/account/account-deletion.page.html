@@ -1,0 +1,63 @@
+<main class="deletion-page">
+  <h1>Eliminar cuenta</h1>
+  <p>
+    Podés solicitar la eliminación de tu cuenta de <strong>El Camino de los Residuos</strong>,
+    de Jujuy GIRSU, y de los datos asociados, incluso si ya desinstalaste la app.
+  </p>
+
+  <section aria-labelledby="request-heading">
+    <h2 id="request-heading">Cómo solicitarla</h2>
+    @if (config.email) {
+      <ol>
+        <li>
+          Enviá un correo a <a [href]="requestUrl()">{{ config.email }}</a> desde la dirección
+          con la que registraste tu cuenta.
+        </li>
+        <li>
+          Usá el asunto “Solicitud de eliminación de cuenta - El Camino de los Residuos”
+          e indicá que querés eliminar tu cuenta y todos sus datos asociados.
+        </li>
+        <li>
+          El equipo verificará que la cuenta te pertenece y te confirmará la eliminación
+          por correo. No envíes tu contraseña.
+        </li>
+      </ol>
+      <a class="request-link" [href]="requestUrl()">Solicitar eliminación por correo</a>
+      <p>El enlace abre un correo preparado. Revisalo y envialo para completar la solicitud.</p>
+    } @else {
+      <p role="status">El canal de solicitudes de eliminación todavía no está habilitado.</p>
+    }
+  </section>
+
+  <section aria-labelledby="data-heading">
+    <h2 id="data-heading">Qué datos se eliminan</h2>
+    <ul>
+      <li>La cuenta de acceso, el correo electrónico y las credenciales de autenticación.</li>
+      <li>El nombre, la fecha de nacimiento, la provincia y la localidad del perfil.</li>
+      <li>La vinculación con la escuela, el curso y el rol escolar.</li>
+      <li>Las respuestas sobre separación de residuos y compostaje.</li>
+      <li>El progreso, los resultados, los puntajes y la participación en el ranking.</li>
+    </ul>
+    <p>
+      La eliminación es permanente: no podrás recuperar tu cuenta ni tus partidas.
+      Los catálogos de escuelas y localidades se mantienen porque son información general,
+      sin la vinculación con tu cuenta eliminada.
+    </p>
+  </section>
+
+  <section aria-labelledby="retention-heading">
+    <h2 id="retention-heading">Conservación de datos</h2>
+    <p>
+      Conservamos los datos asociados a tu cuenta mientras exista. Podés solicitar su
+      eliminación en cualquier momento mediante el procedimiento indicado en esta página.
+    </p>
+    @if (config.retentionNotice) {
+      <p>{{ config.retentionNotice }}</p>
+    } @else {
+      <p>
+        Los datos que puedan conservarse después de eliminar la cuenta, como copias de
+        seguridad y correos de la solicitud, y sus plazos están pendientes de confirmación.
+      </p>
+    }
+  </section>
+</main>

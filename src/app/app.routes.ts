@@ -4,6 +4,11 @@ import { adminGuard, authGuard, guestGuard } from './core/auth.guards';
 
 export const routes: Routes = [
   {
+    path: 'eliminar-cuenta',
+    loadComponent: () =>
+      import('./pages/account/account-deletion.page').then((m) => m.AccountDeletionPage)
+  },
+  {
     path: 'login',
     canActivate: [guestGuard],
     loadComponent: () => import('./pages/auth/login.page').then((m) => m.LoginPage)

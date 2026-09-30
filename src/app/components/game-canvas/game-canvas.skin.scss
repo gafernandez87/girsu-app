@@ -43,8 +43,37 @@
 }
 
 .game-audio-toggle__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 1.65rem;
+  height: 1.65rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1.8rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.game-audio-toggle__icon.is-ios {
+  font-size: 1.4rem;
+  margin-left: -10px;
+}
+
+.game-audio-toggle__icon.is-muted::after {
+  position: absolute;
+  top: 50%;
+  left: 0.16rem;
+  width: 1.34rem;
+  height: 2px;
+  border-radius: 999px;
+  background: currentColor;
+  content: '';
+  transform: rotate(-48deg);
+}
+
+.game-audio-toggle__icon.is-ios.is-muted::after {
   width: 1.3rem;
-  height: 1.3rem;
+  height: 3px;
 }
 
 .game-intro {
