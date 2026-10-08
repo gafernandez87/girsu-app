@@ -59,7 +59,7 @@
     class="home-game"
     [class.is-hidden]="stage.id !== 'separacion-origen'"
     [style.background-image]="homeBackgroundImage"
-    aria-label="Minijuego de separacion en origen"
+    aria-label="Minijuego de separación en origen"
   >
     @if (stage.id === 'separacion-origen' && gameplayActive()) {
       <div class="home-game__shade" aria-hidden="true"></div>
@@ -167,7 +167,7 @@
       <div class="home-complete" aria-live="polite">
         <div class="home-complete__panel">
           <img src="/assets/game-1/effects/processed/medal.png" alt="" />
-          <strong>Separacion lograda</strong>
+          <strong>Separación lograda</strong>
           <span>{{ result.score }} puntos</span>
           <small>
             Tiempo +{{ result.remainingSeconds * 10 }} | Bonus por aciertos +{{
@@ -212,7 +212,7 @@
           <strong>Planta en marcha</strong>
           <span>{{ result.score }} puntos</span>
           <small>
-            Tiempo +{{ result.remainingSeconds * 10 }} | Precision +{{
+            Tiempo +{{ result.remainingSeconds * 10 }} | Precisión +{{
               industrialAccuracyBonus(result)
             }}
           </small>
@@ -228,7 +228,7 @@
               routerLink="/juego/compostaje-domiciliario"
               class="industrial-complete__action industrial-complete__action--secondary"
             >
-              Proximo juego
+              Próximo juego
             </a>
           </div>
         </div>

@@ -1,34 +1,21 @@
-<main class="deletion-page">
-  <h1>Eliminar cuenta</h1>
-  <p>
-    Podés solicitar la eliminación de tu cuenta de <strong>El Camino de los Residuos</strong>,
-    de Jujuy GIRSU, y de los datos asociados, incluso si ya desinstalaste la app.
-  </p>
-
-  <section aria-labelledby="request-heading">
-    <h2 id="request-heading">Cómo solicitarla</h2>
-    @if (config.email) {
-      <ol>
-        <li>
-          Enviá un correo a <a [href]="requestUrl()">{{ config.email }}</a> desde la dirección
-          con la que registraste tu cuenta.
-        </li>
-        <li>
-          Usá el asunto “Solicitud de eliminación de cuenta - El Camino de los Residuos”
-          e indicá que querés eliminar tu cuenta y todos sus datos asociados.
-        </li>
-        <li>
-          El equipo verificará que la cuenta te pertenece y te confirmará la eliminación
-          por correo. No envíes tu contraseña.
-        </li>
-      </ol>
-      <a class="request-link" [href]="requestUrl()">Solicitar eliminación por correo</a>
-      <p>El enlace abre un correo preparado. Revisalo y envialo para completar la solicitud.</p>
-    } @else {
-      <p role="status">El canal de solicitudes de eliminación todavía no está habilitado.</p>
-    }
-  </section>
-
+<main class="deletion-page" aria-labelledby="deletion-title">
+  <h1 id="deletion-title">Eliminar cuenta</h1>
+  @if (deleted()) {
+    <section class="deletion-success" role="status" aria-labelledby="success-heading">
+      <h2 id="success-heading">Tu cuenta fue eliminada</h2>
+      <p>
+        Se eliminaron tu cuenta, perfil, resultados y participación en el ranking de
+        <strong>El Camino de los Residuos</strong>. Se cerraron las sesiones de la cuenta.
+      </p>
+      <p>Podés cerrar esta pantalla o <a routerLink="/registro">crear una nueva cuenta</a>.</p>
+    </section>
+  } @else {
+    <p>
+      Podés eliminar tu cuenta de <strong>El Camino de los Residuos</strong>, de Jujuy GIRSU, y sus
+      datos asociados desde esta página, en la app o en la web, incluso si ya desinstalaste la app.
+    </p>
+    <p>No necesitás enviar un correo ni contactar a un administrador.</p>
+  }
   <section aria-labelledby="data-heading">
     <h2 id="data-heading">Qué datos se eliminan</h2>
     <ul>
@@ -39,25 +26,105 @@
       <li>El progreso, los resultados, los puntajes y la participación en el ranking.</li>
     </ul>
     <p>
-      La eliminación es permanente: no podrás recuperar tu cuenta ni tus partidas.
-      Los catálogos de escuelas y localidades se mantienen porque son información general,
-      sin la vinculación con tu cuenta eliminada.
+      La eliminación es permanente: no podrás recuperar tu cuenta ni tus partidas. Los catálogos de
+      escuelas y localidades se mantienen sin la vinculación con tu cuenta eliminada.
     </p>
   </section>
-
   <section aria-labelledby="retention-heading">
-    <h2 id="retention-heading">Conservación de datos</h2>
+    <h2 id="retention-heading">Cuándo se eliminan los datos</h2>
     <p>
-      Conservamos los datos asociados a tu cuenta mientras exista. Podés solicitar su
-      eliminación en cualquier momento mediante el procedimiento indicado en esta página.
+      La eliminación de la cuenta y de los datos en uso se realiza al confirmar la operación y
+      verificar tu identidad. Esperá el mensaje de confirmación en esta pantalla. Desinstalar la app
+      o cerrar sesión no elimina la cuenta.
     </p>
     @if (config.retentionNotice) {
       <p>{{ config.retentionNotice }}</p>
     } @else {
       <p>
-        Los datos que puedan conservarse después de eliminar la cuenta, como copias de
-        seguridad y correos de la solicitud, y sus plazos están pendientes de confirmación.
+        Los datos que puedan conservarse en copias de seguridad, registros técnicos o comunicaciones
+        previas, sus motivos y plazos están pendientes de confirmación antes del lanzamiento. No se
+        garantiza su eliminación inmediata.
       </p>
     }
   </section>
+  @if (!deleted()) {
+    <section aria-labelledby="confirm-heading">
+      <h2 id="confirm-heading">Confirmar eliminación</h2>
+      @if (auth.loading()) {
+        <p role="status">Verificando tu sesión…</p>
+      } @else {
+        <form
+          class="deletion-form"
+          (ngSubmit)="submit()"
+          #deletionForm="ngForm"
+          [attr.aria-busy]="deleting()"
+        >
+          @if (auth.isAuthenticated()) {
+            <p>
+              Vas a eliminar la cuenta <strong>{{ auth.session()?.user?.email }}</strong
+              >.
+            </p>
+          } @else {
+            <p>Ingresá los datos de tu cuenta para verificar que te pertenece.</p>
+            <label
+              >Correo electrónico de la cuenta
+              <input
+                type="email"
+                name="email"
+                autocomplete="username"
+                email
+                required
+                [(ngModel)]="email"
+                [disabled]="deleting()"
+              />
+            </label>
+          }
+          <label
+            >Contraseña actual
+            <input
+              type="password"
+              name="password"
+              autocomplete="current-password"
+              required
+              [(ngModel)]="password"
+              [disabled]="deleting()"
+            />
+          </label>
+          <p class="deletion-help">
+            La usamos para verificar tu identidad. No la enviamos por correo ni la guardamos en esta
+            página.
+          </p>
+          <label class="deletion-confirmation">
+            <input
+              type="checkbox"
+              name="confirmed"
+              required
+              [(ngModel)]="confirmed"
+              [disabled]="deleting()"
+            />
+            <span
+              >Entiendo que se eliminarán mi cuenta y sus datos asociados de forma permanente.</span
+            >
+          </label>
+          @if (error(); as message) {
+            <p class="deletion-error" role="alert">{{ message }}</p>
+          }
+          <button
+            type="submit"
+            class="deletion-button"
+            [disabled]="deletionForm.invalid || !confirmed || deleting()"
+          >
+            {{ deleting() ? 'Eliminando cuenta…' : 'Eliminar mi cuenta y mis datos' }}
+          </button>
+          <a
+            routerLink="/login"
+            [attr.aria-disabled]="deleting()"
+            (click)="deleting() && $event.preventDefault()"
+            >Cancelar</a
+          >
+        </form>
+      }
+    </section>
+  }
+  <p><a routerLink="/politica-privacidad">Consultar la política de privacidad</a></p>
 </main>

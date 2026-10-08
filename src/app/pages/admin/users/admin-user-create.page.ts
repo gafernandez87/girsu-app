@@ -76,7 +76,7 @@ export class AdminUserCreatePage {
     }
 
     if (!this.canSubmit()) {
-      this.error.set('Completa los datos obligatorios antes de crear el usuario.');
+      this.error.set('Completá los datos obligatorios antes de crear el usuario.');
       return;
     }
 

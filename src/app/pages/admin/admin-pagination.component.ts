@@ -15,11 +15,11 @@ type PageItem =
   selector: 'app-admin-pagination',
   template: `
     @if (totalPages > 1) {
-      <nav class="admin-pagination" aria-label="Paginacion">
+      <nav class="admin-pagination" aria-label="Paginación">
         <button
           class="page-button page-button--arrow"
           type="button"
-          aria-label="Pagina anterior"
+          aria-label="Página anterior"
           [disabled]="loading || currentPage <= 1"
           (click)="goToPage(currentPage - 1)"
         >
@@ -37,7 +37,7 @@ type PageItem =
               type="button"
               [class.page-button--active]="item.page === currentPage"
               [attr.aria-current]="item.page === currentPage ? 'page' : null"
-              [attr.aria-label]="'Pagina ' + item.page"
+              [attr.aria-label]="'Página ' + item.page"
               [disabled]="loading || item.page === currentPage"
               (click)="goToPage(item.page)"
             >
@@ -49,7 +49,7 @@ type PageItem =
         <button
           class="page-button page-button--arrow"
           type="button"
-          aria-label="Pagina siguiente"
+          aria-label="Página siguiente"
           [disabled]="loading || currentPage >= totalPages"
           (click)="goToPage(currentPage + 1)"
         >

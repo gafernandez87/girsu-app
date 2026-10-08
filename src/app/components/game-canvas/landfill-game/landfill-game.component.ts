@@ -1027,9 +1027,9 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
       },
       { id: 'landfill-recycling', label: 'Reciclaje correcto', score: this.recycleScore },
       { id: 'landfill-soft-drop', label: 'Descenso manual', score: this.softDropScore },
-      { id: 'landfill-adjustment', label: 'Operacion', score: scoreAdjustment },
-      { id: 'landfill-durability', label: 'Vida util', score: survivalBonus },
-      { id: 'landfill-compaction', label: 'Compactacion', score: precisionBonus },
+      { id: 'landfill-adjustment', label: 'Operación', score: scoreAdjustment },
+      { id: 'landfill-durability', label: 'Vida útil', score: survivalBonus },
+      { id: 'landfill-compaction', label: 'Compactación', score: precisionBonus },
       { id: 'landfill-layers', label: 'Capas selladas', score: sealedLayerBonus },
       { id: 'landfill-full-run', label: 'Fosa sostenida', score: fullRunBonus },
       {

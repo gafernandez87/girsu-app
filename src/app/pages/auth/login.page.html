@@ -3,12 +3,12 @@
     <div class="auth-copy">
       <span class="label">GIRSU Jujuy</span>
       <h1 id="login-title">Ingresar</h1>
-      <p>Guarda tus puntos, continua el recorrido y mira tu posicion en el ranking.</p>
+      <p>Guardá tus puntos, continuá el recorrido y mirá tu posición en el ranking.</p>
     </div>
 
     <form class="auth-form" (ngSubmit)="submit()" #loginForm="ngForm">
       <label>
-        Email
+        Correo electrónico
         <input
           type="email"
           name="email"
@@ -19,7 +19,7 @@
       </label>
 
       <label>
-        Password
+        Contraseña
         <span class="password-field">
           <input
             [type]="showPassword() ? 'text' : 'password'"
@@ -32,8 +32,8 @@
           <button
             type="button"
             class="password-field__toggle"
-            [attr.aria-label]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
-            [attr.title]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
+            [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            [attr.title]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
             (click)="togglePasswordVisibility()"
           >
             @if (showPassword()) {
@@ -62,6 +62,7 @@
       </button>
     </form>
 
-    <p class="auth-link">No tenes cuenta? <a routerLink="/registro">Registrate</a></p>
+    <p class="auth-link">¿No tenés cuenta? <a routerLink="/registro">Registrate</a></p>
+    <p class="auth-link"><a routerLink="/politica-privacidad">Política de privacidad</a></p>
   </section>
 </main>

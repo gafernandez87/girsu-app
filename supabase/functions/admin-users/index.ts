@@ -55,7 +55,7 @@ Deno.serve(async (request) => {
   }
 
   if (request.method !== 'POST') {
-    return json({ message: 'Metodo no permitido.' }, 405);
+    return json({ message: 'Método no permitido.' }, 405);
   }
 
   try {
@@ -80,9 +80,9 @@ Deno.serve(async (request) => {
       return json({ ok: true });
     }
 
-    return json({ message: 'Accion no soportada.' }, 400);
+    return json({ message: 'Acción no soportada.' }, 400);
   } catch (error) {
-    const message = error instanceof Error ? error.message : 'No pudimos completar la operacion.';
+    const message = error instanceof Error ? error.message : 'No pudimos completar la operación.';
     const status = error instanceof HttpError ? error.status : 500;
     return json({ message }, status);
   }
@@ -95,13 +95,13 @@ async function getCaller(
   const token = request.headers.get('Authorization')?.replace(/^Bearer\s+/i, '');
 
   if (!token) {
-    throw new HttpError('Sesion requerida.', 401);
+    throw new HttpError('Sesión requerida.', 401);
   }
 
   const { data, error } = await adminClient.auth.getUser(token);
 
   if (error || !data.user) {
-    throw new HttpError('Sesion invalida.', 401);
+    throw new HttpError('Sesión inválida.', 401);
   }
 
   return { id: data.user.id };
@@ -115,7 +115,7 @@ async function assertAdmin(userId: string, adminClient: ReturnType<typeof create
     .single();
 
   if (error || data?.role !== 'admin' || !data?.is_active) {
-    throw new HttpError('No tenes permisos para administrar usuarios.', 403);
+    throw new HttpError('No tenés permisos para administrar usuarios.', 403);
   }
 }
 
@@ -208,7 +208,7 @@ async function deleteUser(
   }
 
   if (payload.id === callerId) {
-    throw new HttpError('No podes eliminar tu propio usuario admin.', 400);
+    throw new HttpError('No podés eliminar tu propio usuario admin.', 400);
   }
 
   const { error } = await adminClient.auth.admin.deleteUser(payload.id);
@@ -287,7 +287,7 @@ async function getLocality(
   adminClient: ReturnType<typeof createAdminClient>,
 ): Promise<{ readonly id: string; readonly name: string } | null> {
   if (!localityId) {
-    throw new HttpError('Selecciona una localidad de Jujuy.', 400);
+    throw new HttpError('Seleccioná una localidad de Jujuy.', 400);
   }
 
   const { data, error } = await adminClient
@@ -320,7 +320,7 @@ function normalizePayload(
   const composting = normalizeHabitValues(payload.composting, 'compostaje');
 
   if (!isEmail(email)) {
-    throw new HttpError('Ingresa un email válido.', 400);
+    throw new HttpError('Ingresá un email válido.', 400);
   }
 
   if (!payload.name?.trim()) {
@@ -328,27 +328,27 @@ function normalizePayload(
   }
 
   if (!schoolRole) {
-    throw new HttpError('Selecciona el rol en la escuela.', 400);
+    throw new HttpError('Seleccioná el rol en la escuela.', 400);
   }
 
   if (province === 'Jujuy' && !localityId) {
-    throw new HttpError('Selecciona una localidad de Jujuy.', 400);
+    throw new HttpError('Seleccioná una localidad de Jujuy.', 400);
   }
 
   if (province === 'Otra' && !locality) {
-    throw new HttpError('Escribe la localidad.', 400);
+    throw new HttpError('Escribí la localidad.', 400);
   }
 
   if (schoolMembership === 'jujuy_school' && !payload.schoolId?.trim()) {
-    throw new HttpError('Selecciona una escuela de Jujuy.', 400);
+    throw new HttpError('Seleccioná una escuela de Jujuy.', 400);
   }
 
   if (options.passwordRequired && password.length < 6) {
-    throw new HttpError('El password debe tener al menos 6 caracteres.', 400);
+    throw new HttpError('La contraseña debe tener al menos 6 caracteres.', 400);
   }
 
   if (!options.passwordRequired && password && password.length < 6) {
-    throw new HttpError('El password debe tener al menos 6 caracteres.', 400);
+    throw new HttpError('La contraseña debe tener al menos 6 caracteres.', 400);
   }
 
   return {
@@ -375,7 +375,7 @@ function normalizeProvince(province: string | undefined): Province {
     return province;
   }
 
-  throw new HttpError('Selecciona una provincia válida.', 400);
+  throw new HttpError('Seleccioná una provincia válida.', 400);
 }
 
 function normalizeSchoolMembership(value: string | undefined): SchoolMembership {
@@ -383,7 +383,7 @@ function normalizeSchoolMembership(value: string | undefined): SchoolMembership 
     return value;
   }
 
-  throw new HttpError('Selecciona la relación con una institución educativa.', 400);
+  throw new HttpError('Seleccioná la relación con una institución educativa.', 400);
 }
 
 function normalizeBirthDate(value: string | undefined): string {
@@ -408,14 +408,14 @@ function normalizeBirthDate(value: string | undefined): string {
 
 function normalizeHabitValues(value: unknown, label: string): readonly string[] {
   if (!Array.isArray(value)) {
-    throw new HttpError(`Selecciona una opción de ${label}.`, 400);
+    throw new HttpError(`Seleccioná una opción de ${label}.`, 400);
   }
 
   const values = [...new Set(value.filter((item): item is string => typeof item === 'string'))];
   const allowedValues = new Set(['school', 'home', 'none']);
 
   if (values.length === 0 || values.some((item) => !allowedValues.has(item))) {
-    throw new HttpError(`Selecciona una opción válida de ${label}.`, 400);
+    throw new HttpError(`Seleccioná una opción válida de ${label}.`, 400);
   }
 
   if (values.includes('none') && values.length > 1) {
@@ -446,7 +446,7 @@ function createAdminClient() {
   const secretKey = getSecretKey();
 
   if (!supabaseUrl || !secretKey) {
-    throw new HttpError('Falta configuracion de Supabase en la funcion.', 500);
+    throw new HttpError('Falta configuración de Supabase en la función.', 500);
   }
 
   return createClient(supabaseUrl, secretKey, {

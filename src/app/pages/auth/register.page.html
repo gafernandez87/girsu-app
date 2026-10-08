@@ -14,7 +14,7 @@
         Antes de comenzar, queremos conocer un poco más sobre vos y sobre los hábitos de gestión de residuos que ya existen <strong>en tu escuela y en tu casa</strong>.
       </p>
       <p>
-        Completá este breve formulario con tus datos y respondé algunas preguntas sobre <strong>separacion
+        Completá este breve formulario con tus datos y respondé algunas preguntas sobre <strong>separación
         de residuos y compostaje</strong>.
       </p>
       <p>
@@ -61,7 +61,7 @@
             <input #emailControl="ngModel" type="email" name="email" autocomplete="email" required [(ngModel)]="email" />
             @if (hasEmailError(emailControl)) {
               <small class="field-error" role="alert">
-                {{ email.trim() ? 'Ingresa un correo electrónico válido.' : 'Este campo es obligatorio.' }}
+                {{ email.trim() ? 'Ingresá un correo electrónico válido.' : 'Este campo es obligatorio.' }}
               </small>
             }
           </label>
@@ -108,7 +108,7 @@
                 [(ngModel)]="localityId"
               />
               @if (hasLocalityError(localityControl)) {
-                <small class="field-error" role="alert">Selecciona una localidad.</small>
+                <small class="field-error" role="alert">Seleccioná una localidad.</small>
               }
             </div>
           } @else {
@@ -119,12 +119,12 @@
                 type="text"
                 name="manualLocality"
                 autocomplete="address-level2"
-                placeholder="Escribi tu localidad"
+                placeholder="Escribí tu localidad"
                 required
                 [(ngModel)]="manualLocality"
               />
               @if (hasLocalityError(manualLocalityControl)) {
-                <small class="field-error" role="alert">Escribe tu localidad.</small>
+                <small class="field-error" role="alert">Escribí tu localidad.</small>
               }
             </label>
           }
@@ -152,7 +152,7 @@
                   [ngModel]="schoolMembership"
                   (ngModelChange)="onSchoolMembershipChange($event)"
                 />
-                Otra institucion o sin escuela
+                Otra institución o sin escuela
               </label>
             </div>
           </fieldset>
@@ -172,7 +172,7 @@
                 (schoolSelect)="onSchoolSelected($event)"
               />
               @if (hasSchoolError(schoolControl)) {
-                <small class="field-error" role="alert">Selecciona una escuela.</small>
+                <small class="field-error" role="alert">Seleccioná una escuela.</small>
               }
             </div>
           }
@@ -188,7 +188,7 @@
               <option value="Otro">Otro</option>
             </select>
             @if (isFieldInvalid(schoolRoleControl)) {
-              <small class="field-error" role="alert">Selecciona un rol.</small>
+              <small class="field-error" role="alert">Seleccioná un rol.</small>
             }
           </label>
 
@@ -207,8 +207,8 @@
               <button
                 type="button"
                 class="password-field__toggle"
-                [attr.aria-label]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
-                [attr.title]="showPassword() ? 'Ocultar password' : 'Mostrar password'"
+                [attr.aria-label]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+                [attr.title]="showPassword() ? 'Ocultar contraseña' : 'Mostrar contraseña'"
                 (click)="togglePasswordVisibility()"
               >
                 @if (showPassword()) {
@@ -270,7 +270,7 @@
               </label>
             </div>
             @if (hasChoiceError(wasteSeparation)) {
-              <small class="field-error" role="alert">Selecciona al menos una opción.</small>
+              <small class="field-error" role="alert">Seleccioná al menos una opción.</small>
             }
           </fieldset>
 
@@ -304,7 +304,7 @@
               </label>
             </div>
             @if (hasChoiceError(composting)) {
-              <small class="field-error" role="alert">Selecciona al menos una opción.</small>
+              <small class="field-error" role="alert">Seleccioná al menos una opción.</small>
             }
           </fieldset>
         </fieldset>
@@ -317,6 +317,13 @@
           <p class="form-message auth-form__full">{{ message }}</p>
         }
 
+        <p class="auth-form__full privacy-notice">
+          Antes de registrarte, consultá la
+          <a routerLink="/politica-privacidad">Política de privacidad</a>.
+          Tu nombre y apellido, escuela, curso o rol y puntajes serán visibles para otros
+          usuarios que inicien sesión en el ranking.
+        </p>
+
         <button
           type="submit"
           class="auth-form__full"
@@ -326,7 +333,7 @@
         </button>
       </form>
 
-      <p class="auth-link">Ya tenes cuenta? <a routerLink="/login">Ingresa</a></p>
+      <p class="auth-link">¿Ya tenés cuenta? <a routerLink="/login">Ingresá</a></p>
     </section>
   </section>
 </main>

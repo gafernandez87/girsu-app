@@ -125,7 +125,7 @@ export class AdminSchoolEditPage {
   }
 
   async deleteSchool(): Promise<void> {
-    if (this.deleting() || !confirm('Seguro que queres eliminar esta escuela?')) {
+    if (this.deleting() || !confirm('¿Seguro que querés eliminar esta escuela?')) {
       return;
     }
 

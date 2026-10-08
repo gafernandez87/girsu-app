@@ -24,7 +24,7 @@
       <table class="admin-table admin-table--ranking">
         <thead>
           <tr>
-            <th scope="col">Posicion</th>
+            <th scope="col">Posición</th>
             <th scope="col">Participante</th>
             <th scope="col">Escuela</th>
             <th scope="col">Curso</th>
@@ -51,7 +51,7 @@
           } @empty {
             <tr>
               <td colspan="6" class="empty-cell">
-                {{ loading() ? 'Cargando ranking...' : 'Todavia no hay ranking.' }}
+                {{ loading() ? 'Cargando ranking...' : 'Todavía no hay ranking.' }}
               </td>
             </tr>
           }
@@ -59,7 +59,7 @@
       </table>
     </div>
 
-    <footer class="pagination" aria-label="Paginacion de ranking">
+    <footer class="pagination" aria-label="Paginación de ranking">
       <p class="pagination__detail">Total de registros: {{ total() }}</p>
       <app-admin-pagination
         [page]="page()"

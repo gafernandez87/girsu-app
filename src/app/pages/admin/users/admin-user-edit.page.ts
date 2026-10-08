@@ -87,7 +87,7 @@ export class AdminUserEditPage {
 
     try {
       if (!this.canSubmit()) {
-        this.error.set('Completa los datos obligatorios antes de guardar los cambios.');
+        this.error.set('Completá los datos obligatorios antes de guardar los cambios.');
         return;
       }
 
@@ -120,7 +120,7 @@ export class AdminUserEditPage {
   }
 
   async deleteUser(): Promise<void> {
-    if (this.deleting() || !confirm('Seguro que queres eliminar este usuario?')) {
+    if (this.deleting() || !confirm('¿Seguro que querés eliminar este usuario?')) {
       return;
     }
 

@@ -40,7 +40,7 @@ export class LoginPage {
       });
       await this.router.navigate(['/']);
     } catch (error) {
-      this.error.set(error instanceof Error ? error.message : 'No pudimos iniciar sesion.');
+      this.error.set(error instanceof Error ? error.message : 'No pudimos iniciar sesión.');
     } finally {
       this.loading.set(false);
     }

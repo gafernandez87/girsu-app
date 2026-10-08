@@ -1,28 +1,42 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
 import { accountDeletionConfig } from '../../core/account-deletion.config';
 import { AuthService } from '../../core/auth.service';
 
 @Component({
   selector: 'app-account-deletion-page',
+  imports: [FormsModule, RouterLink],
   templateUrl: './account-deletion.page.html',
   styleUrl: './account-deletion.page.scss',
 })
 export class AccountDeletionPage {
-  private readonly auth = inject(AuthService);
-
+  readonly auth = inject(AuthService);
   readonly config = accountDeletionConfig;
-  readonly requestUrl = computed(() => {
-    const email = this.auth.session()?.user.email ?? '';
-    const subject = 'Solicitud de eliminacion de cuenta - El Camino de los Residuos';
-    const body = [
-      'Solicito eliminar mi cuenta de El Camino de los Residuos y todos sus datos asociados.',
-      '',
-      `Correo de mi cuenta: ${email || '[escribir el correo registrado]'}`,
-      '',
-      'Por favor, confirmen la eliminacion por este medio.',
-    ].join('\n');
+  readonly deleting = signal(false);
+  readonly deleted = signal(false);
+  readonly error = signal<string | null>(null);
+  email = '';
+  password = '';
+  confirmed = false;
 
-    return `mailto:${this.config.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
-  });
+  async submit(): Promise<void> {
+    if (this.deleting() || this.deleted() || !this.confirmed || !this.password) return;
+    this.deleting.set(true);
+    this.error.set(null);
+    try {
+      await this.auth.deleteAccount(this.password, this.email);
+      this.deleted.set(true);
+      this.email = '';
+      this.confirmed = false;
+    } catch (error) {
+      this.error.set(
+        error instanceof Error ? error.message : 'No pudimos confirmar la eliminación.',
+      );
+    } finally {
+      this.password = '';
+      this.deleting.set(false);
+    }
+  }
 }

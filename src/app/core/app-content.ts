@@ -4,8 +4,8 @@ import { GAME_ONE_ITEMS } from './game-1-products';
 type IndustrialItemCategory = 'plastico' | 'papel-carton' | 'vidrio' | 'metal' | 'descarte';
 
 const INDUSTRIAL_ITEM_DETAILS: Record<IndustrialItemCategory, string> = {
-  plastico: 'Material plastico recuperable en planta.',
-  'papel-carton': 'Papel o carton recuperable si esta limpio y seco.',
+  plastico: 'Material plástico recuperable en planta.',
+  'papel-carton': 'Papel o cartón recuperable si está limpio y seco.',
   vidrio: 'Vidrio recuperable en circuito industrial.',
   metal: 'Metal valorizable en planta.',
   descarte: 'Material que no debe mezclarse con reciclables secos.',
@@ -71,18 +71,18 @@ export const GAME_STAGES: readonly GameStage[] = [
   {
     id: 'separacion-origen',
     order: 1,
-    title: 'Separacion en origen',
+    title: 'Separación en origen',
     shortTitle: 'Hogar',
     subtitle: 'Clasificar residuos desde la cocina',
-    objective: 'Promover el habito primario de separar residuos en el nucleo familiar.',
+    objective: 'Promover el hábito primario de separar residuos en el núcleo familiar.',
     environment:
-      'Cocina familiar con tonos calidos, luz natural y referencias visuales al paisaje andino.',
+      'Cocina familiar con tonos cálidos, luz natural y referencias visuales al paisaje andino.',
     introText:
-      'En este juego vas a separar residuos del hogar en el cesto correcto para aprender que materiales se reciclan, cuales van al resto y cuales pueden compostarse.',
+      'En este juego vas a separar residuos del hogar en el cesto correcto para aprender qué materiales se reciclan, cuáles van al resto y cuáles pueden compostarse.',
     mechanic:
-      'Arrastrar cada residuo domestico al cesto correcto: reciclables, no reciclables o compostables.',
+      'Arrastrar cada residuo doméstico al cesto correcto: reciclables, no reciclables o compostables.',
     scoring:
-      'Cada acierto suma puntos inmediatos y el tiempo restante agrega una bonificacion final.',
+      'Cada acierto suma puntos inmediatos y el tiempo restante agrega una bonificación final.',
     kind: 'sorting',
     durationSeconds: 70,
     accentColor: '#2f7d57',
@@ -93,21 +93,21 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Reciclables',
         shortLabel: 'Reciclables',
         color: '#2f8f4e',
-        description: 'Plastico, papel, carton, metal y vidrio limpio.',
+        description: 'Plástico, papel, cartón, metal y vidrio limpio.',
       },
       {
         id: 'compostables',
         label: 'Compostables',
         shortLabel: 'Compostables',
         color: '#8a5a26',
-        description: 'Residuos vegetales para degradacion biologica.',
+        description: 'Residuos vegetales para degradación biológica.',
       },
       {
         id: 'no-reciclables',
         label: 'No reciclables',
         shortLabel: 'No reciclables',
         color: '#000000',
-        description: 'Materiales sin valorizacion actual.',
+        description: 'Materiales sin valorización actual.',
       },
     ],
     items: GAME_ONE_ITEMS,
@@ -115,16 +115,16 @@ export const GAME_STAGES: readonly GameStage[] = [
   {
     id: 'valorizacion-industrial',
     order: 2,
-    title: 'Valorizacion industrial',
+    title: 'Valorización industrial',
     shortTitle: 'Planta',
     subtitle: 'Separar materiales en cinta',
     objective:
-      'Visibilizar el trabajo de recuperadores urbanos y la clasificacion tecnica por material.',
+      'Visibilizar el trabajo de recuperadores urbanos y la clasificación técnica por material.',
     environment:
       'Planta urbana limpia, luminosa y techada, con cinta transportadora y cerros al fondo.',
     introText:
-      'En este juego vas a clasificar materiales secos en una planta de valorizacion para sostener el flujo de reciclaje y evitar que el descarte contamine la cinta.',
-    mechanic: 'Clasificar residuos secos en plastico, papel/carton, vidrio, metal o descarte.',
+      'En este juego vas a clasificar materiales secos en una planta de valorización para sostener el flujo de reciclaje y evitar que el descarte contamine la cinta.',
+    mechanic: 'Clasificar residuos secos en plástico, papel/cartón, vidrio, metal o descarte.',
     scoring:
       'Los aciertos sostienen el flujo de la planta; los errores representan mezcla inadecuada.',
     kind: 'conveyor',
@@ -134,14 +134,14 @@ export const GAME_STAGES: readonly GameStage[] = [
     dropZones: [
       {
         id: 'plastico',
-        label: 'Plastico',
+        label: 'Plástico',
         shortLabel: 'Azul',
         color: '#2f80ed',
         description: 'Botellas PET, envases y contenedores limpios.',
       },
       {
         id: 'papel-carton',
-        label: 'Papel y carton',
+        label: 'Papel y cartón',
         shortLabel: 'Amarillo',
         color: '#d99b21',
         description: 'Cajas, diarios, revistas y carpetas.',
@@ -177,15 +177,15 @@ export const GAME_STAGES: readonly GameStage[] = [
     shortTitle: 'Compost',
     subtitle: 'Balancear verdes y marrones',
     objective:
-      'Introducir la economia circular biologica mediante compostaje hogareño y balance de nutrientes.',
+      'Introducir la economía circular biológica mediante compostaje hogareño y balance de nutrientes.',
     environment:
       'Patio jujeño con suelo arcilloso, plantas regionales, cerros de fondo y compostera central.',
     introText:
-      'En este juego vas a armar una compostera equilibrando materiales verdes humedos y marrones secos para transformar restos organicos en abono.',
+      'En este juego vas a armar una compostera equilibrando materiales verdes húmedos y marrones secos para transformar restos orgánicos en abono.',
     mechanic:
-      'Alternar materiales verdes humedos y marrones secos para mantener el equilibrio de humedad.',
+      'Alternar materiales verdes húmedos y marrones secos para mantener el equilibrio de humedad.',
     scoring:
-      'Cada capa correcta suma puntos y el equilibrio final desbloquea el abono para el jardin.',
+      'Cada capa correcta suma puntos y el equilibrio final desbloquea el abono para el jardín.',
     kind: 'compost',
     durationSeconds: 90,
     accentColor: '#8a5a26',
@@ -193,17 +193,17 @@ export const GAME_STAGES: readonly GameStage[] = [
     dropZones: [
       {
         id: 'verdes',
-        label: 'Verdes humedos',
-        shortLabel: 'Nitrogeno',
+        label: 'Verdes húmedos',
+        shortLabel: 'Nitrógeno',
         color: '#4f8f46',
-        description: 'Cascaras, verduras, yerba y saquitos de te.',
+        description: 'Cáscaras, verduras, yerba y saquitos de té.',
       },
       {
         id: 'marrones',
         label: 'Marrones secos',
         shortLabel: 'Carbono',
         color: '#9c6b3d',
-        description: 'Hojas secas, ramas, cesped seco y carton sin tinta.',
+        description: 'Hojas secas, ramas, césped seco y cartón sin tinta.',
       },
     ],
     items: [
@@ -212,15 +212,15 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Verduras',
         symbol: 'VER',
         category: 'verdes',
-        detail: 'Aporta humedad y nitrogeno.',
+        detail: 'Aporta humedad y nitrógeno.',
         points: 120,
       },
       {
         id: 'cascaras-fruta',
-        label: 'Cascaras',
+        label: 'Cáscaras',
         symbol: 'FRU',
         category: 'verdes',
-        detail: 'Restos de fruta para nitrogeno.',
+        detail: 'Restos de fruta para nitrógeno.',
         points: 120,
       },
       {
@@ -228,7 +228,7 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Lechuga',
         symbol: 'LEC',
         category: 'verdes',
-        detail: 'Hoja vegetal humeda.',
+        detail: 'Hoja vegetal húmeda.',
         points: 115,
       },
       {
@@ -236,15 +236,15 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Yerba',
         symbol: 'YRB',
         category: 'verdes',
-        detail: 'Material verde humedo.',
+        detail: 'Material verde húmedo.',
         points: 120,
       },
       {
         id: 'te',
-        label: 'Saquito te',
+        label: 'Saquito de té',
         symbol: 'TE',
         category: 'verdes',
-        detail: 'Organico compostable.',
+        detail: 'Orgánico compostable.',
         points: 110,
       },
       {
@@ -260,12 +260,12 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Ramas',
         symbol: 'RAM',
         category: 'marrones',
-        detail: 'Material seco del jardin.',
+        detail: 'Material seco del jardín.',
         points: 130,
       },
       {
         id: 'cesped-seco',
-        label: 'Cesped seco',
+        label: 'Césped seco',
         symbol: 'CES',
         category: 'marrones',
         detail: 'Fibra seca para airear la mezcla.',
@@ -273,7 +273,7 @@ export const GAME_STAGES: readonly GameStage[] = [
       },
       {
         id: 'carton-sin-tinta',
-        label: 'Carton limpio',
+        label: 'Cartón limpio',
         symbol: 'CAR',
         category: 'marrones',
         detail: 'Carbono sin tinta.',
@@ -281,10 +281,10 @@ export const GAME_STAGES: readonly GameStage[] = [
       },
       {
         id: 'carton-trocitos',
-        label: 'Carton trozado',
+        label: 'Cartón trozado',
         symbol: 'CTZ',
         category: 'marrones',
-        detail: 'Pedacitos de carton sin tinta.',
+        detail: 'Pedacitos de cartón sin tinta.',
         points: 115,
       },
     ],
@@ -296,15 +296,15 @@ export const GAME_STAGES: readonly GameStage[] = [
     shortTitle: 'Relleno',
     subtitle: 'Compactar sin desperdiciar espacio',
     objective:
-      'Mostrar la complejidad de la ingenieria sanitaria y la importancia de reducir residuos desde el hogar.',
+      'Mostrar la complejidad de la ingeniería sanitaria y la importancia de reducir residuos desde el hogar.',
     environment:
-      'Fosa impermeabilizada con geomembrana, grua hidraulica y cerros jujeños al atardecer.',
+      'Fosa impermeabilizada con geomembrana, grúa hidráulica y cerros jujeños al atardecer.',
     introText:
-      'En este juego vas a ubicar bolsas en una fosa sanitaria intentando compactar bien, evitar huecos y cuidar la vida util del relleno.',
+      'En este juego vas a ubicar bolsas en una fosa sanitaria intentando compactar bien, evitar huecos y cuidar la vida útil del relleno.',
     mechanic:
       'Ubicar bolsas de residuos en la fosa con criterio de encastre para evitar huecos y colapso.',
     scoring:
-      'La buena compactacion suma puntos y sostener la vida util de la fosa agrega bonificacion.',
+      'La buena compactación suma puntos y sostener la vida útil de la fosa agrega bonificación.',
     kind: 'landfill',
     durationSeconds: 80,
     accentColor: '#7251a3',
@@ -315,14 +315,14 @@ export const GAME_STAGES: readonly GameStage[] = [
         label: 'Fosa compacta',
         shortLabel: 'Compactar',
         color: '#7251a3',
-        description: 'Ubicacion eficiente dentro de la fosa impermeabilizada.',
+        description: 'Ubicación eficiente dentro de la fosa impermeabilizada.',
       },
       {
         id: 'zona-riesgo',
-        label: 'Huecos vacios',
+        label: 'Huecos vacíos',
         shortLabel: 'Riesgo',
         color: '#a4503f',
-        description: 'Espacios desordenados que reducen la vida util.',
+        description: 'Espacios desordenados que reducen la vida útil.',
       },
     ],
     items: [

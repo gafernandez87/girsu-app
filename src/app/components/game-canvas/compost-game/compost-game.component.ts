@@ -220,7 +220,7 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     const state = this.moistureState();
 
     if (state === 'wet') {
-      return 'Muy humeda';
+      return 'Muy húmeda';
     }
 
     if (state === 'dry') {

@@ -166,7 +166,7 @@ export class RegisterPage {
     }
 
     if (!this.canSubmit()) {
-      this.error.set('Revisa los campos marcados para continuar.');
+      this.error.set('Revisá los campos marcados para continuar.');
       return;
     }
 

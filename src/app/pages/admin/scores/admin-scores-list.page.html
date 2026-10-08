@@ -63,7 +63,7 @@
           } @empty {
             <tr>
               <td colspan="7" class="empty-cell">
-                {{ loading() ? 'Cargando puntajes...' : 'Todavia no hay puntajes registrados.' }}
+                {{ loading() ? 'Cargando puntajes...' : 'Todavía no hay puntajes registrados.' }}
               </td>
             </tr>
           }
@@ -71,7 +71,7 @@
       </table>
     </div>
 
-    <footer class="pagination" aria-label="Paginacion de puntajes">
+    <footer class="pagination" aria-label="Paginación de puntajes">
       <p class="pagination__detail">Total de registros: {{ result().total }}</p>
       <app-admin-pagination
         [page]="result().page"

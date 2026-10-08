@@ -1,5 +1,5 @@
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { type AuthError, type Session, type User } from '@supabase/supabase-js';
+import { FunctionsHttpError, type AuthError, type Session, type User } from '@supabase/supabase-js';
 
 import { LocalitySource, UserProfile } from './app.models';
 import { SupabaseService } from './supabase.service';
@@ -107,7 +107,7 @@ export class AuthService {
 
     if (this.profileState() && !this.profileState()?.isActive) {
       await this.signOut();
-      throw new Error('Este usuario esta desactivado.');
+      throw new Error('Este usuario está desactivado.');
     }
   }
 
@@ -119,6 +119,56 @@ export class AuthService {
 
   async refreshProfile(): Promise<void> {
     await this.loadProfile(this.sessionState()?.user ?? null);
+  }
+
+  async deleteAccount(password: string, email?: string): Promise<void> {
+    await this.ready();
+    let session = this.sessionState();
+    if (!session) {
+      // Inactive accounts may also delete themselves from the public page.
+      const { data, error } = await this.supabase.auth.signInWithPassword({
+        email: this.normalizeEmail(email ?? ''),
+        password,
+      });
+      if (error) throw this.toReadableAuthError(error);
+      session = data.session;
+      this.sessionState.set(session);
+    }
+    if (!session) throw new Error('Identificate para eliminar tu cuenta.');
+
+    const { data, error } = await this.supabase.functions.invoke<{ readonly ok: boolean }>(
+      'delete-account',
+      {
+        headers: { Authorization: `Bearer ${session.access_token}` },
+        body: { password, confirmation: true },
+      },
+    );
+    if (error) {
+      if (error instanceof FunctionsHttpError) {
+        let message = 'No pudimos confirmar la eliminación. Volvé a intentarlo.';
+        try {
+          const body = (await (error.context as Response).json()) as { readonly message?: string };
+          message = body.message || message;
+        } catch {
+          /* Gateways may return non-JSON errors. */
+        }
+        throw new Error(message);
+      }
+      throw new Error(
+        'No pudimos conectar con el servicio de eliminación. Revisá tu conexión y volvé a intentarlo.',
+      );
+    }
+    if (data?.ok !== true)
+      throw new Error('No pudimos confirmar la eliminación. Volvé a intentarlo.');
+    try {
+      // Supabase clears persisted credentials even when a deleted user returns 401/404.
+      await this.supabase.auth.signOut({ scope: 'local' });
+    } catch {
+      // Cleanup must not turn a confirmed deletion into a false failure.
+    } finally {
+      this.sessionState.set(null);
+      this.profileState.set(null);
+    }
   }
 
   private async initialize(): Promise<void> {
@@ -152,6 +202,9 @@ export class AuthService {
       .eq('id', user.id)
       .maybeSingle();
 
+    // Ignore a profile request started before logout/deletion or an account switch.
+    if (this.sessionState()?.user.id !== user.id) return;
+
     if (error) {
       console.error(error.message);
       this.profileState.set(null);
@@ -172,24 +225,24 @@ export class AuthService {
   private getReadableAuthErrorMessage(error: AuthError): string {
     switch (error.code) {
       case 'email_address_invalid':
-        return 'Ese email fue rechazado por Supabase. Proba con una casilla personal real, evitando direcciones genericas como admin@, test@ o dominios de ejemplo.';
+        return 'Ese email fue rechazado por Supabase. Probá con una casilla personal real, evitando direcciones genéricas como admin@, test@ o dominios de ejemplo.';
       case 'email_address_not_authorized':
-        return 'Supabase no puede enviar emails a esa direccion con la configuracion actual. Para usarla hay que configurar SMTP propio en Auth.';
+        return 'Supabase no puede enviar emails a esa dirección con la configuración actual. Para usarla hay que configurar SMTP propio en Auth.';
       case 'email_exists':
       case 'user_already_exists':
         return 'Ya existe una cuenta con ese email.';
       case 'email_not_confirmed':
-        return 'Todavia falta confirmar el email antes de iniciar sesion.';
+        return 'Todavía falta confirmar el email antes de iniciar sesión.';
       case 'invalid_credentials':
-        return 'El email o la contrasena no son correctos.';
+        return 'El email o la contraseña no son correctos.';
       case 'over_email_send_rate_limit':
-        return 'Supabase alcanzo el limite de emails para esa direccion. Espera unos minutos antes de volver a intentarlo.';
+        return 'Supabase alcanzó el límite de emails para esa dirección. Esperá unos minutos antes de volver a intentarlo.';
       case 'over_request_rate_limit':
-        return 'Se hicieron demasiados intentos desde esta conexion. Espera unos minutos y volve a probar.';
+        return 'Se hicieron demasiados intentos desde esta conexión. Esperá unos minutos y volvé a probar.';
       case 'weak_password':
-        return 'La contrasena no cumple los requisitos minimos.';
+        return 'La contraseña no cumple los requisitos mínimos.';
       default:
-        return error.message || 'No pudimos completar la operacion.';
+        return error.message || 'No pudimos completar la operación.';
     }
   }
 

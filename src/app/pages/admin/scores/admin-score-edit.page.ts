@@ -84,7 +84,7 @@ export class AdminScoreEditPage {
   }
 
   async deleteScore(): Promise<void> {
-    if (this.deleting() || !confirm('Seguro que queres eliminar este puntaje?')) {
+    if (this.deleting() || !confirm('¿Seguro que querés eliminar este puntaje?')) {
       return;
     }
 

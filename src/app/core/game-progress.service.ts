@@ -41,6 +41,9 @@ export class GameProgressService {
       const profile = this.auth.profile();
 
       if (!profile) {
+        ++this.loadRunId;
+        this.loading.set(false);
+        this.error.set(null);
         this.resultsByStage.set({});
         this.leaderboardEntries.set([]);
         return;
@@ -74,7 +77,7 @@ export class GameProgressService {
     const profile = this.auth.profile();
 
     if (!profile) {
-      this.error.set('Inicia sesion para guardar tus puntos.');
+      this.error.set('Iniciá sesión para guardar tus puntos.');
       return;
     }
 
@@ -100,6 +103,9 @@ export class GameProgressService {
     });
 
     this.saving.set(false);
+
+    // A result started before logout/deletion must not restore the previous user's data.
+    if (this.auth.profile()?.id !== profile.id) return;
 
     if (error) {
       if (this.isFirstResultConflict(error)) {
@@ -154,7 +160,9 @@ export class GameProgressService {
   private async loadLeaderboard(runId: number): Promise<void> {
     const { data, error } = await this.supabase
       .from('leaderboard')
-      .select('position, user_id, name, school_id, school, course, score, completed_stages, last_played_at')
+      .select(
+        'position, user_id, name, school_id, school, course, score, completed_stages, last_played_at',
+      )
       .order('position', { ascending: true })
       .limit(50);
 
@@ -229,8 +237,13 @@ export class GameProgressService {
       .filter((item) => item.id && item.label);
   }
 
-  private isFirstResultConflict(error: { readonly code?: string; readonly message?: string }): boolean {
-    return error.code === '23505' || Boolean(error.message?.toLowerCase().includes('duplicate key'));
+  private isFirstResultConflict(error: {
+    readonly code?: string;
+    readonly message?: string;
+  }): boolean {
+    return (
+      error.code === '23505' || Boolean(error.message?.toLowerCase().includes('duplicate key'))
+    );
   }
 
   private toJson(value: readonly StageScoreBreakdownItem[]): Json {

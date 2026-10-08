@@ -60,7 +60,7 @@
           } @empty {
             <tr>
               <td colspan="6" class="empty-cell">
-                {{ loading() ? 'Cargando usuarios...' : 'Todavia no hay usuarios registrados.' }}
+                {{ loading() ? 'Cargando usuarios...' : 'Todavía no hay usuarios registrados.' }}
               </td>
             </tr>
           }
@@ -68,7 +68,7 @@
       </table>
     </div>
 
-    <footer class="pagination" aria-label="Paginacion de usuarios">
+    <footer class="pagination" aria-label="Paginación de usuarios">
       <p class="pagination__detail">Total de registros: {{ result().total }}</p>
       <app-admin-pagination
         [page]="result().page"

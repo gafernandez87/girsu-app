@@ -1,0 +1,214 @@
+<main class="privacy-page" aria-labelledby="privacy-title">
+  <header class="privacy-intro">
+    <span class="label">El Camino de los Residuos · Jujuy GIRSU</span>
+    <h1 id="privacy-title">Política de privacidad</h1>
+    <p>
+      Esta política explica cómo tratamos tus datos cuando usás
+      <strong>El Camino de los Residuos</strong>, nuestra aplicación educativa sobre
+      gestión de residuos, en su versión web, Android e iOS.
+    </p>
+    <p class="privacy-date">
+      Última actualización: <time [attr.datetime]="config.lastUpdated">{{ lastUpdatedLabel }}</time>.
+    </p>
+  </header>
+
+  @if (isDraft) {
+    <aside class="privacy-draft" aria-label="Estado de la política">
+      <strong>Borrador pendiente de completar</strong>
+      <p>
+        La identificación del responsable, el contacto y las condiciones de conservación,
+        proveedores y participación de menores deben confirmarse antes de publicar esta
+        política como versión definitiva.
+      </p>
+    </aside>
+  }
+
+  <section aria-labelledby="controller-heading">
+    <h2 id="controller-heading">1. Responsable y contacto</h2>
+    <p>Aplicación: <strong>El Camino de los Residuos — Jujuy GIRSU</strong>.</p>
+    <p>Responsable del tratamiento: {{ config.controllerName || 'Pendiente de confirmación.' }}</p>
+    <p>Domicilio: {{ config.controllerAddress || 'Pendiente de confirmación.' }}</p>
+    @if (contactUrl) {
+      <p>Consultas de privacidad: <a [href]="contactUrl">{{ contactEmail }}</a>.</p>
+    } @else {
+      <p>El canal de consultas de privacidad todavía no está habilitado.</p>
+    }
+  </section>
+
+  <section aria-labelledby="collection-heading">
+    <h2 id="collection-heading">2. Qué datos recopilamos y para qué</h2>
+    <p>
+      Recibimos los datos que ingresás al registrarte, los resultados que generás al jugar
+      y la información necesaria para mantener tu sesión. El equipo administrador también
+      puede crear cuentas y actualizar perfiles.
+    </p>
+    <dl class="privacy-data">
+      <div>
+        <dt>Cuenta y acceso</dt>
+        <dd>
+          Nombre y apellido, correo electrónico, contraseña e identificador de cuenta.
+          Se utilizan para identificarte, autenticar el acceso y asociar tus partidas.
+          La contraseña se procesa a través del servicio de autenticación de Supabase;
+          no se muestra en el panel de administración.
+        </dd>
+      </div>
+      <div>
+        <dt>Perfil personal y escolar</dt>
+        <dd>
+          Fecha de nacimiento, provincia y localidad declaradas, pertenencia a una escuela,
+          escuela y curso o rol escolar. Forman parte de tu ficha de participación educativa;
+          el nombre, la escuela y el curso o rol también identifican tu participación en el ranking.
+          La localidad la indicás vos: no se obtiene mediante el GPS del dispositivo.
+        </dd>
+      </div>
+      <div>
+        <dt>Hábitos ambientales</dt>
+        <dd>
+          Respuestas sobre separación de residuos y compostaje en tu casa o escuela.
+          Se guardan en tu perfil para conocer el contexto de tu participación educativa.
+        </dd>
+      </div>
+      <div>
+        <dt>Actividad en los juegos</dt>
+        <dd>
+          Etapas completadas, puntajes y su desglose, aciertos, errores, tiempo restante
+          y fechas de las partidas. Se usan para conservar el progreso, calcular los puntos
+          y ordenar el ranking.
+        </dd>
+      </div>
+      <div>
+        <dt>Sesión e información técnica</dt>
+        <dd>
+          Tokens de sesión y preferencia de sonido almacenados en tu dispositivo. Los
+          servicios que reciben las conexiones pueden procesar direcciones IP, información
+          del navegador o dispositivo y registros técnicos para atender las solicitudes
+          y proteger el servicio.
+        </dd>
+      </div>
+      <div>
+        <dt>Consultas y solicitudes</dt>
+        <dd>
+          Si contactás al equipo, se recibe tu dirección de correo y el contenido de tu
+          mensaje para responder, verificar la titularidad y gestionar tu solicitud.
+          No envíes contraseñas ni información personal que no sea necesaria.
+        </dd>
+      </div>
+    </dl>
+  </section>
+
+  <section aria-labelledby="ranking-heading">
+    <h2 id="ranking-heading">3. Qué pueden ver otras personas</h2>
+    <p>
+      Otros usuarios que iniciaron sesión pueden consultar el ranking y los datos de
+      participación: nombre y apellido, escuela, curso o rol, posición, puntajes, etapas
+      completadas y actividad de juego asociada. No publiques información adicional en el
+      campo de nombre.
+    </p>
+    <p>
+      Tu correo, fecha de nacimiento y respuestas sobre hábitos ambientales no se muestran
+      en el ranking. Los administradores autorizados pueden consultar y gestionar los
+      perfiles y resultados para operar la aplicación y atender solicitudes.
+    </p>
+  </section>
+
+  <section aria-labelledby="providers-heading">
+    <h2 id="providers-heading">4. Proveedores y tratamiento fuera de Argentina</h2>
+    <p>
+      Usamos <strong>Supabase</strong> para autenticar cuentas y almacenar perfiles y
+      resultados. Este proveedor procesa los datos necesarios para prestar esos servicios.
+      Podés consultar su
+      <a href="https://supabase.com/legal/dpa" target="_blank" rel="noopener noreferrer">acuerdo de tratamiento de datos</a>
+      y su
+      <a href="https://supabase.com/privacy" target="_blank" rel="noopener noreferrer">política de privacidad</a>.
+    </p>
+    <p>{{ config.hostingNotice || 'El proveedor de alojamiento web y los servicios de correo utilizados deben confirmarse antes de la publicación.' }}</p>
+    <p>{{ config.internationalTransfersNotice || 'Los proveedores pueden procesar datos fuera de Argentina. Los países de tratamiento y las garantías aplicables están pendientes de confirmación.' }}</p>
+    <p>
+      La versión actual no incorpora publicidad, SDK de seguimiento publicitario ni
+      herramientas de analítica de terceros. No incluye funciones de venta de datos
+      personales. Las tiendas pueden tratar información de descarga conforme a sus propias políticas.
+    </p>
+  </section>
+
+  <section aria-labelledby="security-heading">
+    <h2 id="security-heading">5. Seguridad y almacenamiento en el dispositivo</h2>
+    <p>
+      Las conexiones con el servicio de datos usan HTTPS. El acceso a los perfiles está
+      sujeto a autenticación y permisos según el usuario y su rol. La app utiliza una
+      sesión persistente para mantener el acceso y guarda localmente tu preferencia de sonido.
+    </p>
+    <p>
+      No solicitamos acceso a la cámara, micrófono, contactos, fotos ni ubicación precisa
+      para usar los juegos. Podés cerrar sesión desde el menú. Borrar el almacenamiento local
+      o desinstalar la app no elimina la cuenta ni los datos guardados en el servicio.
+    </p>
+  </section>
+
+  <section aria-labelledby="retention-heading">
+    <h2 id="retention-heading">6. Conservación y eliminación</h2>
+    <p>
+      Conservamos los datos de la cuenta, el perfil y las partidas mientras la cuenta exista.
+      Podés iniciar el procedimiento en <a routerLink="/eliminar-cuenta">Eliminar cuenta</a>,
+      desde el menú de la app o en la web. La página se abre sin iniciar sesión y permite
+      identificarte y confirmar la eliminación sin contactar al equipo por correo.
+    </p>
+    <p>
+      Al verificar tu identidad y confirmar la operación se borran la cuenta de acceso, el perfil, los datos de
+      participación en el ranking y los resultados asociados. Los catálogos de escuelas
+      y localidades se mantienen sin el vínculo con la cuenta eliminada. Se cierran las
+      sesiones de la cuenta y se muestra la confirmación de la eliminación en pantalla.
+    </p>
+    @if (deletionConfig.retentionNotice) {
+      <p>{{ deletionConfig.retentionNotice }}</p>
+    } @else {
+      <p>
+        La conservación adicional de copias de seguridad, registros técnicos y
+        comunicaciones previas, con sus motivos y plazos, está pendiente de confirmación
+        antes del lanzamiento. No se garantiza su eliminación inmediata.
+      </p>
+    }
+  </section>
+
+  <section aria-labelledby="rights-heading">
+    <h2 id="rights-heading">7. Tus derechos y el consentimiento</h2>
+    <p>
+      Podés solicitar acceso a tus datos, su actualización, rectificación o supresión y,
+      cuando el tratamiento se base en consentimiento, retirarlo. Para atender una solicitud
+      podemos verificar tu titularidad sin pedir tu contraseña. La eliminación de la cuenta
+      impide recuperar el progreso y los puntajes asociados.
+    </p>
+    <p>{{ config.processingBasisNotice || 'La base que autoriza cada tratamiento y el procedimiento de consentimiento están pendientes de confirmación. Consultar esta política no equivale, por sí solo, a dar consentimiento.' }}</p>
+    @if (contactUrl) {
+      <p>Para ejercer tus derechos, escribí a <a [href]="contactUrl">{{ contactEmail }}</a>.</p>
+    }
+    <p>
+      En Argentina, la Ley 25.326 protege tus datos personales. Podés consultar tus derechos
+      y presentar un reclamo ante la
+      <a href="https://www.argentina.gob.ar/aaip/datospersonales/derechos" target="_blank" rel="noopener noreferrer">Agencia de Acceso a la Información Pública (AAIP)</a>.
+    </p>
+  </section>
+
+  <section aria-labelledby="minors-heading">
+    <h2 id="minors-heading">8. Niñas, niños y adolescentes</h2>
+    <p>
+      La aplicación tiene un propósito educativo para estudiantes y docentes, incluidos
+      estudiantes de nivel primario y secundario. Los datos de participación que aparecen
+      en el ranking también pueden corresponder a estudiantes menores de edad.
+    </p>
+    <p>{{ config.minorsNotice || 'La edad mínima, las condiciones de participación y el procedimiento de autorización de madres, padres o representantes legales, cuando corresponda, deben definirse antes del lanzamiento. Este borrador no acredita que se haya obtenido esa autorización.' }}</p>
+    <p>
+      Las madres, padres o representantes legales pueden contactar al responsable para
+      consultar o solicitar la rectificación o eliminación de los datos de la persona
+      que representan, acreditando esa representación cuando sea necesario.
+    </p>
+  </section>
+
+  <section aria-labelledby="changes-heading">
+    <h2 id="changes-heading">9. Cambios en esta política</h2>
+    <p>
+      Publicaremos las actualizaciones en esta página e indicaremos la fecha de revisión.
+      Los cambios relevantes en el tratamiento de datos se comunicarán antes de aplicarse;
+      si requieren una nueva autorización, deberá obtenerse antes de ese tratamiento.
+    </p>
+  </section>
+</main>

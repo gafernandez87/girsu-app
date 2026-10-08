@@ -32,20 +32,47 @@ La app usa Supabase para autenticacion, perfiles, resultados de juegos, ranking 
 
 Los scripts `start` y `build` quedan disponibles para etapas posteriores, pero no deben ejecutarse en este flujo de trabajo.
 
-## Solicitudes de eliminacion de cuenta
+## Politica de privacidad
 
-La ruta publica `/eliminar-cuenta` se abre sin iniciar sesion y tambien esta disponible en el menu de la app.
-Prepara un correo de solicitud; no elimina automaticamente la cuenta ni envia el correo por el usuario.
-La URL prevista para Play Console es `https://girsu-app.vercel.app/eliminar-cuenta`, una vez desplegada y configurada la pagina.
+La ruta publica `/politica-privacidad` se puede consultar sin iniciar sesion y esta enlazada
+desde el menu, login, registro y la pagina de eliminacion de cuenta.
+La URL prevista para las tiendas es `https://girsu-app.vercel.app/politica-privacidad`, una vez desplegada y verificada.
+
+Completar `src/app/core/privacy-policy.config.ts` y los datos compartidos de
+`src/app/core/account-deletion.config.ts` con informacion confirmada por el responsable.
+Mientras falten datos, la pagina se identifica como borrador.
+Ver `docs/privacy-store-readiness.md` para el inventario de datos y los pendientes de
+publicacion, especialmente eliminacion de cuenta para iOS, menores y consentimiento.
+
+## Eliminacion de cuenta
+
+La ruta publica `/eliminar-cuenta` permite eliminar la cuenta desde la app o la web.
+Quien ya inicio sesion confirma la operacion e ingresa su contrasena actual; quien entra
+sin sesion se identifica en esa misma pagina con su correo y contrasena.
+No se exige un correo a soporte ni intervencion de un administrador.
+La URL prevista para Play Console es `https://girsu-app.vercel.app/eliminar-cuenta`, una vez desplegada.
+
+La Edge Function `delete-account` verifica la identidad y la contrasena en el servidor,
+cierra todas las sesiones y elimina la cuenta de Supabase Auth. Las claves foraneas
+`ON DELETE CASCADE` eliminan perfil, perfil de ranking y resultados. La pagina muestra
+confirmacion solo cuando el servidor informa el exito. Los usuarios administradores
+pueden eliminar su propia cuenta por esta via; la restriccion del backoffice para
+borrarse a si mismos solo aplica a la funcion administrativa.
+
+La migracion `enforce_live_account_sessions` agrega restricciones para bloquear lectura
+y escritura de datos personales con sesiones revocadas, incluso si su JWT no vencio.
+Los catalogos de escuelas y localidades se mantienen.
 
 Antes de publicar:
 
-- Completar `src/app/core/account-deletion.config.ts` con un correo monitoreado del cliente.
-- Confirmar y completar `retentionNotice`: indicar los datos conservados (incluidos backups, logs y correos de solicitudes), los motivos y los plazos adicionales; si no se conserva ninguno, declararlo solo tras verificarlo.
-- Publicar la web con soporte para rutas Angular y verificar `/eliminar-cuenta` sin iniciar sesion. Usar su URL HTTPS completa en Play Console.
-- Incorporar esta version al siguiente paquete Android para incluir el acceso desde la app.
+- Aplicar la migracion y desplegar `supabase/functions/delete-account` en el proyecto correcto.
+- Mantener autenticacion de la funcion: verificar el bearer con `auth.getUser` dentro del
+  servidor; las claves privilegiadas permanecen en las variables del backend.
+- Confirmar los plazos y motivos de retencion adicional en `account-deletion.config.ts`.
+- Completar responsable y contacto de privacidad; no son necesarios para iniciar el borrado.
+- Verificar en el entorno desplegado el flujo completo con una cuenta de prueba, el acceso
+  externo sin sesion y la revocacion del acceso con tokens anteriores.
+- Publicar la web con soporte para rutas Angular y registrar la URL HTTPS en Play Console.
+- Incorporar esta version en las proximas versiones Android e iOS.
 
-El equipo debe verificar la titularidad desde el correo registrado y procesar las solicitudes desde Backoffice > Usuarios > Editar > Eliminar usuario.
-La funcion existente `admin-users` elimina al usuario de Auth; las claves foraneas `ON DELETE CASCADE` eliminan el perfil, el perfil publico y los resultados asociados.
-Verificar el resultado en el entorno desplegado y confirmar la eliminacion al solicitante; no pedir contrasenas.
-Los administradores no pueden eliminar su propia cuenta desde el backoffice: otro administrador debe procesar esa solicitud.
+Detalle de activacion y pruebas: `docs/account-deletion.md`.

@@ -4,6 +4,12 @@ import { adminGuard, authGuard, guestGuard } from './core/auth.guards';
 
 export const routes: Routes = [
   {
+    path: 'politica-privacidad',
+    title: 'Política de privacidad | El Camino de los Residuos',
+    loadComponent: () =>
+      import('./pages/account/privacy-policy.page').then((m) => m.PrivacyPolicyPage)
+  },
+  {
     path: 'eliminar-cuenta',
     loadComponent: () =>
       import('./pages/account/account-deletion.page').then((m) => m.AccountDeletionPage)

@@ -16,7 +16,7 @@
         class="menu-toggle"
         aria-controls="primary-navigation"
         [attr.aria-expanded]="mobileMenuOpen()"
-        [attr.aria-label]="mobileMenuOpen() ? 'Cerrar menu' : 'Abrir menu'"
+        [attr.aria-label]="mobileMenuOpen() ? 'Cerrar menú' : 'Abrir menú'"
         (click)="toggleMobileMenu()"
       >
         <span aria-hidden="true"></span>
@@ -181,6 +181,9 @@
             <span>Registro</span>
           </a>
         }
+        <a routerLink="/politica-privacidad" routerLinkActive="active" (click)="closeMobileMenu()">
+          <span>Privacidad</span>
+        </a>
         <a routerLink="/eliminar-cuenta" routerLinkActive="active" (click)="closeMobileMenu()">
           <span>Eliminar cuenta</span>
         </a>

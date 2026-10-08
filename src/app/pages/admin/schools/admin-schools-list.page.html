@@ -14,7 +14,7 @@
 
   <section class="admin-section">
     <div class="admin-section__heading">
-      <h2>Padron cargado</h2>
+      <h2>Padrón cargado</h2>
       <p>Escuelas normalizadas para registro, usuarios y ranking.</p>
     </div>
 
@@ -49,9 +49,9 @@
         <thead>
           <tr>
             <th scope="col">Escuela</th>
-            <th scope="col">Ubicacion</th>
+            <th scope="col">Ubicación</th>
             <th scope="col">Sector</th>
-            <th scope="col">Ambito</th>
+            <th scope="col">Ámbito</th>
             <th scope="col">Estado</th>
             <th scope="col">Acciones</th>
           </tr>
@@ -83,7 +83,7 @@
           } @empty {
             <tr>
               <td colspan="6" class="empty-cell">
-                {{ loading() ? 'Cargando escuelas...' : 'Todavia no hay escuelas cargadas.' }}
+                {{ loading() ? 'Cargando escuelas...' : 'Todavía no hay escuelas cargadas.' }}
               </td>
             </tr>
           }
@@ -91,7 +91,7 @@
       </table>
     </div>
 
-    <footer class="pagination" aria-label="Paginacion de escuelas">
+    <footer class="pagination" aria-label="Paginación de escuelas">
       <p class="pagination__detail">Total filtrado: {{ result().total }}</p>
       <app-admin-pagination
         [page]="result().page"

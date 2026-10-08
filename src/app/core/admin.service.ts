@@ -520,23 +520,23 @@ export class AdminService {
 
       try {
         const body = (await response.clone().json()) as { readonly message?: string };
-        return body.message ?? `La funcion admin-users respondio con error ${response.status}.`;
+        return body.message ?? `La función admin-users respondió con error ${response.status}.`;
       } catch {
-        return `La funcion admin-users respondio con error ${response.status}.`;
+        return `La función admin-users respondió con error ${response.status}.`;
       }
     }
 
     if (error instanceof FunctionsRelayError) {
-      return 'Supabase no pudo ejecutar la funcion admin-users. Verifica que este desplegada y revisa sus logs.';
+      return 'Supabase no pudo ejecutar la función admin-users. Verificá que esté desplegada y revisá sus logs.';
     }
 
     if (error instanceof FunctionsFetchError) {
-      return 'No pudimos conectar con la funcion admin-users. Si Chrome muestra CORS, suele indicar que la funcion no esta desplegada, fallo antes de responder o el gateway la rechazo.';
+      return 'No pudimos conectar con la función admin-users. Si Chrome muestra CORS, suele indicar que la función no está desplegada, falló antes de responder o el gateway la rechazó.';
     }
 
     return error instanceof Error
       ? error.message
-      : 'No pudimos completar la operacion de usuarios. Verifica que la Edge Function admin-users este desplegada.';
+      : 'No pudimos completar la operación de usuarios. Verificá que la Edge Function admin-users esté desplegada.';
   }
 
   private mapProfile(row: ProfileRow): UserProfile {

@@ -55,7 +55,7 @@ export class AdminScoreCreatePage {
     }
 
     if (!this.userId) {
-      this.error.set('Selecciona un usuario para crear el puntaje.');
+      this.error.set('Seleccioná un usuario para crear el puntaje.');
       return;
     }
 

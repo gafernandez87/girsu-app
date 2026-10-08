@@ -1,0 +1,34 @@
+@mixin document {
+  width: min(100%, 52rem);
+  margin-inline: auto;
+  padding: 2rem 1rem max(3rem, env(safe-area-inset-bottom));
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+
+  h1 {
+    margin: 0 0 1rem;
+    font-size: clamp(1.8rem, 4vw, 2.4rem);
+    line-height: 1.2;
+  }
+
+  section {
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid #c7d8ca;
+  }
+
+  h2 {
+    margin: 0 0 0.75rem;
+    font-size: 1.2rem;
+    line-height: 1.3;
+  }
+
+  li + li {
+    margin-top: 0.5rem;
+  }
+
+  a {
+    color: #246a73;
+    text-underline-offset: 0.18em;
+  }
+}

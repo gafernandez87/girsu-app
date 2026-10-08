@@ -2,7 +2,8 @@ export const accountDeletionConfig: {
   readonly email: string;
   readonly retentionNotice: string;
 } = {
-  // Complete with the client's monitored mailbox and confirmed retention policy before publishing.
+  // email is an optional fallback privacy contact, never a prerequisite for deletion.
+  // Confirm additional retention of backups, logs and prior correspondence before release.
   email: '',
   retentionNotice: '',
 };
