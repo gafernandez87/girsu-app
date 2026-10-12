@@ -23,6 +23,7 @@ import {
   StageResult,
   StageScoreBreakdownItem,
 } from '../../core/app.models';
+import { GAME_ONE_PRODUCTS } from '../../core/game-1-products';
 import { GameAudioService } from '../../core/game-audio.service';
 import { normalizeRawStageScore } from '../../core/scoring';
 import {
@@ -30,11 +31,14 @@ import {
   HOME_BIN_ASSETS,
   HOME_BIN_ASSET_PATHS,
   HOME_PRODUCT_ASSETS,
+  INDUSTRIAL_PRODUCT_ASSETS,
+  COMPOST_PRODUCT_ASSETS,
 } from './game-canvas.assets';
 import type { BinVisualState, HomeEffect, StageTick } from './game-canvas.types';
 import { CompostGameComponent } from './compost-game/compost-game.component';
 import { IndustrialGameComponent } from './industrial-game/industrial-game.component';
 import { LandfillGameComponent } from './landfill-game/landfill-game.component';
+import { GameReviewComponent, GameReviewGroup } from './game-review/game-review.component';
 
 type GameIntroState = 'intro' | 'countdown' | 'playing';
 type HomePoint = { readonly x: number; readonly y: number };
@@ -53,16 +57,18 @@ interface HomeReviewItem {
   readonly chosenZoneId: string;
 }
 
-interface HomeReviewGroup {
-  readonly zone: DropZone;
-  readonly items: readonly HomeReviewItem[];
-}
-
 const HOME_VISIBLE_SLOT_COUNT = 3;
+const RESULT_DISPLAY_MS = 4500;
 
 @Component({
   selector: 'app-game-canvas',
-  imports: [CompostGameComponent, IndustrialGameComponent, LandfillGameComponent, RouterLink],
+  imports: [
+    CompostGameComponent,
+    IndustrialGameComponent,
+    LandfillGameComponent,
+    GameReviewComponent,
+    RouterLink,
+  ],
   templateUrl: './game-canvas.component.html',
   styleUrl: './game-canvas.component.scss',
 })
@@ -86,10 +92,12 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   readonly homeDraggedSlotId = signal<number | null>(null);
   readonly homeEffects = signal<readonly HomeEffect[]>([]);
   readonly homeItemSlots = signal<readonly HomeItemSlot[]>([]);
-  readonly homeReviewGroups = signal<readonly HomeReviewGroup[]>([]);
+  readonly reviewGroups = signal<readonly GameReviewGroup[]>([]);
+  readonly reviewVisible = signal(false);
   readonly introState = signal<GameIntroState>('intro');
   readonly countdownSeconds = signal(3);
 
+  private reviewTimer?: ReturnType<typeof setTimeout>;
   private resizeTimer?: ReturnType<typeof setTimeout>;
   private countdownTimer?: ReturnType<typeof setInterval>;
   private homeTimer?: ReturnType<typeof setInterval>;
@@ -125,7 +133,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   @HostListener('window:resize')
   handleResize(): void {
-    if (this.stage.id !== 'separacion-origen') {
+    if (this.stage.id !== 'separacion-origen' || this.completedResult()) {
       return;
     }
 
@@ -188,6 +196,8 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   private destroyGame(): void {
+    clearTimeout(this.reviewTimer);
+    this.reviewTimer = undefined;
     clearInterval(this.homeTimer);
     this.homeTimer = undefined;
     this.homeTimeouts.forEach((timeout) => clearTimeout(timeout));
@@ -255,8 +265,20 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     target?.setPointerCapture?.(event.pointerId);
   }
 
-  homeReviewDelay(zoneIndex: number, itemIndex: number): string {
-    return `${120 + zoneIndex * 90 + itemIndex * 70}ms`;
+  showReview(): void {
+    if (!this.completedResult() || this.reviewGroups().length === 0) {
+      return;
+    }
+
+    clearTimeout(this.reviewTimer);
+    this.reviewTimer = undefined;
+    this.reviewVisible.set(true);
+  }
+
+  private scheduleReview(): void {
+    clearTimeout(this.reviewTimer);
+    this.reviewVisible.set(false);
+    this.reviewTimer = setTimeout(() => this.showReview(), RESULT_DISPLAY_MS);
   }
 
   restartCurrentGame(): void {
@@ -327,6 +349,79 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.completedItems.set(update.completedItems);
   }
 
+  reviewTitle(): string {
+    if (this.stage.id === 'compostaje-domiciliario') {
+      return '¡Qué materiales podemos compostar!';
+    }
+    return this.stage.id === 'separacion-origen'
+      ? '¡Así se separan los residuos!'
+      : '¡Así se clasifican los materiales!';
+  }
+
+  reviewDescription(): string {
+    return this.stage.id === 'compostaje-domiciliario'
+      ? 'Los materiales compostables van a la compostera. Separá los demás residuos en sus cestos.'
+      : 'Cada residuo aparece en el cesto que le corresponde.';
+  }
+
+  reviewNextStageLink(): string {
+    if (this.stage.id === 'compostaje-domiciliario') {
+      return '/juego/relleno-sanitario';
+    }
+    return this.stage.id === 'separacion-origen'
+      ? '/juego/valorizacion-industrial'
+      : '/juego/compostaje-domiciliario';
+  }
+
+  reviewNextStageLabel(): string {
+    return this.stage.id === 'separacion-origen'
+      ? '¡Quiero visitar la planta de reciclaje!'
+      : 'Próximo juego';
+  }
+
+  private createCompostReviewGroups(): readonly GameReviewGroup[] {
+    const nonCompostableIds = new Set([
+      'reciclables-botella-de-plastico-pet',
+      'reciclables-botella-de-vidrio',
+      'reciclables-lata-de-gaseosa',
+      'no-reciclables-panal-descartable',
+      'no-reciclables-colilla-de-cigarrillo',
+      'no-reciclables-guantes-descartables',
+    ]);
+    return [
+      {
+        zone: {
+          id: 'compostables',
+          label: 'Compostables',
+          shortLabel: 'Compostables',
+          color: '#2f7d57',
+          description:
+            'Restos vegetales húmedos y materiales secos. Alterná las capas y mezclá con cuidado.',
+        },
+        items: this.stage.items.map((item) => ({
+          id: item.id,
+          label: item.label,
+          imagePath: COMPOST_PRODUCT_ASSETS[item.id]?.path ?? '',
+        })),
+      },
+      {
+        zone: {
+          id: 'no-compostables',
+          label: 'No compostables',
+          shortLabel: 'No compostables',
+          color: '#9b421a',
+          description:
+            'Estos materiales no van a la compostera. Separá los reciclables y los no reciclables en sus cestos.',
+        },
+        items: GAME_ONE_PRODUCTS.filter((item) => nonCompostableIds.has(item.id)).map((item) => ({
+          id: item.id,
+          label: item.label,
+          imagePath: item.path,
+        })),
+      },
+    ];
+  }
+
   handleStageCompleted(result: StageResult): void {
     const visibleResult = this.withVisibleStageScore(result);
 
@@ -334,6 +429,25 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.score.set(result.score);
     this.completedResult.set(visibleResult);
     this.completed.emit(visibleResult);
+
+    if (this.stage.id === 'valorizacion-industrial') {
+      this.reviewGroups.set(
+        this.stage.dropZones.map((zone) => ({
+          zone,
+          items: this.stage.items
+            .filter((item) => item.category === zone.id)
+            .map((item) => ({
+              id: item.id,
+              label: item.label,
+              imagePath: INDUSTRIAL_PRODUCT_ASSETS[item.id]?.path ?? '',
+            })),
+        })),
+      );
+      this.scheduleReview();
+    } else if (this.stage.id === 'compostaje-domiciliario') {
+      this.reviewGroups.set(this.createCompostReviewGroups());
+      this.scheduleReview();
+    }
   }
 
   gameplayActive(): boolean {
@@ -390,7 +504,8 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.completedResult.set(null);
     this.homeEffects.set([]);
     this.homeItemSlots.set([]);
-    this.homeReviewGroups.set([]);
+    this.reviewGroups.set([]);
+    this.reviewVisible.set(false);
     this.homePlayedItems = [];
     this.homeDraggedSlotId.set(null);
   }
@@ -628,10 +743,11 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
     this.score.set(rawFinalScore);
     this.homeBinStates.set(this.createHomeBinStates('open'));
-    this.homeReviewGroups.set(this.createHomeReviewGroups());
+    this.reviewGroups.set(this.createHomeReviewGroups());
     this.audio.playGameComplete();
     this.completedResult.set(result);
     this.completed.emit(result);
+    this.scheduleReview();
   }
 
   private returnHomeSlot(slotId: number): void {
@@ -796,10 +912,17 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.homePlayedItems.push({ item, correct, chosenZoneId });
   }
 
-  private createHomeReviewGroups(): readonly HomeReviewGroup[] {
+  private createHomeReviewGroups(): readonly GameReviewGroup[] {
     return this.stage.dropZones.map((zone) => ({
       zone,
-      items: this.homePlayedItems.filter((playedItem) => playedItem.item.category === zone.id),
+      items: this.homePlayedItems
+        .filter((playedItem) => playedItem.item.category === zone.id)
+        .map(({ item, correct }) => ({
+          id: item.id,
+          label: item.label,
+          imagePath: this.homeProductImage(item.id),
+          correct,
+        })),
     }));
   }
 

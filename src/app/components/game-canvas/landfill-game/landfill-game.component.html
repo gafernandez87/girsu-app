@@ -1,11 +1,16 @@
 <div
+  #landfillStage
   class="landfill-game"
+  [class.is-piece-dragging]="pieceDragging()"
   [style.--landfill-crane-x]="cranePosition()"
   aria-label="Minijuego de relleno sanitario"
   (pointerdown)="startBoardGesture($event)"
   (pointerup)="finishBoardGesture($event)"
   (pointercancel)="cancelBoardGesture()"
 >
+  <div class="landfill-game__landscape" aria-hidden="true"></div>
+  <div class="landfill-game__environment" aria-hidden="true"></div>
+
   <div class="landfill-game__crane">
     <img
       class="landfill-game__crane-structure"
@@ -21,35 +26,65 @@
         alt=""
         draggable="false"
       />
-
-      <aside class="landfill-game__next" aria-label="Próxima pieza">
-        <span>Próximo</span>
-        <div
-          class="landfill-game__preview"
-          [style.grid-template-columns]="previewGridColumns()"
-          [style.grid-template-rows]="previewGridRows()"
-          aria-hidden="true"
-        >
-          @for (cell of previewCells(); track cell.id) {
-            <span
-              class="landfill-game__preview-cell landfill-game__piece-cell"
-              [class.landfill-game__piece-cell--recyclable]="cell.wasteKind === 'recyclable'"
-              [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
-              [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
-              [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
-              [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
-              [style.grid-column]="gridColumn(cell.x)"
-              [style.grid-row]="gridRow(cell.y)"
-            >
-              <span class="landfill-game__bag">
-                <img [src]="cell.bagImagePath" alt="" draggable="false" />
-              </span>
-            </span>
-          }
-        </div>
-      </aside>
     </div>
   </div>
+
+  <aside class="landfill-game__next" aria-label="Próxima pieza">
+    <span>Próximo</span>
+    <div
+      class="landfill-game__preview"
+      [style.grid-template-columns]="previewGridColumns()"
+      [style.grid-template-rows]="previewGridRows()"
+      aria-hidden="true"
+    >
+      @for (cell of previewCells(); track cell.id) {
+        <span
+          class="landfill-game__preview-cell landfill-game__piece-cell"
+          [class.landfill-game__piece-cell--recyclable]="cell.wasteKind === 'recyclable'"
+          [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
+          [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
+          [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
+          [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
+          [style.grid-column]="gridColumn(cell.x)"
+          [style.grid-row]="gridRow(cell.y)"
+        >
+          <span class="landfill-game__bag">
+            <img [src]="cell.bagImagePath" alt="" draggable="false" />
+          </span>
+        </span>
+      }
+    </div>
+  </aside>
+
+  <button
+    #recycleBin
+    type="button"
+    class="landfill-game__recycle-bin"
+    [class.is-active]="recycleBinCanReceive()"
+    [class.is-ready]="recycleBinReady()"
+    [class.is-hovered]="recycleBinHovered()"
+    [attr.aria-disabled]="!recycleBinCanReceive()"
+    [attr.aria-label]="
+      recycleBinReady()
+        ? 'Reciclar pieza verde'
+        : recycleBinCanReceive()
+          ? 'Error: la pieza negra no va al tacho verde'
+          : 'Tacho verde de reciclaje'
+    "
+    [attr.title]="
+      recycleBinReady()
+        ? 'Reciclar pieza verde'
+        : recycleBinCanReceive()
+          ? 'La pieza negra no va al tacho verde'
+          : 'Tacho verde de reciclaje'
+    "
+    (pointerdown)="stopRecycleBinGesture($event)"
+    (click)="recycleFromBin($event)"
+  >
+    <img [src]="recycleBinImagePath()" alt="" draggable="false" />
+    <strong>Reciclaje</strong>
+    <small>{{ recycledPieces() }}</small>
+  </button>
 
   <aside class="landfill-game__status" aria-live="polite">
     <span>Compactación</span>
@@ -58,34 +93,6 @@
   </aside>
 
   <section class="landfill-game__well" [class.is-danger]="dangerActive()">
-    <button
-      type="button"
-      class="landfill-game__recycle-bin"
-      [class.is-active]="recycleBinCanReceive()"
-      [class.is-ready]="recycleBinReady()"
-      [attr.aria-disabled]="!recycleBinCanReceive()"
-      [attr.aria-label]="
-        recycleBinReady()
-          ? 'Reciclar pieza verde'
-          : recycleBinCanReceive()
-            ? 'Error: la pieza negra no va al tacho verde'
-            : 'Tacho verde de reciclaje'
-      "
-      [attr.title]="
-        recycleBinReady()
-          ? 'Reciclar pieza verde'
-          : recycleBinCanReceive()
-            ? 'La pieza negra no va al tacho verde'
-            : 'Tacho verde de reciclaje'
-      "
-      (pointerdown)="stopRecycleBinGesture($event)"
-      (click)="recycleFromBin($event)"
-    >
-      <img [src]="recycleBinImagePath()" alt="" draggable="false" />
-      <strong>Reciclaje</strong>
-      <small>{{ recycledPieces() }}</small>
-    </button>
-
     <span class="landfill-game__liner landfill-game__liner--left" aria-hidden="true"></span>
     <span class="landfill-game__liner landfill-game__liner--right" aria-hidden="true"></span>
     <span class="landfill-game__liner landfill-game__liner--bottom" aria-hidden="true"></span>
@@ -145,7 +152,16 @@
           [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
           [style.grid-column]="gridColumn(cell.x)"
           [style.grid-row]="gridRow(cell.y)"
-          [attr.aria-label]="cell.label"
+          [attr.aria-label]="
+            cell.wasteKind === 'recyclable'
+              ? 'Arrastrar pieza verde al cesto de reciclaje'
+              : cell.label
+          "
+          [attr.role]="cell.wasteKind === 'recyclable' ? 'button' : null"
+          [attr.tabindex]="cell.wasteKind === 'recyclable' ? 0 : null"
+          (pointerdown)="startPieceDrag($event)"
+          (keydown.enter)="recycleFromKeyboard($event)"
+          (keydown.space)="recycleFromKeyboard($event)"
         >
           <span class="landfill-game__bag">
             <img [src]="cell.bagImagePath" alt="" draggable="false" />
@@ -154,6 +170,35 @@
       }
     </div>
   </section>
+
+  @if (pieceDragging()) {
+    <div
+      class="landfill-game__drag-piece"
+      [style.left.px]="dragPosition().x"
+      [style.top.px]="dragPosition().y"
+      [style.grid-template-columns]="dragGridColumns()"
+      [style.grid-template-rows]="dragGridRows()"
+      aria-hidden="true"
+    >
+      @for (cell of draggedCells(); track cell.id) {
+        <span
+          class="landfill-game__block landfill-game__piece-cell landfill-game__piece-cell--recyclable"
+          [class.landfill-game__piece-cell--edge-top]="cell.edgeTop"
+          [class.landfill-game__piece-cell--edge-right]="cell.edgeRight"
+          [class.landfill-game__piece-cell--edge-bottom]="cell.edgeBottom"
+          [class.landfill-game__piece-cell--edge-left]="cell.edgeLeft"
+          [style.grid-column]="gridColumn(cell.x)"
+          [style.grid-row]="gridRow(cell.y)"
+        >
+          <span class="landfill-game__bag"
+            ><img [src]="cell.bagImagePath" alt="" draggable="false"
+          /></span>
+        </span>
+      }
+    </div>
+  }
+
+  <p class="landfill-game__recycle-hint">Bolsas verdes: arrastralas al cesto o tocá Reciclaje.</p>
 
   <div class="landfill-game__controls" aria-label="Controles de pieza">
     <div class="landfill-game__control-cluster">

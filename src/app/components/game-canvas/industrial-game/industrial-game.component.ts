@@ -34,6 +34,7 @@ interface IndustrialActiveToken {
   readonly progress: number;
   readonly position: IndustrialPoint;
   readonly rotation: number;
+  readonly falling: boolean;
 }
 
 type IndustrialEffectType = 'score' | 'error';
@@ -71,6 +72,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   readonly backgroundImage = `url("${INDUSTRIAL_BACKGROUND_ASSET.path}")`;
   readonly conveyorBaseAsset = INDUSTRIAL_CONVEYOR_ASSETS.base;
   readonly conveyorBeltPattern = `url("${INDUSTRIAL_CONVEYOR_ASSETS.belt.path}")`;
+  readonly workerPositions = [16, 44, 70];
   readonly activeTokens = signal<readonly IndustrialActiveToken[]>([]);
   readonly effects = signal<readonly IndustrialEffect[]>([]);
   readonly draggingTokenId = signal<number | null>(null);
@@ -148,7 +150,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   startDrag(event: PointerEvent, tokenId: number): void {
     const token = this.activeToken(tokenId);
 
-    if (this.finished || !token) {
+    if (this.finished || !token || token.falling || this.draggingTokenId() !== null) {
       return;
     }
 
@@ -212,9 +214,9 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   tokenTransform(token: IndustrialActiveToken): string {
-    const scale = this.isTokenDragging(token.tokenId) ? 1.08 : 1;
+    const scale = token.falling ? 0.3 : this.isTokenDragging(token.tokenId) ? 1.08 : 1;
 
-    return `translate3d(${token.position.x - 45}px, ${token.position.y - 45}px, 0) rotate(${token.rotation}deg) scale(${scale})`;
+    return `translate3d(${token.position.x}px, ${token.position.y}px, 0) translate(-50%, -45%) rotate(${token.rotation}deg) scale(${scale})`;
   }
 
   private startGame(): void {
@@ -286,11 +288,11 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
       }
 
       const draggingId = this.draggingTokenId();
-      const lostTokens: IndustrialActiveToken[] = [];
+      const exitingTokens: IndustrialActiveToken[] = [];
       const nextTokens: IndustrialActiveToken[] = [];
 
       for (const token of this.activeTokens()) {
-        if (token.tokenId === draggingId) {
+        if (token.tokenId === draggingId || token.falling) {
           nextTokens.push(token);
           continue;
         }
@@ -298,7 +300,8 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
         const progress = token.progress + INDUSTRIAL_PROGRESS_STEP;
 
         if (progress >= INDUSTRIAL_END_PROGRESS) {
-          lostTokens.push(token);
+          nextTokens.push(token);
+          exitingTokens.push(token);
           continue;
         }
 
@@ -311,8 +314,8 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
 
       this.activeTokens.set(nextTokens);
 
-      for (const token of lostTokens) {
-        this.handleItemLost(token);
+      for (const token of exitingTokens) {
+        this.startDiscardFall(token);
       }
 
       this.ensureActiveItem();
@@ -337,6 +340,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
       progress: INDUSTRIAL_START_PROGRESS,
       position: this.beltPosition(INDUSTRIAL_START_PROGRESS),
       rotation: Math.floor(Math.random() * 7) - 3,
+      falling: false,
     };
 
     this.nextTokenId += 1;
@@ -349,7 +353,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   private beltPosition(progress: number): IndustrialPoint {
     const stageRect = this.industrialStage.nativeElement.getBoundingClientRect();
     const beltRect = this.beltTrack.nativeElement.getBoundingClientRect();
-    const x = beltRect.left - stageRect.left + beltRect.width * progress;
+    const x = beltRect.left - stageRect.left + Math.max(48, beltRect.width * progress);
     const y = beltRect.top - stageRect.top + beltRect.height * 0.45;
 
     return { x, y };
@@ -359,7 +363,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     const stage = this.industrialStage.nativeElement;
     const rect = stage.getBoundingClientRect();
     const localPoint = this.getLocalPoint(event.clientX, event.clientY);
-    const radius = 44;
+    const radius = 48;
     const x = Math.min(rect.width - radius, Math.max(radius, localPoint.x - this.dragOffset.x));
     const y = Math.min(rect.height - radius, Math.max(radius, localPoint.y - this.dragOffset.y));
 
@@ -438,6 +442,36 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     this.schedule(() => {
       this.setZoneState(dropZone.id, 'normal');
       this.finishIfDeckComplete();
+    }, 520);
+  }
+
+  private startDiscardFall(token: IndustrialActiveToken): void {
+    const discardZone = this.stage.dropZones.find((zone) => zone.id === 'descarte');
+    const target = this.getZoneCenter('descarte');
+
+    this.updateToken(token.tokenId, (current) => ({
+      ...current,
+      falling: true,
+      position: target,
+      rotation: current.rotation + 65,
+    }));
+
+    this.schedule(() => {
+      if (this.finished) {
+        return;
+      }
+
+      if (discardZone && token.item.category === discardZone.id) {
+        this.handleCorrectDrop(token, discardZone);
+      } else {
+        this.removeToken(token.tokenId);
+        this.handleItemLost(token);
+        this.setZoneState('descarte', 'error');
+        this.spawnEffect('error', '¡Era reciclable!', target);
+        this.schedule(() => this.setZoneState('descarte', 'normal'), 520);
+        this.ensureActiveItem();
+        this.finishIfDeckComplete();
+      }
     }, 520);
   }
 

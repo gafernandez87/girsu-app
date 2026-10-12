@@ -113,163 +113,158 @@
           {{ effect.text }}
         </span>
       }
-
-      @if (homeReviewGroups().length) {
-        <div class="home-game__review" aria-label="Repaso de residuos por tacho">
-          @for (group of homeReviewGroups(); track group.zone.id; let zoneIndex = $index) {
-            <section class="home-game__review-group" [style.--zone-color]="group.zone.color">
-              <strong>{{ group.zone.shortLabel }}</strong>
-              <div class="home-game__review-items">
-                @for (reviewItem of group.items; track reviewItem.item.id; let itemIndex = $index) {
-                  <span
-                    class="home-game__review-item"
-                    [class.is-correct]="reviewItem.correct"
-                    [class.is-wrong]="!reviewItem.correct"
-                    [style.--review-delay]="homeReviewDelay(zoneIndex, itemIndex)"
-                  >
-                    <span class="home-game__review-status" aria-hidden="true"></span>
-                    <img
-                      [src]="homeProductImage(reviewItem.item.id)"
-                      [alt]="reviewItem.item.label"
-                      draggable="false"
-                    />
-                    <small>{{ reviewItem.item.label }}</small>
-                  </span>
-                } @empty {
-                  <small class="home-game__review-empty">Sin residuos</small>
-                }
-              </div>
-            </section>
-          }
-        </div>
-      }
     }
   </div>
   @if (stage.id === 'separacion-origen' && gameplayActive()) {
-    <div class="home-hud" aria-live="polite">
-      <div class="home-hud__top">
-        <strong class="home-hud__title">{{ stage.title }}</strong>
-        <div class="home-hud__timer" [class.is-low]="remainingSeconds() <= 10">
-          <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
-          <span>Tiempo</span>
-          <strong>{{ remainingSeconds() }}s</strong>
-        </div>
-      </div>
-    </div>
-
-    <div class="home-bin-labels" aria-hidden="true">
-      @for (zone of stage.dropZones; track zone.id) {
-        <span [style.--zone-color]="zone.color">{{ zone.shortLabel }}</span>
-      }
-    </div>
-
-    @if (completedResult(); as result) {
-      <div class="home-complete" aria-live="polite">
-        <div class="home-complete__panel">
-          <img src="/assets/game-1/effects/processed/medal.png" alt="" />
-          <strong>Separación lograda</strong>
-          <span>{{ result.score }} puntos</span>
-          <small>
-            Tiempo +{{ result.remainingSeconds * 10 }} | Bonus por aciertos +{{
-              homeAccuracyBonus(result)
-            }}
-          </small>
-          <div class="home-complete__actions">
-            <button type="button" class="home-complete__action" (click)="restartCurrentGame()">
-              &iexcl;Quiero jugar de nuevo!
-            </button>
-            <a
-              routerLink="/juego/valorizacion-industrial"
-              class="home-complete__action home-complete__action--secondary"
-            >
-              &iexcl;Quiero visitar la planta de reciclaje!
-            </a>
+    @if (!completedResult()) {
+      <div class="home-hud" aria-live="polite">
+        <div class="home-hud__top">
+          <strong class="home-hud__title">{{ stage.title }}</strong>
+          <div class="home-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+            <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
+            <span>Tiempo</span>
+            <strong>{{ remainingSeconds() }}s</strong>
           </div>
         </div>
       </div>
+
+      <div class="home-bin-labels" aria-hidden="true">
+        @for (zone of stage.dropZones; track zone.id) {
+          <span [style.--zone-color]="zone.color">{{ zone.shortLabel }}</span>
+        }
+      </div>
+    }
+
+    @if (completedResult(); as result) {
+      @if (!reviewVisible()) {
+        <div class="home-complete" aria-live="polite">
+          <div class="home-complete__panel">
+            <img src="/assets/game-1/effects/processed/medal.png" alt="" />
+            <strong>Resultado obtenido</strong>
+            <span>{{ result.score }} puntos</span>
+            <small>
+              Tiempo +{{ result.remainingSeconds * 10 }} | Bonus por aciertos +{{
+                homeAccuracyBonus(result)
+              }}
+            </small>
+            <div class="home-complete__actions">
+              <button type="button" class="home-complete__action" (click)="showReview()">
+                Ver respuestas
+              </button>
+              <button type="button" class="home-complete__action" (click)="restartCurrentGame()">
+                &iexcl;Quiero jugar de nuevo!
+              </button>
+              <a
+                routerLink="/juego/valorizacion-industrial"
+                class="home-complete__action home-complete__action--secondary"
+              >
+                &iexcl;Quiero visitar la planta de reciclaje!
+              </a>
+            </div>
+          </div>
+        </div>
+      }
     }
   }
 
   @if (stage.id === 'valorizacion-industrial' && gameplayActive()) {
-    <div class="industrial-hud" aria-live="polite">
-      <div class="industrial-hud__top">
-        <strong class="industrial-hud__title">{{ stage.title }}</strong>
-        <div class="industrial-hud__timer" [class.is-low]="remainingSeconds() <= 10">
-          <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
-          <span>Tiempo</span>
-          <strong>{{ remainingSeconds() }}s</strong>
-        </div>
-        <div class="industrial-hud__progress industrial-hud__progress--count" aria-hidden="true">
-          <span>{{ completedItems() }} / {{ stage.items.length }}</span>
-        </div>
-      </div>
-    </div>
-
-    @if (completedResult(); as result) {
-      <div class="industrial-complete" aria-live="polite">
-        <div class="industrial-complete__panel">
-          <img src="/assets/game-1/effects/processed/medal.png" alt="" />
-          <strong>Planta en marcha</strong>
-          <span>{{ result.score }} puntos</span>
-          <small>
-            Tiempo +{{ result.remainingSeconds * 10 }} | Precisión +{{
-              industrialAccuracyBonus(result)
-            }}
-          </small>
-          <div class="industrial-complete__actions">
-            <button
-              type="button"
-              class="industrial-complete__action"
-              (click)="restartCurrentGame()"
-            >
-              &iexcl;Jugar de nuevo!
-            </button>
-            <a
-              routerLink="/juego/compostaje-domiciliario"
-              class="industrial-complete__action industrial-complete__action--secondary"
-            >
-              Próximo juego
-            </a>
+    @if (!completedResult()) {
+      <div class="industrial-hud" aria-live="polite">
+        <div class="industrial-hud__top">
+          <strong class="industrial-hud__title">{{ stage.title }}</strong>
+          <div class="industrial-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+            <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
+            <span>Tiempo</span>
+            <strong>{{ remainingSeconds() }}s</strong>
+          </div>
+          <div class="industrial-hud__progress industrial-hud__progress--count" aria-hidden="true">
+            <span>{{ completedItems() }} / {{ stage.items.length }}</span>
           </div>
         </div>
       </div>
     }
+
+    @if (completedResult(); as result) {
+      @if (!reviewVisible()) {
+        <div class="industrial-complete" aria-live="polite">
+          <div class="industrial-complete__panel">
+            <img src="/assets/game-1/effects/processed/medal.png" alt="" />
+            <strong>Planta en marcha</strong>
+            <span>{{ result.score }} puntos</span>
+            <small>
+              Tiempo +{{ result.remainingSeconds * 10 }} | Precisión +{{
+                industrialAccuracyBonus(result)
+              }}
+            </small>
+            <div class="industrial-complete__actions">
+              <button type="button" class="industrial-complete__action" (click)="showReview()">
+                Ver respuestas
+              </button>
+              <button
+                type="button"
+                class="industrial-complete__action"
+                (click)="restartCurrentGame()"
+              >
+                &iexcl;Jugar de nuevo!
+              </button>
+              <a
+                routerLink="/juego/compostaje-domiciliario"
+                class="industrial-complete__action industrial-complete__action--secondary"
+              >
+                Próximo juego
+              </a>
+            </div>
+          </div>
+        </div>
+      }
+    }
   }
 
   @if (stage.id === 'compostaje-domiciliario' && gameplayActive()) {
-    <div class="compost-hud" aria-live="polite">
-      <div class="compost-hud__top">
-        <strong class="compost-hud__title">{{ stage.title }}</strong>
-        <div class="compost-hud__score">
-          <span>Puntaje</span>
-          <strong>{{ score() }} pts</strong>
-        </div>
-        <div class="compost-hud__timer" [class.is-low]="remainingSeconds() <= 10">
-          <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
-          <span>Tiempo</span>
-          <strong>{{ remainingSeconds() }}s</strong>
-        </div>
-        <div class="compost-hud__progress compost-hud__progress--count">
-          <span>{{ completedItems() }} / {{ stage.items.length }} capas</span>
+    @if (!completedResult()) {
+      <div class="compost-hud" aria-live="polite">
+        <div class="compost-hud__top">
+          <strong class="compost-hud__title">{{ stage.title }}</strong>
+          <div class="compost-hud__score">
+            <span>Puntaje</span>
+            <strong>{{ score() }} pts</strong>
+          </div>
+          <div class="compost-hud__timer" [class.is-low]="remainingSeconds() <= 10">
+            <i class="hud-icon hud-icon--time" aria-hidden="true"></i>
+            <span>Tiempo</span>
+            <strong>{{ remainingSeconds() }}s</strong>
+          </div>
+          <div class="compost-hud__progress compost-hud__progress--count">
+            <span>{{ completedItems() }} / {{ stage.items.length }} capas</span>
+          </div>
         </div>
       </div>
-    </div>
+    }
 
     @if (completedResult(); as result) {
-      <div class="compost-complete" aria-live="polite">
-        <div class="compost-complete__panel">
-          <img src="/assets/game-1/effects/processed/medal.png" alt="" />
-          <strong>{{
-            result.correct === stage.items.length && result.mistakes === 0
-              ? 'Abono desbloqueado'
-              : 'Compost en proceso'
-          }}</strong>
-          <span>{{ result.score }} puntos</span>
-          <small>
-            Tiempo +{{ result.remainingSeconds * 10 }} | Balance +{{ compostAccuracyBonus(result) }}
-          </small>
+      @if (!reviewVisible()) {
+        <div class="compost-complete" aria-live="polite">
+          <div class="compost-complete__panel">
+            <img src="/assets/game-1/effects/processed/medal.png" alt="" />
+            <strong>{{
+              result.correct === stage.items.length && result.mistakes === 0
+                ? 'Abono desbloqueado'
+                : 'Compost en proceso'
+            }}</strong>
+            <span>{{ result.score }} puntos</span>
+            <small>
+              Tiempo +{{ result.remainingSeconds * 10 }} | Balance +{{
+                compostAccuracyBonus(result)
+              }}
+            </small>
+            <div class="home-complete__actions">
+              <button type="button" class="home-complete__action" (click)="showReview()">
+                Ver materiales
+              </button>
+            </div>
+          </div>
         </div>
-      </div>
+      }
     }
   }
 
@@ -318,6 +313,17 @@
         </div>
       </div>
     }
+  }
+
+  @if (reviewVisible()) {
+    <app-game-review
+      [groups]="reviewGroups()"
+      [title]="reviewTitle()"
+      [description]="reviewDescription()"
+      [nextStageLink]="reviewNextStageLink()"
+      [nextStageLabel]="reviewNextStageLabel()"
+      (replay)="restartCurrentGame()"
+    />
   }
 
   @if (introState() === 'intro') {

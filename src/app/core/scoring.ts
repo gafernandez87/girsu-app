@@ -1,4 +1,5 @@
 import type { GameStage } from './app.models';
+import { COMPOST_MIX_BONUS } from './compost-rules';
 
 export const STAGE_SCORE_TOTAL = 1000;
 
@@ -21,7 +22,11 @@ function rawScoreCeiling(stage: GameStage): number {
   const accuracyScore = itemCount * accuracyBonusStep(stage.kind);
   const timeScore = stage.durationSeconds * 10;
 
-  return Math.max(STAGE_SCORE_TOTAL, baseScore + comboScore + accuracyScore + timeScore);
+  const activityBonus = stage.kind === 'compost' ? COMPOST_MIX_BONUS : 0;
+  return Math.max(
+    STAGE_SCORE_TOTAL,
+    baseScore + comboScore + accuracyScore + timeScore + activityBonus,
+  );
 }
 
 function comboBonusStep(kind: GameStage['kind']): number {

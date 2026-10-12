@@ -115,7 +115,7 @@ export const GAME_STAGES: readonly GameStage[] = [
   {
     id: 'valorizacion-industrial',
     order: 2,
-    title: 'Valorización industrial',
+    title: 'Planta de reciclaje',
     shortTitle: 'Planta',
     subtitle: 'Separar materiales en cinta',
     objective:
@@ -123,7 +123,7 @@ export const GAME_STAGES: readonly GameStage[] = [
     environment:
       'Planta urbana limpia, luminosa y techada, con cinta transportadora y cerros al fondo.',
     introText:
-      'En este juego vas a clasificar materiales secos en una planta de valorización para sostener el flujo de reciclaje y evitar que el descarte contamine la cinta.',
+      'En este juego vas a clasificar materiales secos en una planta de reciclaje para sostener el flujo de reciclaje y evitar que el descarte contamine la cinta.',
     mechanic: 'Clasificar residuos secos en plástico, papel/cartón, vidrio, metal o descarte.',
     scoring:
       'Los aciertos sostienen el flujo de la planta; los errores representan mezcla inadecuada.',
@@ -135,36 +135,36 @@ export const GAME_STAGES: readonly GameStage[] = [
       {
         id: 'plastico',
         label: 'Plástico',
-        shortLabel: 'Azul',
+        shortLabel: 'Plástico',
         color: '#2f80ed',
         description: 'Botellas PET, envases y contenedores limpios.',
       },
       {
         id: 'papel-carton',
         label: 'Papel y cartón',
-        shortLabel: 'Amarillo',
+        shortLabel: 'Papel y cartón',
         color: '#d99b21',
         description: 'Cajas, diarios, revistas y carpetas.',
       },
       {
-        id: 'vidrio',
-        label: 'Vidrio',
-        shortLabel: 'Verde',
-        color: '#3a9152',
-        description: 'Frascos, botellas y envases de conserva.',
-      },
-      {
         id: 'metal',
         label: 'Metal',
-        shortLabel: 'Rojo',
+        shortLabel: 'Metal',
         color: '#c44536',
         description: 'Latas de aluminio, hojalata y ferrosos pequeños.',
       },
       {
+        id: 'vidrio',
+        label: 'Vidrio',
+        shortLabel: 'Vidrio',
+        color: '#3a9152',
+        description: 'Frascos, botellas y envases de conserva.',
+      },
+      {
         id: 'descarte',
         label: 'Descarte',
-        shortLabel: 'Compuerta',
-        color: '#4f5963',
+        shortLabel: 'Descarte',
+        color: '#000000',
         description: 'Residuos no valorizables que no deben contaminar la cinta.',
       },
     ],

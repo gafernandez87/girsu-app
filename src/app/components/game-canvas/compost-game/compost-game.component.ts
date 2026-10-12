@@ -16,6 +16,13 @@ import {
 
 import { GameItem, GameStage, StageResult } from '../../../core/app.models';
 import { GameAudioService } from '../../../core/game-audio.service';
+import {
+  COMPOST_MIX_BONUS,
+  COMPOST_SKIP_MIX_PENALTY,
+  COMPOST_MIXING_DURATION_MS,
+  COMPOST_NOTICES,
+  CompostNotice,
+} from '../../../core/compost-rules';
 import { COMPOST_BACKGROUND_ASSET, COMPOST_PRODUCT_ASSETS } from '../game-canvas.assets';
 import type { ProductAsset, StageTick } from '../game-canvas.types';
 
@@ -81,6 +88,19 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
   @Output() completed = new EventEmitter<StageResult>();
   @ViewChild('compostStage', { static: true })
   private readonly compostStage!: ElementRef<HTMLDivElement>;
+  private learningPanelElement?: ElementRef<HTMLElement>;
+
+  @ViewChild('learningPanel')
+  set learningPanel(panel: ElementRef<HTMLElement> | undefined) {
+    this.learningPanelElement = panel;
+    if (panel) {
+      queueMicrotask(() => {
+        if (this.learningPanelElement === panel) {
+          panel.nativeElement.querySelector<HTMLElement>('h2')?.focus();
+        }
+      });
+    }
+  }
 
   private readonly audio = inject(GameAudioService);
 
@@ -96,6 +116,11 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
   readonly effects = signal<readonly CompostEffect[]>([]);
   readonly moistureBalance = signal(0);
   readonly moistureIcons = MOISTURE_ICONS;
+  readonly wormsAdded = signal(false);
+  readonly wormPositions = [18, 42, 68, 83];
+  readonly notice = signal<CompostNotice | null>(null);
+  readonly mixingDecision = signal(false);
+  readonly mixing = signal(false);
 
   private viewReady = false;
   private correct = 0;
@@ -104,6 +129,11 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
   private streak = 0;
   private remainingSeconds = 0;
   private finished = false;
+  private mixingOffered = false;
+  private consecutiveCategory?: CompostCategory;
+  private consecutiveLayers = 0;
+  private settlingLayers = 0;
+  private noticeQueue: CompostNotice[] = [];
   private dragPointerId?: number;
   private effectId = 0;
   private layerId = 0;
@@ -123,7 +153,33 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   ngOnDestroy(): void {
+    this.learningPanelElement = undefined;
     this.clearTimers();
+  }
+
+  handleNoticeKey(event: KeyboardEvent): void {
+    if (event.key === 'Escape' && this.notice()) {
+      event.preventDefault();
+      this.dismissNotice();
+      return;
+    }
+    if (event.key !== 'Tab') {
+      return;
+    }
+    const buttons =
+      this.learningPanelElement?.nativeElement.querySelectorAll<HTMLButtonElement>('button');
+    if (!buttons?.length) {
+      return;
+    }
+    const first = buttons[0];
+    const last = buttons[buttons.length - 1];
+    if (event.shiftKey && document.activeElement !== last) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
   @HostListener('window:pointermove', ['$event'])
@@ -157,7 +213,7 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   startDrag(item: GameItem, event: PointerEvent): void {
-    if (this.finished || this.placedItemIds().has(item.id)) {
+    if (this.finished || this.isPaused() || this.dragging() || this.placedItemIds().has(item.id)) {
       return;
     }
 
@@ -180,6 +236,111 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
 
   isItemPlaced(itemId: string): boolean {
     return this.placedItemIds().has(itemId);
+  }
+
+  isPaused(): boolean {
+    return this.notice() !== null || this.mixingDecision() || this.mixing();
+  }
+
+  addWorms(): void {
+    if (this.finished || this.isPaused() || this.wormsAdded()) {
+      return;
+    }
+
+    this.cancelDrag();
+    this.wormsAdded.set(true);
+    this.showNotice(COMPOST_NOTICES.worms);
+  }
+
+  dismissNotice(): void {
+    this.notice.set(this.noticeQueue.shift() ?? null);
+    this.finishIfComplete();
+  }
+
+  chooseMixing(shouldMix: boolean): void {
+    if (!this.mixingDecision() || this.notice() || this.mixing() || this.finished) {
+      return;
+    }
+
+    this.mixingDecision.set(false);
+
+    if (!shouldMix) {
+      const penalty = Math.min(this.score, COMPOST_SKIP_MIX_PENALTY);
+      this.score -= penalty;
+      this.streak = 0;
+      this.audio.playWrongDrop();
+      this.spawnEffect('penalty', `-${penalty}`, this.composterCenter());
+      this.showNotice(COMPOST_NOTICES.skipped);
+      this.emitTick();
+      return;
+    }
+
+    this.score += COMPOST_MIX_BONUS;
+    this.mixing.set(true);
+    this.audio.playCorrectDrop();
+    this.spawnEffect('score', `+${COMPOST_MIX_BONUS}`, this.composterCenter());
+    this.emitTick();
+    this.schedule(() => {
+      this.mixing.set(false);
+      this.layers.update((layers) =>
+        layers.map((layer) => ({
+          ...layer,
+          offset: -layer.offset,
+          tilt: -layer.tilt,
+          fragments: layer.fragments.map((fragment) => ({
+            ...fragment,
+            x: 100 - fragment.x,
+            rotation: -fragment.rotation,
+          })),
+        })),
+      );
+      this.showNotice(COMPOST_NOTICES.mixed);
+    }, COMPOST_MIXING_DURATION_MS);
+  }
+
+  private composterCenter(): { x: number; y: number } {
+    const stageRect = this.compostStage.nativeElement.getBoundingClientRect();
+    const rect = this.compostStage.nativeElement
+      .querySelector<HTMLElement>('[data-compost-drop-zone]')
+      ?.getBoundingClientRect();
+    return rect
+      ? {
+          x: rect.left - stageRect.left + rect.width / 2,
+          y: rect.top - stageRect.top + rect.height / 2,
+        }
+      : { x: stageRect.width / 2, y: stageRect.height / 2 };
+  }
+
+  private showNotice(notice: CompostNotice): void {
+    if (this.notice()) {
+      this.noticeQueue.push(notice);
+    } else {
+      this.notice.set(notice);
+    }
+  }
+
+  private offerMixingIfNeeded(): void {
+    if (this.finished || this.mixingOffered) {
+      return;
+    }
+
+    const halfMaterials = this.placedItemIds().size >= Math.ceil(this.stage.items.length / 2);
+    const halfTime = this.remainingSeconds <= this.stage.durationSeconds / 2;
+    if (halfMaterials || halfTime) {
+      this.cancelDrag();
+      this.mixingOffered = true;
+      this.mixingDecision.set(true);
+    }
+  }
+
+  private finishIfComplete(): void {
+    if (
+      !this.isPaused() &&
+      this.settlingLayers === 0 &&
+      this.placedItemIds().size === this.stage.items.length
+    ) {
+      this.finishLevel();
+    }
   }
 
   private neededCategory(): CompostCategory {
@@ -249,6 +410,15 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     this.streak = 0;
     this.remainingSeconds = this.stage.durationSeconds;
     this.finished = false;
+    this.mixingOffered = false;
+    this.consecutiveCategory = undefined;
+    this.consecutiveLayers = 0;
+    this.settlingLayers = 0;
+    this.noticeQueue = [];
+    this.wormsAdded.set(false);
+    this.notice.set(null);
+    this.mixingDecision.set(false);
+    this.mixing.set(false);
     this.dragPointerId = undefined;
     this.effectId = 0;
     this.layerId = 0;
@@ -264,7 +434,7 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     this.emitTick();
 
     this.timer = setInterval(() => {
-      if (this.finished) {
+      if (this.finished || this.isPaused()) {
         return;
       }
 
@@ -273,6 +443,8 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
 
       if (this.remainingSeconds === 0) {
         this.finishLevel();
+      } else {
+        this.offerMixingIfNeeded();
       }
     }, 1000);
   }
@@ -317,6 +489,9 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
   }
 
   private placeItem(item: GameItem, category: CompostCategory): void {
+    if (this.finished || this.isPaused() || this.placedItemIds().has(item.id)) {
+      return;
+    }
     const requiredCategory = this.neededCategory();
     const isCorrect = category === requiredCategory;
     const nextBalance = this.moistureBalance() + (category === 'verdes' ? 1 : -1);
@@ -358,12 +533,18 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
 
     this.emitTick();
 
+    this.consecutiveLayers = this.consecutiveCategory === category ? this.consecutiveLayers + 1 : 1;
+    this.consecutiveCategory = category;
+    if (this.consecutiveLayers >= 2) {
+      this.showNotice(category === 'verdes' ? COMPOST_NOTICES.wet : COMPOST_NOTICES.dry);
+    }
+    this.offerMixingIfNeeded();
+    this.settlingLayers += 1;
+
     this.schedule(() => {
       this.composterState.set('normal');
-
-      if (this.placedItemIds().size === this.stage.items.length) {
-        this.finishLevel();
-      }
+      this.settlingLayers -= 1;
+      this.finishIfComplete();
     }, 620);
   }
 
@@ -503,6 +684,10 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     this.clearTimers();
     this.activeItem.set(null);
     this.dragging.set(false);
+    this.notice.set(null);
+    this.noticeQueue = [];
+    this.mixingDecision.set(false);
+    this.mixing.set(false);
 
     const timeBonus = this.remainingSeconds * 10;
     const accuracyBonus = Math.max(0, this.correct - this.mistakes) * 22;

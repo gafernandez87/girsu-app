@@ -1,6 +1,7 @@
 <div
   #compostStage
   class="compost-game"
+  [class.is-paused]="isPaused()"
   [style.background-image]="backgroundImage"
   aria-label="Minijuego de compostaje domiciliario"
 >
@@ -46,7 +47,7 @@
               class="compost-game__source-item"
               [class.is-picked]="activeItem()?.id === item.id"
               [class.is-spent]="isItemPlaced(item.id)"
-              [disabled]="isItemPlaced(item.id)"
+              [disabled]="isItemPlaced(item.id) || isPaused()"
               [attr.aria-hidden]="isItemPlaced(item.id) ? 'true' : null"
               [attr.aria-label]="'Arrastrar ' + item.label"
               (pointerdown)="startDrag(item, $event)"
@@ -85,6 +86,14 @@
       data-compost-drop-zone
       aria-live="polite"
     >
+      <button
+        type="button"
+        class="compost-game__worms-button"
+        [disabled]="wormsAdded() || isPaused()"
+        (click)="addWorms()"
+      >
+        {{ wormsAdded() ? 'Lombrices agregadas' : 'Agregar lombrices' }}
+      </button>
       <span
         class="compost-game__composter-depth compost-game__composter-depth--back"
         aria-hidden="true"
@@ -127,12 +136,13 @@
             }
           </div>
 
-          <div class="compost-game__layers">
+          <div class="compost-game__layers" [class.is-mixing]="mixing()">
             @for (layer of layers(); track layer.id) {
               <span
                 class="compost-game__layer"
                 [class.compost-game__layer--verdes]="layer.category === 'verdes'"
                 [class.compost-game__layer--marrones]="layer.category === 'marrones'"
+                [style.--mix-delay]="$index * 90 + 'ms'"
                 [style.--layer-offset]="layer.offset + 'px'"
                 [style.--layer-height]="layer.height + '%'"
                 [style.--layer-tilt]="layer.tilt + 'deg'"
@@ -165,6 +175,19 @@
               </span>
             }
           </div>
+          @if (wormsAdded()) {
+            <div class="compost-game__worms" aria-hidden="true">
+              @for (position of wormPositions; track position) {
+                <svg
+                  viewBox="0 0 80 28"
+                  [style.left.%]="position"
+                  [style.bottom.%]="8 + $index * 10"
+                >
+                  <path d="M5 18C20 0 25 28 40 12S62 6 75 17" />
+                </svg>
+              }
+            </div>
+          }
         </div>
       </div>
     </section>
@@ -213,5 +236,60 @@
     >
       {{ effect.text }}
     </span>
+  }
+  @if (notice(); as currentNotice) {
+    <div class="compost-game__notice-backdrop">
+      <section
+        class="compost-game__notice"
+        #learningPanel
+        (keydown)="handleNoticeKey($event)"
+        aria-live="polite"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="compost-notice-title"
+      >
+        <h2 id="compost-notice-title" tabindex="-1">{{ currentNotice.title }}</h2>
+        <p>{{ currentNotice.message }}</p>
+        <button type="button" (click)="dismissNotice()">Continuar</button>
+      </section>
+    </div>
+  } @else if (mixingDecision()) {
+    <div class="compost-game__notice-backdrop">
+      <section
+        class="compost-game__notice"
+        #learningPanel
+        (keydown)="handleNoticeKey($event)"
+        aria-live="polite"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="compost-mixing-title"
+      >
+        <h2 id="compost-mixing-title" tabindex="-1">
+          Ya pasó una semana… ¿vas a mezclar tu compostera?
+        </h2>
+        <div class="compost-game__mixing-explanation">
+          <strong>¡A mezclar!</strong>
+          <p>
+            Mezclar la compostera ayuda a incorporar oxígeno y distribuir la humedad, para que los
+            residuos se descompongan mejor.
+          </p>
+          <p>Lo hago con cuidado para no molestar ni lastimar a mis lombrices.</p>
+        </div>
+        <button type="button" (click)="chooseMixing(true)">¡Voy a mezclar la compostera!</button>
+        <button type="button" class="is-secondary" (click)="chooseMixing(false)">
+          Prefiero no mezclar la compostera
+        </button>
+      </section>
+    </div>
+  }
+  @if (mixing()) {
+    <aside class="compost-game__mixing-caption" aria-live="polite">
+      <strong>¡A mezclar!</strong>
+      <p>
+        Mezclar la compostera ayuda a incorporar oxígeno y distribuir la humedad, para que los
+        residuos se descompongan mejor.
+      </p>
+      <p>Lo hago con cuidado para no molestar ni lastimar a mis lombrices.</p>
+    </aside>
   }
 </div>

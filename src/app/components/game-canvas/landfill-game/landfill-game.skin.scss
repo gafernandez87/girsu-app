@@ -1,21 +1,55 @@
 .landfill-game {
   --landfill-crane-x: 50%;
-  --landfill-board-width: min(23dvh, calc(100vw - 7rem), 18rem);
+  --landfill-board-bottom: max(6rem, calc(env(safe-area-inset-bottom) + 6rem));
+  --landfill-hud-clearance: max(12.5rem, calc(env(safe-area-inset-top) + 12.5rem));
+  --landfill-board-width: min(
+    calc((100dvh - var(--landfill-hud-clearance) - var(--landfill-board-bottom)) / 2),
+    calc(100vw - 7rem),
+    22rem
+  );
+  --landfill-board-height: calc(var(--landfill-board-width) * 2);
+  --landfill-surface-y: calc(100% - var(--landfill-board-bottom) - var(--landfill-board-height));
+  --landfill-environment-height: calc(var(--landfill-board-height) / 0.6);
+  --landfill-crane-height: clamp(5rem, 12dvh, 7.5rem);
   --landfill-grid-gap: 0.08rem;
-  --landfill-preview-cell-size: calc((var(--landfill-board-width) - 0.56rem) / 8);
+  --landfill-cell-size: calc((var(--landfill-board-width) - 7 * var(--landfill-grid-gap)) / 8);
+  --landfill-preview-cell-size: 0.85rem;
 
   position: absolute;
   inset: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background:
-    linear-gradient(180deg, rgba(49, 32, 22, 0.18), rgba(49, 32, 22, 0.04) 22%, transparent 62%),
-    url('/assets/game-4/processed/background/fondo-tetris.png') center bottom / cover no-repeat,
-    #c69366;
+  background: linear-gradient(
+    #e6b87c 0 var(--landfill-surface-y),
+    #8f5f3f var(--landfill-surface-y),
+    #604431
+  );
   color: #241b19;
   font-family: Inter, Arial, sans-serif;
   touch-action: none;
+}
+
+/* The image's pit occupies the central 70% width and 60% height. */
+.landfill-game__environment {
+  position: absolute;
+  top: calc(var(--landfill-surface-y) - var(--landfill-environment-height) * 0.33);
+  left: 50%;
+  width: calc(var(--landfill-board-width) / 0.7);
+  height: var(--landfill-environment-height);
+  background: url('/assets/game-4/processed/background/fondo-tetris.png') center / 100% 100%
+    no-repeat;
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+
+.landfill-game__landscape {
+  position: absolute;
+  inset: 0 0 auto;
+  height: var(--landfill-surface-y);
+  background: url('/assets/game-4/processed/background/fondo-tetris.png') center top / 100% 303%
+    no-repeat;
+  pointer-events: none;
 }
 
 .landfill-game__crane,
@@ -30,10 +64,10 @@
 
 .landfill-game__crane {
   z-index: 12;
-  top: max(16.35rem, calc(env(safe-area-inset-top) + 5.35rem));
+  top: calc(var(--landfill-surface-y) - var(--landfill-crane-height));
   right: 0;
   left: 0;
-  height: clamp(7.8rem, 18dvh, 11.2rem);
+  height: var(--landfill-crane-height);
   pointer-events: none;
 }
 
@@ -48,8 +82,9 @@
   position: absolute;
   top: 0;
   left: 50%;
-  width: min(96vw, 43rem);
-  height: auto;
+  width: calc(var(--landfill-board-width) + 3rem);
+  height: 100%;
+  object-fit: fill;
   filter: drop-shadow(0 0.45rem 0.38rem rgba(35, 25, 18, 0.2));
   transform: translateX(-50%);
 }
@@ -68,7 +103,7 @@
   top: 0;
   left: var(--landfill-crane-x);
   width: auto;
-  height: clamp(7.2rem, 17.2dvh, 10.8rem);
+  height: 88%;
   filter: drop-shadow(0 0.34rem 0.26rem rgba(25, 19, 16, 0.24));
   transform: translateX(-50%);
 }
@@ -97,26 +132,20 @@
 }
 
 .landfill-game__next {
-  z-index: 14;
-  top: clamp(6.18rem, 14.2dvh, 8.75rem);
-  left: var(--landfill-crane-x);
+  z-index: 18;
+  top: calc(var(--landfill-surface-y) + 0.5rem);
+  right: max(0.65rem, calc(50% - var(--landfill-board-width) / 2 - 6rem));
   display: grid;
-  gap: 0.2rem;
+  gap: 0.4rem;
   justify-items: center;
-  min-width: max-content;
+  width: 5.2rem;
+  padding: 0.5rem 0.25rem;
+  border: 1px solid rgba(255, 244, 215, 0.4);
+  border-radius: 8px;
+  background: rgba(39, 30, 27, 0.8);
   color: #fff4d7;
   text-align: center;
-  text-shadow: 0 0.08rem 0.28rem rgba(22, 15, 12, 0.42);
-  transform: translateX(-50%);
-}
-
-.landfill-game__next::before {
-  content: '';
-  width: 0.08rem;
-  height: 0.42rem;
-  border-radius: 999px;
-  background: rgba(33, 25, 22, 0.62);
-  box-shadow: 0 0 0.28rem rgba(255, 232, 176, 0.32);
+  pointer-events: none;
 }
 
 .landfill-game__status span {
@@ -135,7 +164,7 @@
   border-radius: 999px;
   background: rgba(39, 30, 27, 0.54);
   color: rgba(255, 236, 195, 0.82);
-  font-size: 0.46rem;
+  font-size: 0.65rem;
   font-weight: 950;
   letter-spacing: 0;
   line-height: 1;
@@ -178,7 +207,7 @@
 
 .landfill-game__well {
   z-index: 9;
-  bottom: max(6.05rem, calc(env(safe-area-inset-bottom) + 6.05rem));
+  bottom: var(--landfill-board-bottom);
   left: 50%;
   display: grid;
   width: var(--landfill-board-width);
@@ -192,19 +221,6 @@
   transition:
     box-shadow 180ms ease,
     filter 180ms ease;
-}
-
-.landfill-game__well::before,
-.landfill-game__well::after {
-  display: none;
-}
-
-.landfill-game__well::before {
-  display: none;
-}
-
-.landfill-game__well::after {
-  display: none;
 }
 
 .landfill-game__well.is-danger {
@@ -265,10 +281,10 @@
 }
 
 .landfill-game__recycle-bin {
-  --recycle-bin-size: clamp(4.25rem, 9dvh, 5.7rem);
+  --recycle-bin-size: clamp(3rem, 7dvh, 4.25rem);
 
-  top: 6.2%;
-  left: calc((var(--recycle-bin-size) + 0.5rem) * -1);
+  bottom: calc(var(--landfill-board-bottom) + var(--landfill-board-height));
+  left: max(0.75rem, calc(50% - var(--landfill-board-width) / 2 - 4.5rem));
   z-index: 16;
   display: grid;
   justify-items: center;
@@ -432,8 +448,8 @@
 .landfill-game__preview-cell.landfill-game__piece-cell {
   --piece-border-color: rgba(45, 31, 23, 0.58);
   --piece-edge-color: rgba(255, 236, 177, 0.82);
-  --piece-border-width: 0.4rem;
-  --piece-edge-size: 0.8rem;
+  --piece-border-width: 0.04rem;
+  --piece-edge-size: 0.1rem;
   --piece-shadow-base: inset 0 0 0 1px rgba(255, 255, 255, 0.08);
 
   overflow: hidden;
@@ -951,22 +967,8 @@
 
 @media (max-width: 520px) {
   .landfill-game {
-    --landfill-board-width: min(22dvh, calc(100vw - 7.2rem), 16rem);
     --landfill-grid-gap: 0.075rem;
-    --landfill-preview-cell-size: calc((var(--landfill-board-width) - 0.525rem) / 8);
-  }
-
-  .landfill-game__crane {
-    top: max(9.42rem, calc(env(safe-area-inset-top) + 5.42rem));
-    height: 7.6rem;
-  }
-
-  .landfill-game__crane-structure {
-    width: min(106vw, 34rem);
-  }
-
-  .landfill-game__crane-trolley {
-    height: 7.45rem;
+    --landfill-preview-cell-size: 0.65rem;
   }
 
   .landfill-game__status {
@@ -980,16 +982,12 @@
     right: max(0.68rem, calc(env(safe-area-inset-right) + 0.68rem));
   }
 
-  .landfill-game__next {
-    top: 6.08rem;
-  }
-
   .landfill-game__status span {
     font-size: 0.48rem;
   }
 
   .landfill-game__next > span {
-    font-size: 0.42rem;
+    font-size: 0.6rem;
   }
 
   .landfill-game__status strong {
@@ -1004,13 +1002,6 @@
     gap: var(--landfill-grid-gap);
   }
 
-  .landfill-game__recycle-bin {
-    --recycle-bin-size: clamp(2.72rem, 6.25dvh, 3.38rem);
-
-    top: 6%;
-    left: calc((var(--recycle-bin-size) + 0.42rem) * -1);
-  }
-
   .landfill-game__recycle-bin strong {
     font-size: 0.38rem;
   }
@@ -1021,7 +1012,7 @@
   }
 
   .landfill-game__well {
-    bottom: max(5.96rem, calc(env(safe-area-inset-bottom) + 5.96rem));
+    bottom: var(--landfill-board-bottom);
     width: var(--landfill-board-width);
   }
 
@@ -1142,5 +1133,82 @@
   .landfill-game__block--placed,
   .landfill-game__effect {
     animation: none;
+  }
+}
+
+.landfill-game__drag-piece {
+  position: absolute;
+  z-index: 28;
+  display: grid;
+  gap: var(--landfill-grid-gap);
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0.5rem 0.6rem rgba(0, 0, 0, 0.35));
+  pointer-events: none;
+}
+
+.landfill-game.is-piece-dragging .landfill-game__block--active {
+  opacity: 0;
+}
+
+.landfill-game__block--active.landfill-game__piece-cell--recyclable {
+  cursor: grab;
+  touch-action: none;
+}
+
+.landfill-game__recycle-bin.is-hovered {
+  filter: drop-shadow(0 0 0.8rem #c7ff83);
+  transform: scale(1.12);
+}
+
+.landfill-game__recycle-hint {
+  position: absolute;
+  z-index: 18;
+  right: 0.7rem;
+  bottom: calc(var(--landfill-board-bottom) - 1.15rem);
+  left: 0.7rem;
+  width: fit-content;
+  max-width: calc(100% - 1.4rem);
+  margin: 0 auto;
+  padding: 0.3rem 0.5rem;
+  border-radius: 6px;
+  background: rgba(39, 30, 27, 0.88);
+  color: #fff4d7;
+  font-size: 0.68rem;
+  line-height: 1.3;
+  text-align: center;
+  pointer-events: none;
+}
+
+@media (max-width: 520px) {
+  .landfill-game__next {
+    right: 0.5rem;
+    width: 2.8rem;
+    padding: 0.4rem 0.1rem;
+  }
+
+  .landfill-game {
+    --landfill-preview-cell-size: 0.42rem;
+  }
+}
+
+@media (max-height: 540px) and (min-width: 521px) {
+  .landfill-game {
+    --landfill-hud-clearance: max(5.5rem, calc(env(safe-area-inset-top) + 5.5rem));
+    --landfill-board-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 2rem));
+    --landfill-crane-height: 3rem;
+  }
+
+  .landfill-game__controls {
+    right: 1rem;
+    left: 1rem;
+    max-width: none;
+  }
+
+  .landfill-game__status {
+    top: 7rem;
+  }
+
+  .landfill-game__recycle-hint {
+    display: none;
   }
 }

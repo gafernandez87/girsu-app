@@ -66,10 +66,117 @@ const musicBars = [
   },
 ] as const;
 
+interface MusicTrack {
+  readonly intervalMs: number;
+  readonly melodyType: OscillatorType;
+  readonly melodyDuration: number;
+  readonly bars: readonly {
+    readonly chord: readonly number[];
+    readonly bass: number;
+    readonly melody: readonly (number | null)[];
+  }[];
+}
+
+const defaultMusicTrack: MusicTrack = {
+  intervalMs: 300,
+  melodyType: 'triangle',
+  melodyDuration: 0.38,
+  bars: musicBars,
+};
+
+const recyclingMusicTrack: MusicTrack = {
+  intervalMs: 240,
+  melodyType: 'sine',
+  melodyDuration: 0.21,
+  bars: [
+    {
+      chord: [notes.G4, notes.B4, notes.D5],
+      bass: notes.G2,
+      melody: [notes.G4, notes.D5, notes.B4, notes.D5, notes.G5, null, notes.D5, notes.B4],
+    },
+    {
+      chord: [notes.A3, notes.C4, notes.E4],
+      bass: notes.A2,
+      melody: [notes.A4, notes.E5, notes.C5, notes.E5, notes.A5, null, notes.E5, notes.C5],
+    },
+    {
+      chord: [notes.C4, notes.E4, notes.G4],
+      bass: notes.C3,
+      melody: [notes.C5, notes.G5, notes.E5, notes.G5, notes.E5, notes.D5, notes.C5, null],
+    },
+    {
+      chord: [notes.B3, notes.D4, notes.G4],
+      bass: notes.G2,
+      melody: [notes.D5, notes.B4, notes.G4, notes.B4, notes.D5, null, notes.G5, null],
+    },
+  ],
+};
+
+const compostMusicTrack: MusicTrack = {
+  intervalMs: 420,
+  melodyType: 'sine',
+  melodyDuration: 0.52,
+  bars: [
+    {
+      chord: [notes.F4, notes.A4, notes.C5],
+      bass: notes.F2,
+      melody: [notes.A4, null, notes.C5, notes.A4, notes.F4, null, notes.G4, null],
+    },
+    {
+      chord: [notes.C4, notes.E4, notes.G4],
+      bass: notes.C3,
+      melody: [notes.G4, null, notes.E5, notes.D5, notes.C5, null, notes.G4, null],
+    },
+    {
+      chord: [notes.C4, notes.E4, notes.A4],
+      bass: notes.A2,
+      melody: [notes.A4, notes.C5, null, notes.E5, notes.C5, null, notes.A4, null],
+    },
+    {
+      chord: [notes.F4, notes.A4, notes.C5],
+      bass: notes.F2,
+      melody: [notes.F4, null, notes.A4, notes.G4, notes.F4, null, null, null],
+    },
+  ],
+};
+
+const landfillMusicTrack: MusicTrack = {
+  intervalMs: 210,
+  melodyType: 'triangle',
+  melodyDuration: 0.16,
+  bars: [
+    {
+      chord: [notes.C4, notes.E4, notes.A4],
+      bass: notes.A2,
+      melody: [notes.A3, notes.E4, notes.A4, null, notes.E4, notes.C4, notes.E4, null],
+    },
+    {
+      chord: [notes.F4, notes.A4, notes.C5],
+      bass: notes.F2,
+      melody: [notes.F4, notes.C4, notes.F4, null, notes.A4, notes.F4, notes.C4, null],
+    },
+    {
+      chord: [notes.C4, notes.E4, notes.G4],
+      bass: notes.C3,
+      melody: [notes.C4, notes.G4, notes.E4, null, notes.G4, notes.E4, notes.C4, null],
+    },
+    {
+      chord: [notes.B3, notes.D4, notes.G4],
+      bass: notes.G2,
+      melody: [notes.G4, notes.D4, notes.B3, null, notes.D4, notes.G4, notes.B3, null],
+    },
+  ],
+};
+
+const stageMusicTracks: Readonly<Record<string, MusicTrack>> = {
+  'valorizacion-industrial': recyclingMusicTrack,
+  'compostaje-domiciliario': compostMusicTrack,
+  'relleno-sanitario': landfillMusicTrack,
+};
+
 @Injectable({ providedIn: 'root' })
 export class GameAudioService {
   private static readonly mutedStorageKey = 'girsu-game-audio-muted';
-  private static readonly musicIntervalMs = 300;
 
   readonly muted = signal(this.readMutedPreference());
 
@@ -131,7 +238,7 @@ export class GameAudioService {
     this.clearMusicTimer();
     this.musicStep = 0;
     this.playMusicStep();
-    this.musicTimer = setInterval(() => this.playMusicStep(), GameAudioService.musicIntervalMs);
+    this.musicTimer = setInterval(() => this.playMusicStep(), this.musicTrack().intervalMs);
   }
 
   stopBackground(): void {
@@ -223,17 +330,18 @@ export class GameAudioService {
       return;
     }
 
-    const stepsPerBar = musicBars[0].melody.length;
+    const track = this.musicTrack();
+    const stepsPerBar = track.bars[0].melody.length;
     const stepInBar = this.musicStep % stepsPerBar;
-    const bar = musicBars[Math.floor(this.musicStep / stepsPerBar) % musicBars.length];
+    const bar = track.bars[Math.floor(this.musicStep / stepsPerBar) % track.bars.length];
     const melodyNote = bar.melody[stepInBar];
 
     if (melodyNote) {
       this.playTone({
         frequency: melodyNote,
-        duration: stepInBar === 2 ? 0.26 : 0.38,
+        duration: track === defaultMusicTrack && stepInBar === 2 ? 0.26 : track.melodyDuration,
         gain: 0.075,
-        type: 'triangle',
+        type: track.melodyType,
         destination: this.musicGain,
         attack: 0.018,
         release: 0.18,
@@ -245,7 +353,7 @@ export class GameAudioService {
       bar.chord.forEach((frequency) => {
         this.playTone({
           frequency,
-          duration: 2.35,
+          duration: (stepsPerBar * track.intervalMs) / 1000 - 0.05,
           gain: 0.025,
           type: 'sine',
           destination: this.musicGain,
@@ -270,6 +378,10 @@ export class GameAudioService {
     }
 
     this.musicStep += 1;
+  }
+
+  private musicTrack(): MusicTrack {
+    return stageMusicTracks[this.activeMusicStageId ?? ''] ?? defaultMusicTrack;
   }
 
   private playConfettiBurst(startOffset: number): void {

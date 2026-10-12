@@ -1,12 +1,14 @@
 import {
   AfterViewInit,
   Component,
+  ElementRef,
   EventEmitter,
   HostListener,
   Input,
   OnChanges,
   OnDestroy,
   Output,
+  ViewChild,
   inject,
   SimpleChanges,
   computed,
@@ -21,8 +23,8 @@ import type { StageTick } from '../game-canvas.types';
 const BOARD_COLUMNS = 8;
 const BOARD_ROWS = 16;
 const SAFETY_ROWS = 2;
-const FALL_INTERVAL_MS = 760;
-const SPAWN_DELAY_MS = 320;
+const FALL_INTERVAL_MS = 480;
+const SPAWN_DELAY_MS = 240;
 const RECYCLABLE_MIN_PIECES = 3;
 const RECYCLABLE_MAX_GAP = 5;
 const RECYCLABLE_CHANCE = 0.18;
@@ -221,6 +223,10 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
   @Input({ required: true }) stage!: GameStage;
   @Output() tick = new EventEmitter<StageTick>();
   @Output() completed = new EventEmitter<StageResult>();
+  @ViewChild('landfillStage', { static: true })
+  private readonly landfillStage!: ElementRef<HTMLDivElement>;
+  @ViewChild('recycleBin', { static: true })
+  private readonly recycleBin!: ElementRef<HTMLButtonElement>;
 
   private readonly audio = inject(GameAudioService);
 
@@ -233,6 +239,22 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
   readonly placedPieces = signal(0);
   readonly compactedLayers = signal(0);
   readonly recycledPieces = signal(0);
+  readonly pieceDragging = signal(false);
+  readonly dragPosition = signal<LandfillPoint>({ x: 0, y: 0 });
+  readonly recycleBinHovered = signal(false);
+
+  readonly draggedCells = computed(() => {
+    const piece = this.activePiece();
+    return piece ? this.renderPieceCells({ ...piece, x: 0, y: 0 }) : [];
+  });
+  readonly dragGridColumns = computed(
+    () =>
+      `repeat(${this.pieceWidth(this.activePiece()?.cells ?? [{ x: 0, y: 0 }])}, var(--landfill-cell-size))`,
+  );
+  readonly dragGridRows = computed(
+    () =>
+      `repeat(${this.pieceHeight(this.activePiece()?.cells ?? [{ x: 0, y: 0 }])}, var(--landfill-cell-size))`,
+  );
 
   readonly activeCells = computed(() => {
     const piece = this.activePiece();
@@ -316,6 +338,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
   private fallTimer?: ReturnType<typeof setInterval>;
   private timeouts: Array<ReturnType<typeof setTimeout>> = [];
   private gestureStart?: GestureStart;
+  private dragPointerId?: number;
 
   ngAfterViewInit(): void {
     this.viewReady = true;
@@ -330,6 +353,75 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
 
   ngOnDestroy(): void {
     this.clearTimers();
+    this.cancelPieceDrag();
+  }
+
+  startPieceDrag(event: PointerEvent): void {
+    if (!this.canControl() || !this.recycleBinReady()) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    this.gestureStart = undefined;
+    this.dragPointerId = event.pointerId;
+    this.pieceDragging.set(true);
+    this.updateDragPosition(event);
+    (event.currentTarget as HTMLElement).setPointerCapture?.(event.pointerId);
+  }
+
+  @HostListener('window:pointermove', ['$event'])
+  handlePiecePointerMove(event: PointerEvent): void {
+    if (!this.pieceDragging() || event.pointerId !== this.dragPointerId) {
+      return;
+    }
+    event.preventDefault();
+    this.updateDragPosition(event);
+  }
+
+  @HostListener('window:pointerup', ['$event'])
+  handlePiecePointerUp(event: PointerEvent): void {
+    if (!this.pieceDragging() || event.pointerId !== this.dragPointerId) {
+      return;
+    }
+    event.preventDefault();
+    const shouldRecycle = this.isOverRecycleBin(event.clientX, event.clientY);
+    this.cancelPieceDrag();
+    if (shouldRecycle) {
+      this.recycleActivePiece();
+    }
+  }
+
+  @HostListener('window:pointercancel', ['$event'])
+  handlePiecePointerCancel(event: PointerEvent): void {
+    if (event.pointerId === this.dragPointerId) {
+      this.cancelPieceDrag();
+    }
+  }
+
+  recycleFromKeyboard(event: Event): void {
+    if (this.recycleBinReady()) {
+      this.recycleFromBin(event);
+    }
+  }
+
+  private updateDragPosition(event: PointerEvent): void {
+    const rect = this.landfillStage.nativeElement.getBoundingClientRect();
+    this.dragPosition.set({ x: event.clientX - rect.left, y: event.clientY - rect.top });
+    this.recycleBinHovered.set(this.isOverRecycleBin(event.clientX, event.clientY));
+  }
+
+  private isOverRecycleBin(clientX: number, clientY: number): boolean {
+    const rect = this.recycleBin.nativeElement.getBoundingClientRect();
+    return (
+      clientX >= rect.left && clientX <= rect.right && clientY >= rect.top && clientY <= rect.bottom
+    );
+  }
+
+  private cancelPieceDrag(): void {
+    this.pieceDragging.set(false);
+    this.recycleBinHovered.set(false);
+    this.dragPointerId = undefined;
   }
 
   @HostListener('window:keydown', ['$event'])
@@ -363,7 +455,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
   }
 
   canControl(): boolean {
-    return !this.finished && this.activePiece() !== null;
+    return !this.finished && !this.pieceDragging() && this.activePiece() !== null;
   }
 
   cranePosition(): string {
@@ -418,7 +510,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
   startBoardGesture(event: PointerEvent): void {
     const target = event.target as HTMLElement | null;
 
-    if (target?.closest('button')) {
+    if (this.pieceDragging() || target?.closest('button')) {
       return;
     }
 
@@ -516,6 +608,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
 
   private startGame(): void {
     this.clearTimers();
+    this.cancelPieceDrag();
     this.score = 0;
     this.correct = 0;
     this.mistakes = 0;
@@ -566,7 +659,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
   }
 
   private advanceFall(): void {
-    if (this.finished) {
+    if (this.finished || this.pieceDragging()) {
       return;
     }
 
@@ -610,7 +703,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
   private moveActivePiece(dx: number, dy: number): boolean {
     const piece = this.activePiece();
 
-    if (!piece || this.finished) {
+    if (!piece || this.finished || this.pieceDragging()) {
       return false;
     }
 
@@ -649,6 +742,8 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
     if (!piece || this.finished || piece.definition.wasteKind !== 'recyclable') {
       return;
     }
+
+    this.cancelPieceDrag();
 
     const recycledPoints = 140 + piece.cells.length * 32 + this.streak * 10;
 
@@ -794,6 +889,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
 
     this.finished = true;
     this.clearTimers();
+    this.cancelPieceDrag();
     this.activePiece.set(null);
     this.gestureStart = undefined;
 

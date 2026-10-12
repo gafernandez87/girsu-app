@@ -39,7 +39,11 @@ La compostera espera primero una base seca y luego alterna capas. Internamente s
 - `+2` o mas deja la compostera en estado muy humedo.
 - `-2` o menos deja la compostera en estado muy seco.
 
-Todas las capas que el jugador suelta sobre la compostera se aceptan, incluso cuando rompen la alternancia o empeoran la humedad. Esos casos cuentan como error interno, restan puntaje y cortan la racha, pero no disparan sacudidas, carteles correctivos ni resaltados del contenedor recomendado. La animacion de recepcion es neutral para cualquier capa aceptada; la intencion es que el estudiante pueda equivocarse, observar el resultado y deducir el balance sin que el juego le indique la siguiente jugada.
+Todas las capas que el jugador suelta sobre la compostera se aceptan, incluso cuando rompen la alternancia o empeoran la humedad. Esos casos restan puntaje y cortan la racha. La animacion de recepcion es neutral para cualquier capa aceptada. A partir de dos materiales humedos o secos consecutivos aparece un aviso que explica como recuperar el equilibrio.
+
+El jugador puede agregar lombrices una sola vez. Se muestran dentro de la compostera y un aviso explica su aporte a la produccion de humus.
+
+Al colocar la mitad de los materiales, o al transcurrir la mitad del tiempo, aparece una unica decision: mezclar la compostera o continuar sin mezclar. Mezclar anima las capas durante 1,8 segundos y explica como incorporar oxigeno y distribuir la humedad cuidando las lombrices. No mezclar muestra las consecuencias sobre la descomposicion y los olores. El reloj y el ingreso de materiales se pausan durante los avisos, la decision y la animacion.
 
 Cada material aceptado dispara una lluvia breve de particulas dentro de la ventana de la compostera. Las particulas varian por categoria y residuo: verdes organicos, hojas/material seco, lechuga, cesped, ramitas, carton y saquito de te. La capa nueva entra con una animacion de caida y asentamiento, con altura, desplazamiento y rotacion sutilmente variables para evitar el efecto de franjas planas.
 
@@ -50,6 +54,8 @@ El puntaje se calcula en tres momentos para que el juego premie el balance sin i
 - Capa correcta: suma los puntos base definidos en `GAME_STAGES` para ese material.
 - Racha de balance: cada capa correcta consecutiva agrega `+16` puntos extra por paso de racha despues de la primera. Por ejemplo, la segunda correcta seguida suma `+16`, la tercera `+32`, y asi sucesivamente.
 - Capa desbalanceada: se acepta visualmente en la compostera, pero resta `-35` puntos y corta la racha.
+- Mezclar la compostera: suma `+100` puntos, sin cambiar los aciertos de materiales.
+- No mezclar: resta hasta `-50` puntos, sin bajar de cero, y corta la racha.
 
 Al finalizar se suman dos bonus:
 
@@ -57,6 +63,8 @@ Al finalizar se suman dos bonus:
 - Bonus de balance: `(correct - mistakes) * 22`, sin bajar de cero.
 
 El panel final muestra "Abono desbloqueado" cuando se completan todas las capas sin errores. En cualquier otro cierre muestra "Compost en proceso".
+
+Despues del resultado aparece un repaso de materiales compostables y no compostables. Se puede abrir de inmediato con "Ver materiales" o esperar 4,5 segundos. El repaso reutiliza el componente compartido de los juegos anteriores y permite avanzar al relleno sanitario. La etapa tiene una melodia propia, distinta de las otras tres.
 
 Para que la regla sea mas clara en la interfaz, el HUD del juego 3 muestra durante toda la partida el puntaje acumulado, el tiempo restante y el avance `capas colocadas / capas totales`. Cada acierto dispara un indicador flotante `+puntos`; cada error dispara `-35`. Estos indicadores explican el impacto en el marcador sin sugerir cual es el proximo material correcto.
 

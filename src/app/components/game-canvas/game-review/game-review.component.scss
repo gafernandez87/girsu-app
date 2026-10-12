@@ -1,0 +1,151 @@
+:host {
+  position: absolute;
+  inset: 0;
+  z-index: 29;
+  display: block;
+}
+
+.game-review {
+  display: grid;
+  place-items: center;
+  height: 100%;
+  padding: max(4.5rem, calc(env(safe-area-inset-top) + 4rem)) 1rem
+    max(1rem, env(safe-area-inset-bottom));
+  background: rgba(16, 31, 23, 0.65);
+}
+
+.game-review__panel {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 58rem);
+  max-height: 100%;
+  min-height: 0;
+  padding: 1rem;
+  border: 2px solid #c5dcc7;
+  border-radius: 12px;
+  background: #fffdf6;
+  box-shadow: 0 18px 48px rgba(16, 31, 23, 0.3);
+  color: #19231d;
+}
+
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+header {
+  padding-bottom: 0.8rem;
+  text-align: center;
+}
+
+h2 {
+  font-size: clamp(1.1rem, 4vw, 1.65rem);
+  line-height: 1.2;
+}
+
+p {
+  margin-top: 0.4rem;
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+
+.game-review__groups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.8rem;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+}
+
+.game-review__group {
+  padding: 0.7rem;
+  border: 1px solid #dce5d9;
+  border-top: 5px solid var(--zone-color);
+  border-radius: 8px;
+  background: #fff;
+}
+
+h3 {
+  font-size: 1rem;
+}
+
+ul {
+  display: grid;
+  gap: 0.35rem;
+  padding: 0;
+  margin: 0.6rem 0 0;
+  list-style: none;
+}
+
+li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.5rem;
+  font-size: 0.82rem;
+  line-height: 1.3;
+}
+
+li img {
+  flex: 0 0 2.5rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  object-fit: contain;
+}
+
+.game-review__status {
+  margin-left: auto;
+  color: #9b421a;
+  font-size: 1.1rem;
+  font-weight: 800;
+}
+
+.game-review__status.is-correct {
+  color: #287647;
+}
+
+.game-review__empty {
+  color: #59695e;
+}
+
+footer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  padding-top: 0.8rem;
+}
+
+footer button,
+footer a {
+  flex: 1 1 12rem;
+  display: grid;
+  place-items: center;
+  min-height: 2.75rem;
+  padding: 0.6rem;
+  border: 1px solid #2f7d57;
+  border-radius: 8px;
+  background: #2f7d57;
+  color: #fff;
+  font-weight: 750;
+  font-size: 0.9rem;
+  line-height: 1.2;
+  text-align: center;
+  text-decoration: none;
+}
+
+footer a {
+  background: #edf5eb;
+  color: #245c40;
+}
+
+@media (max-width: 520px) {
+  .game-review__groups {
+    grid-template-columns: 1fr;
+  }
+
+  .game-review__panel {
+    padding: 0.75rem;
+  }
+}

@@ -1,0 +1,42 @@
+<section class="game-review" aria-labelledby="game-review-title">
+  <div class="game-review__panel">
+    <header>
+      <h2 #reviewTitle id="game-review-title" tabindex="-1">{{ title }}</h2>
+      <p>{{ description }}</p>
+    </header>
+    <div class="game-review__groups" tabindex="0" aria-label="Residuos por cesto">
+      @for (group of groups; track group.zone.id) {
+        <section class="game-review__group" [style.--zone-color]="group.zone.color">
+          <h3>{{ group.zone.label }}</h3>
+          <p>{{ group.zone.description }}</p>
+          <ul>
+            @for (item of group.items; track item.id) {
+              <li>
+                @if (item.imagePath) {
+                  <img [src]="item.imagePath" alt="" loading="lazy" draggable="false" />
+                }
+                <span>{{ item.label }}</span>
+                @if (item.correct !== undefined) {
+                  <span
+                    class="game-review__status"
+                    [class.is-correct]="item.correct"
+                    [attr.aria-label]="
+                      item.correct ? 'Lo separaste correctamente' : 'Revisá este residuo'
+                    "
+                    >{{ item.correct ? '✓' : '↻' }}</span
+                  >
+                }
+              </li>
+            } @empty {
+              <li class="game-review__empty">No hubo residuos de este tipo en esta partida.</li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+    <footer>
+      <button type="button" (click)="replay.emit()">¡Quiero jugar de nuevo!</button>
+      <a [routerLink]="nextStageLink">{{ nextStageLabel }}</a>
+    </footer>
+  </div>
+</section>

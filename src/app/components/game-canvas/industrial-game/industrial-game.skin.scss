@@ -1,4 +1,26 @@
 .industrial-game {
+  --industrial-bin-width: clamp(3rem, min(22vw, 10dvh), 8rem);
+  --industrial-bin-label-space: 2.2rem;
+  --industrial-bin-row-height: calc(
+    var(--industrial-bin-width) * 0.8 + var(--industrial-bin-label-space)
+  );
+  --industrial-stations-gap: clamp(0.6rem, 2dvh, 1.2rem);
+  --industrial-stations-bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.8rem));
+  --industrial-belt-height: clamp(3.35rem, 9vw, 5.2rem);
+  --industrial-base-height: clamp(4.3rem, 11vw, 6.4rem);
+  --industrial-conveyor-height: calc(
+    var(--industrial-belt-height) + var(--industrial-base-height) - 0.6rem
+  );
+  --industrial-conveyor-y: min(
+    60%,
+    calc(
+      100% - var(--industrial-stations-bottom) - 2 *
+        var(--industrial-bin-row-height) - var(--industrial-stations-gap) - var(
+          --industrial-conveyor-height
+        ) /
+        2 - 1rem
+    )
+  );
   position: absolute;
   inset: 0;
   min-height: 100dvh;
@@ -41,49 +63,103 @@
 
 .industrial-game__stations {
   inset: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-content: end;
+  justify-items: center;
+  gap: var(--industrial-stations-gap) 1rem;
+  padding: 0 15% var(--industrial-stations-bottom);
+  pointer-events: none;
 }
 
 .industrial-game__station {
-  position: absolute;
+  --station-translate: 0%;
+  position: relative;
   z-index: 8;
-  width: clamp(7.2rem, 19vw, 9rem);
-  transform: translate(-50%, -50%);
+  align-self: end;
+  width: var(--industrial-bin-width);
+  padding-bottom: var(--industrial-bin-label-space);
+  transform: translate(var(--station-translate), var(--station-translate));
+  pointer-events: auto;
   transition:
     filter 140ms ease,
     transform 140ms ease;
 }
 
-.industrial-game__station--vidrio {
-  top: 55%;
-  left: 18%;
-}
-
+/* Keep material bins in two rows, with enough room for each label. */
 .industrial-game__station--plastico {
-  top: 55%;
-  left: 50%;
-}
-
-.industrial-game__station--descarte {
-  top: 55%;
-  left: 82%;
-}
-
-.industrial-game__station--metal {
-  z-index: 12;
-  top: 86%;
-  left: 25%;
+  grid-area: 1 / 1;
 }
 
 .industrial-game__station--papel-carton {
-  z-index: 12;
-  top: 86%;
-  left: 70%;
+  grid-area: 1 / 2;
+}
+
+.industrial-game__station--metal {
+  grid-area: 2 / 1;
+}
+
+.industrial-game__station--vidrio {
+  grid-area: 2 / 2;
+}
+
+.industrial-game__station--descarte {
+  --station-translate: -50%;
+  position: absolute;
+  top: var(--industrial-conveyor-y);
+  left: calc(3% + min(76%, 72rem) + clamp(1.9rem, 10vw, 6rem));
+  width: clamp(3.4rem, 17vw, 8rem);
+  padding-bottom: 0;
+}
+
+.industrial-game__station--descarte img {
+  filter: brightness(0.5);
+}
+
+.industrial-game__station-label {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 110%;
+  padding: 0.3rem 0.15rem;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.96);
+  color: #000;
+  font-size: clamp(0.65rem, 2.3vw, 0.9rem);
+  font-weight: 800;
+  line-height: 1.15;
+  text-align: center;
+  transform: translateX(-50%);
+}
+
+.industrial-game__station--descarte .industrial-game__station-label {
+  top: calc(100% + 0.65rem);
+  bottom: auto;
+}
+
+.industrial-game__workers {
+  position: absolute;
+  top: calc(var(--industrial-conveyor-y) - clamp(5rem, 18vw, 10rem));
+  left: 3%;
+  z-index: 7;
+  width: min(76%, 72rem);
+  height: clamp(5rem, 18vw, 10rem);
+  pointer-events: none;
+}
+
+.industrial-game__workers img {
+  position: absolute;
+  bottom: 0;
+  width: clamp(3.4rem, 11vw, 7.5rem);
+  height: 100%;
+  object-fit: contain;
+  transform: translateX(-50%);
 }
 
 .industrial-game__station-pad {
   position: absolute;
   right: -0.52rem;
-  bottom: -0.44rem;
+  bottom: calc(var(--industrial-bin-label-space) - 0.44rem);
   left: -0.52rem;
   height: 1.62rem;
   border: 0.26rem solid rgba(255, 255, 255, 0.92);
@@ -92,14 +168,18 @@
   box-shadow: 0 0.75rem 1.6rem rgba(6, 14, 18, 0.2);
 }
 
+.industrial-game__station--descarte .industrial-game__station-pad {
+  bottom: -0.44rem;
+}
+
 .industrial-game__station.is-hover {
   filter: drop-shadow(0 0 1rem rgba(255, 232, 122, 0.46));
-  transform: translate(-50%, -50%) scale(1.06);
+  transform: translate(var(--station-translate), var(--station-translate)) scale(1.06);
 }
 
 .industrial-game__station.is-open {
   filter: drop-shadow(0 0 1.05rem rgba(76, 218, 120, 0.46));
-  transform: translate(-50%, -50%) scale(1.09);
+  transform: translate(var(--station-translate), var(--station-translate)) scale(1.09);
 }
 
 .industrial-game__station.is-error {
@@ -129,22 +209,22 @@
 }
 
 .industrial-game__conveyor {
-  --conveyor-width: min(100vw, 72rem);
+  --conveyor-width: min(76%, 72rem);
 
   z-index: 9;
-  top: 74%;
-  left: 50%;
+  top: var(--industrial-conveyor-y);
+  left: 3%;
   display: grid;
   justify-items: center;
   width: var(--conveyor-width);
-  transform: translate(-50%, -50%);
+  transform: translateY(-50%);
   pointer-events: none;
 }
 
 .industrial-game__asset--conveyor-base {
   aspect-ratio: auto;
-  width: 100%;
-  height: clamp(4.3rem, 11vw, 6.4rem);
+  width: 102%;
+  height: var(--industrial-base-height);
   margin-top: -0.15rem;
   filter: drop-shadow(0 1rem 1.1rem rgba(5, 12, 15, 0.24));
 }
@@ -161,7 +241,7 @@
   isolation: isolate;
   aspect-ratio: auto;
   width: 96%;
-  height: clamp(3.35rem, 9vw, 5.2rem);
+  height: var(--industrial-belt-height);
   margin-bottom: -0.45rem;
   border-radius: 999px;
   background-image: var(--industrial-belt-pattern);
@@ -195,8 +275,8 @@
   z-index: 18;
   display: grid;
   justify-items: center;
-  width: 5.6rem;
-  min-height: 5.35rem;
+  width: clamp(5.9rem, 18vw, 7.6rem);
+  min-height: 6.7rem;
   padding: 0;
   border: 0;
   background: transparent;
@@ -214,12 +294,21 @@
   transition: filter 120ms ease;
 }
 
+.industrial-game__item.is-falling {
+  z-index: 10;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 480ms cubic-bezier(0.4, 0, 0.8, 0.5),
+    opacity 480ms ease-in;
+}
+
 .industrial-game__product-plate {
   position: relative;
   display: grid;
   place-items: center;
-  width: 5rem;
-  height: 4rem;
+  width: clamp(5.5rem, 16vw, 6.6rem);
+  height: clamp(5.5rem, 16vw, 6.6rem);
   pointer-events: none;
 }
 
@@ -246,11 +335,7 @@
   border-radius: 7px;
   background:
     linear-gradient(90deg, rgba(28, 62, 70, 0.18) 0 0.24rem, transparent 0.24rem 100%),
-    repeating-linear-gradient(
-      0deg,
-      transparent 0 0.36rem,
-      rgba(29, 58, 66, 0.24) 0.36rem 0.47rem
-    ),
+    repeating-linear-gradient(0deg, transparent 0 0.36rem, rgba(29, 58, 66, 0.24) 0.36rem 0.47rem),
     linear-gradient(135deg, #fffdf5, #e8eef0);
   box-shadow: 0 0.55rem 0.68rem rgba(6, 14, 18, 0.18);
   transform: rotate(-7deg);
@@ -351,16 +436,16 @@
 }
 
 .industrial-game__item-label {
-  max-width: 5.6rem;
+  max-width: 7.6rem;
   margin-top: 0.22rem;
   padding: 0.25rem 0.48rem;
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-radius: 999px;
   background: rgba(245, 252, 255, 0.9);
   box-shadow: 0 0.4rem 0.8rem rgba(6, 14, 18, 0.14);
-  color: #26434a;
+  color: #000;
   font-family: Inter, Arial, sans-serif;
-  font-size: 0.72rem;
+  font-size: 0.8rem;
   font-weight: 950;
   line-height: 1;
   overflow-wrap: anywhere;
@@ -409,15 +494,15 @@
 @keyframes industrial-station-shake {
   0%,
   100% {
-    transform: translate(-50%, -50%);
+    transform: translate(var(--station-translate), var(--station-translate));
   }
 
   25% {
-    transform: translate(calc(-50% + 0.42rem), -50%);
+    transform: translate(calc(var(--station-translate) + 0.42rem), var(--station-translate));
   }
 
   75% {
-    transform: translate(calc(-50% - 0.42rem), -50%);
+    transform: translate(calc(var(--station-translate) - 0.42rem), var(--station-translate));
   }
 }
 
@@ -486,6 +571,8 @@
 
 @media (max-width: 520px) {
   .industrial-game {
+    --industrial-base-height: 4.65rem;
+    --industrial-belt-height: 3.55rem;
     background-size: auto 118%;
   }
 
@@ -493,68 +580,16 @@
     top: 50%;
   }
 
-  .industrial-game__station {
-    width: clamp(6.75rem, 28vw, 7.7rem);
-  }
-
-  .industrial-game__station--vidrio {
-    top: 55%;
-    left: 18%;
-  }
-
-  .industrial-game__station--plastico {
-    top: 55%;
-    left: 50%;
-  }
-
-  .industrial-game__station--descarte {
-    top: 55%;
-    left: 82%;
-  }
-
-  .industrial-game__station--metal {
-    top: 86%;
-    left: 25%;
-  }
-
-  .industrial-game__station--papel-carton {
-    top: 86%;
-    left: 70%;
-  }
-
   .industrial-game__station-pad {
     right: -0.38rem;
-    bottom: -0.36rem;
+    bottom: calc(var(--industrial-bin-label-space) - 0.36rem);
     left: -0.38rem;
     height: 1.28rem;
     border-width: 0.2rem;
   }
 
-  .industrial-game__conveyor {
-    top: 74%;
-    width: var(--conveyor-width);
-  }
-
-  .industrial-game__asset--conveyor-base {
-    height: 4.65rem;
-    width: 100%;
-  }
-
-  .industrial-game__asset--conveyor-belt {
-    height: 3.55rem;
-    width: 96%;
-    top: 10px;
-  }
-
-  .industrial-game__item {
-    width: 5rem;
-    min-height: 4.9rem;
-    top: -25px;
-  }
-
-  .industrial-game__product-plate {
-    width: 4.25rem;
-    height: 3.45rem;
+  .industrial-game__station--descarte .industrial-game__station-pad {
+    bottom: -0.36rem;
   }
 
   .industrial-game__product-art--diario {
@@ -578,13 +613,29 @@
   }
 
   .industrial-game__item-label {
-    max-width: 5rem;
-    font-size: 0.66rem;
+    max-width: 6rem;
+    font-size: 0.75rem;
   }
 
   .industrial-game__effect {
     min-width: 4rem;
     min-height: 2.7rem;
     font-size: 1.55rem;
+  }
+}
+
+@media (max-height: 500px) {
+  .industrial-game {
+    --industrial-base-height: 2.5rem;
+    --industrial-belt-height: 2.2rem;
+  }
+
+  .industrial-game__workers {
+    height: 4rem;
+    top: calc(var(--industrial-conveyor-y) - 4rem);
+  }
+
+  .industrial-game__station--descarte {
+    width: min(12vw, 4.5rem);
   }
 }

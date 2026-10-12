@@ -21,21 +21,21 @@ export const INDUSTRIAL_PRODUCT_ASSETS: Record<string, ProductAsset> = {
       product.id,
       {
         path: product.path,
-        size: 76,
+        size: 104,
       },
     ]),
   ),
   'pet-planta': {
     path: '/assets/game-1/products/processed/botella.png',
-    size: 82,
+    size: 110,
   },
   caja: {
     path: '/assets/game-1/products/processed/caja-carton.png',
-    size: 84,
+    size: 112,
   },
   'botella-vidrio': {
     path: '/assets/game-1/products/processed/tarro-vidrio.png',
-    size: 82,
+    size: 110,
   },
 };
 

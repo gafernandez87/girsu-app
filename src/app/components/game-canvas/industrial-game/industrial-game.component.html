@@ -2,10 +2,21 @@
   #industrialStage
   class="industrial-game"
   [style.background-image]="backgroundImage"
-  aria-label="Minijuego de valorización industrial"
+  aria-label="Minijuego de la planta de reciclaje"
 >
   <div class="industrial-game__shade" aria-hidden="true"></div>
   <div class="industrial-game__floor" aria-hidden="true"></div>
+
+  <div class="industrial-game__workers" aria-hidden="true">
+    @for (position of workerPositions; track position) {
+      <img
+        src="/assets/game-2/operario-planta.svg"
+        alt=""
+        [style.left.%]="position"
+        draggable="false"
+      />
+    }
+  </div>
 
   <div class="industrial-game__stations">
     @for (zone of stage.dropZones; track zone.id) {
@@ -31,6 +42,7 @@
               draggable="false"
             />
           </span>
+          <span class="industrial-game__station-label">{{ zone.label }}</span>
         </div>
       }
     }
@@ -38,11 +50,7 @@
 
   <div class="industrial-game__conveyor" aria-hidden="true">
     <span class="industrial-game__asset industrial-game__asset--conveyor-base">
-      <img
-        [src]="conveyorBaseAsset.path"
-        alt=""
-        draggable="false"
-      />
+      <img [src]="conveyorBaseAsset.path" alt="" draggable="false" />
     </span>
     <span
       #beltTrack
@@ -56,6 +64,8 @@
       type="button"
       class="industrial-game__item"
       [class.is-dragging]="isTokenDragging(token.tokenId)"
+      [class.is-falling]="token.falling"
+      [disabled]="token.falling"
       [style.transform]="tokenTransform(token)"
       [attr.aria-label]="'Arrastrar ' + token.item.label"
       (pointerdown)="startDrag($event, token.tokenId)"
