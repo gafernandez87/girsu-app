@@ -26,6 +26,7 @@ import {
 import { GAME_ONE_PRODUCTS } from '../../core/game-1-products';
 import { GameAudioService } from '../../core/game-audio.service';
 import { normalizeRawStageScore } from '../../core/scoring';
+import { shuffleGameItems } from '../../core/shuffle-game-items';
 import {
   HOME_BACKGROUND_ASSET,
   HOME_BIN_ASSETS,
@@ -511,7 +512,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   private startHomeGame(): void {
-    this.homePendingItems = this.shuffleHomeItems(this.stage.items);
+    this.homePendingItems = shuffleGameItems(this.stage.items);
     this.homePlayedItems = [];
     this.homeItemSlots.set([]);
     this.homeCorrect = 0;
@@ -788,20 +789,6 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.homeItemSlots.update((slots) =>
       slots.map((slot) => (slot.id === slotId ? updater(slot) : slot)),
     );
-  }
-
-  private shuffleHomeItems(items: readonly GameItem[]): GameItem[] {
-    const shuffledItems = [...items];
-
-    for (let index = shuffledItems.length - 1; index > 0; index -= 1) {
-      const swapIndex = Math.floor(Math.random() * (index + 1));
-      [shuffledItems[index], shuffledItems[swapIndex]] = [
-        shuffledItems[swapIndex],
-        shuffledItems[index],
-      ];
-    }
-
-    return shuffledItems;
   }
 
   private updateHomeHoverState(clientX: number, clientY: number): void {

@@ -17,6 +17,7 @@ import {
 
 import { DropZone, GameItem, GameStage, StageResult } from '../../../core/app.models';
 import { GameAudioService } from '../../../core/game-audio.service';
+import { shuffleGameItems } from '../../../core/shuffle-game-items';
 import {
   INDUSTRIAL_BACKGROUND_ASSET,
   INDUSTRIAL_BIN_ASSETS,
@@ -169,7 +170,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     target?.setPointerCapture?.(event.pointerId);
   }
 
-  assetFrameStyle(asset: ImageAsset): Record<string, string> {
+  assetFrameStyle(asset: ImageAsset, zoneId: string): Record<string, string> {
     const crop = asset.crop;
 
     if (!crop) {
@@ -177,7 +178,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     }
 
     return {
-      aspectRatio: `${crop.width} / ${crop.height}`,
+      aspectRatio: zoneId === 'descarte' ? `${crop.width} / ${crop.height}` : '4 / 3',
     };
   }
 
@@ -221,7 +222,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
 
   private startGame(): void {
     this.clearTimers();
-    this.pendingItems = this.shuffleItems(this.stage.items);
+    this.pendingItems = shuffleGameItems(this.stage.items);
     this.correct = 0;
     this.processed = 0;
     this.mistakes = 0;
@@ -616,20 +617,6 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
 
   private removeToken(tokenId: number): void {
     this.activeTokens.update((tokens) => tokens.filter((token) => token.tokenId !== tokenId));
-  }
-
-  private shuffleItems(items: readonly GameItem[]): GameItem[] {
-    const shuffledItems = [...items];
-
-    for (let index = shuffledItems.length - 1; index > 0; index -= 1) {
-      const swapIndex = Math.floor(Math.random() * (index + 1));
-      [shuffledItems[index], shuffledItems[swapIndex]] = [
-        shuffledItems[swapIndex],
-        shuffledItems[index],
-      ];
-    }
-
-    return shuffledItems;
   }
 
   private createZoneStates(): Record<string, IndustrialZoneState> {

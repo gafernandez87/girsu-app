@@ -34,7 +34,7 @@
           [attr.data-industrial-zone-id]="zone.id"
         >
           <span class="industrial-game__station-pad" aria-hidden="true"></span>
-          <span class="industrial-game__asset" [ngStyle]="assetFrameStyle(asset)">
+          <span class="industrial-game__asset" [ngStyle]="assetFrameStyle(asset, zone.id)">
             <img
               [src]="asset.path"
               [alt]="zone.label"

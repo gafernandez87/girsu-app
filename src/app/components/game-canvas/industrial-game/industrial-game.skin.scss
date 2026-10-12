@@ -2,14 +2,19 @@
   --industrial-bin-width: clamp(3rem, min(22vw, 10dvh), 8rem);
   --industrial-bin-label-space: 2.2rem;
   --industrial-bin-row-height: calc(
-    var(--industrial-bin-width) * 0.8 + var(--industrial-bin-label-space)
+    var(--industrial-bin-width) * 0.75 + var(--industrial-bin-label-space)
   );
   --industrial-stations-gap: clamp(0.6rem, 2dvh, 1.2rem);
-  --industrial-stations-bottom: max(1rem, calc(env(safe-area-inset-bottom) + 0.8rem));
+  --industrial-stations-bottom: max(
+    clamp(3rem, 7dvh, 5rem),
+    calc(env(safe-area-inset-bottom) + 1rem)
+  );
   --industrial-belt-height: clamp(3.35rem, 9vw, 5.2rem);
   --industrial-base-height: clamp(4.3rem, 11vw, 6.4rem);
+  --industrial-conveyor-overlap: calc(var(--industrial-base-height) * 0.2);
   --industrial-conveyor-height: calc(
-    var(--industrial-belt-height) + var(--industrial-base-height) - 0.6rem
+    var(--industrial-belt-height) +
+      var(--industrial-base-height) - var(--industrial-conveyor-overlap)
   );
   --industrial-conveyor-y: min(
     60%,
@@ -225,7 +230,7 @@
   aspect-ratio: auto;
   width: 102%;
   height: var(--industrial-base-height);
-  margin-top: -0.15rem;
+  margin-top: calc(-1 * var(--industrial-conveyor-overlap));
   filter: drop-shadow(0 1rem 1.1rem rgba(5, 12, 15, 0.24));
 }
 
@@ -242,7 +247,6 @@
   aspect-ratio: auto;
   width: 96%;
   height: var(--industrial-belt-height);
-  margin-bottom: -0.45rem;
   border-radius: 999px;
   background-image: var(--industrial-belt-pattern);
   background-position: 0 50%;
