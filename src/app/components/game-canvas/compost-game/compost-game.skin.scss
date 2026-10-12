@@ -1458,6 +1458,10 @@
   top: -2.8rem;
   left: 50%;
   z-index: 18;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
   min-height: 2.5rem;
   padding: 0.45rem 0.8rem;
   border: 2px solid #fff4d7;
@@ -1472,6 +1476,13 @@
 
 .compost-game__worms-button:disabled {
   opacity: 0.7;
+}
+
+.compost-game__worm-icon {
+  flex: 0 0 auto;
+  width: 2rem;
+  height: 1.25rem;
+  pointer-events: none;
 }
 
 .compost-game__worms {

@@ -92,7 +92,31 @@
         [disabled]="wormsAdded() || isPaused()"
         (click)="addWorms()"
       >
-        {{ wormsAdded() ? 'Lombrices agregadas' : 'Agregar lombrices' }}
+        <svg
+          class="compost-game__worm-icon"
+          viewBox="0 0 84 36"
+          aria-hidden="true"
+          focusable="false"
+        >
+          <path
+            d="M8 26C17 8 29 8 31 21S47 33 55 19S65 8 74 13"
+            fill="none"
+            stroke="#5b302b"
+            stroke-width="12"
+            stroke-linecap="round"
+          />
+          <path
+            d="M8 26C17 8 29 8 31 21S47 33 55 19S65 8 74 13"
+            fill="none"
+            stroke="#efae9e"
+            stroke-width="8"
+            stroke-linecap="round"
+          />
+          <circle cx="74" cy="13" r="6" fill="#efae9e" />
+          <circle cx="76" cy="11" r="1.5" fill="#5b302b" />
+          <path d="M73 15q2 2 4 0" fill="none" stroke="#5b302b" stroke-width="1.5" />
+        </svg>
+        <span>{{ wormsAdded() ? 'Lombrices agregadas' : 'Agregar lombrices' }}</span>
       </button>
       <span
         class="compost-game__composter-depth compost-game__composter-depth--back"
