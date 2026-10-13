@@ -26,6 +26,18 @@ Documentos especificos de mini juegos:
 - `npm run typecheck`: validacion TypeScript sin generar build.
 - `npm run cap`: acceso a comandos de Capacitor.
 
+## Xcode Cloud
+
+`ios/App/ci_scripts/ci_post_clone.sh` prepara la app en Xcode Cloud antes de compilar:
+instala Node 22, instala las dependencias con `npm ci`, genera la version web y
+ejecuta `cap sync ios`. Esto crea `ios/App/App/public`, `capacitor.config.json` y
+`config.xml`, que son archivos generados y estan excluidos de Git.
+
+El script debe conservar su permiso de ejecucion y estar incluido en la rama que
+usa el workflow. Despues de subir el commit, iniciar un nuevo build sobre ese
+commit; reintentar un build de un commit anterior no incorpora el script.
+El script requiere el entorno de Xcode Cloud y no debe ejecutarse localmente.
+
 ## Backend
 
 La app usa Supabase para autenticacion, perfiles, resultados de juegos, ranking y backoffice.

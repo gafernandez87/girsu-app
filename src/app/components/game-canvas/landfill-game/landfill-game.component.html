@@ -7,6 +7,7 @@
   (pointerdown)="startBoardGesture($event)"
   (pointerup)="finishBoardGesture($event)"
   (pointercancel)="cancelBoardGesture()"
+  (contextmenu)="$event.preventDefault()"
 >
   <div class="landfill-game__landscape" aria-hidden="true"></div>
   <div class="landfill-game__environment" aria-hidden="true"></div>

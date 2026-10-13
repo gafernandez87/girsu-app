@@ -14,7 +14,6 @@ import {
   ViewChild,
 } from '@angular/core';
 import { RouterLink } from '@angular/router';
-import { Capacitor } from '@capacitor/core';
 
 import {
   DropZone,
@@ -81,7 +80,6 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   private readonly audio = inject(GameAudioService);
 
   readonly audioMuted = this.audio.muted;
-  readonly isIos = Capacitor.getPlatform() === 'ios';
   readonly score = signal(0);
   readonly remainingSeconds = signal(0);
   readonly completedItems = signal(0);
