@@ -12,6 +12,10 @@ import { privacyPolicyConfig } from '../../core/privacy-policy.config';
 })
 export class PrivacyPolicyPage {
   readonly config = privacyPolicyConfig;
+  readonly supportEmail = 'educacion@ambientejujuy.gob.ar';
+  readonly supportUrl = `mailto:${this.supportEmail}?subject=${encodeURIComponent(
+    'Consulta de soporte - El Camino de los Residuos',
+  )}`;
   readonly lastUpdatedLabel = new Intl.DateTimeFormat('es-AR', {
     dateStyle: 'long',
     timeZone: 'UTC',
