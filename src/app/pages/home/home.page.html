@@ -78,13 +78,9 @@
           [style.--stage-bg]="stage.backgroundColor"
           [style.--stage-image]="stageImage(stage.id)"
         >
-          <div class="stage-visual" aria-hidden="true">
-            <span>{{ stage.order }}</span>
-          </div>
-
           <div class="stage-body">
             <div class="stage-kicker">
-              <span>{{ stage.shortTitle }}</span>
+              <span>Nivel {{ stage.order }} · {{ stage.shortTitle }}</span>
               <small>{{ stageCompleted(stage.id) ? 'Completada' : 'Lista para jugar' }}</small>
             </div>
 
@@ -102,7 +98,9 @@
               </small>
             </div>
 
-            <a [routerLink]="['/juego', stage.id]" class="play-button">
+          </div>
+          <div class="stage-visual">
+            <a [routerLink]="['/juego', stage.id]" class="play-button" [attr.aria-label]="(stageCompleted(stage.id) ? 'Rejugar ' : 'Jugar ') + stage.title">
               {{ stageCompleted(stage.id) ? 'Rejugar' : 'Jugar' }}
             </a>
           </div>

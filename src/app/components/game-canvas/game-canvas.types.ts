@@ -44,4 +44,6 @@ export interface HomeEffect {
   readonly x: number;
   readonly y: number;
   readonly text?: string;
+  readonly answer?: string;
+  readonly answerColor?: string;
 }

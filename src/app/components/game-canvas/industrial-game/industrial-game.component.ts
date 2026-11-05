@@ -49,6 +49,8 @@ interface IndustrialEffect {
   readonly id: number;
   readonly type: IndustrialEffectType;
   readonly text: string;
+  readonly answer?: string;
+  readonly answerColor?: string;
   readonly x: number;
   readonly y: number;
 }
@@ -445,7 +447,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     this.removeToken(token.tokenId);
     this.setZoneState(dropZone.id, 'error');
     this.audio.playWrongDrop();
-    this.spawnEffect('error', '-40', this.getZoneCenter(dropZone.id));
+    this.spawnEffect('error', '-40', this.getZoneCenter(dropZone.id), token.item.category);
     this.emitTick();
     this.ensureActiveItem();
 
@@ -643,7 +645,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     }));
   }
 
-  private spawnEffect(type: IndustrialEffectType, text: string, position: IndustrialPoint): void {
+  private spawnEffect(type: IndustrialEffectType, text: string, position: IndustrialPoint, correctZoneId?: string): void {
     const id = this.effectId;
     this.effectId += 1;
 
@@ -653,6 +655,8 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
         id,
         type,
         text,
+        answer: this.stage.dropZones.find((zone) => zone.id === correctZoneId)?.label,
+        answerColor: this.stage.dropZones.find((zone) => zone.id === correctZoneId)?.color,
         x: position.x,
         y: position.y,
       },

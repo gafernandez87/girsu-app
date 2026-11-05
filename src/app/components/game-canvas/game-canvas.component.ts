@@ -24,7 +24,7 @@ import {
 } from '../../core/app.models';
 import { GAME_ONE_PRODUCTS } from '../../core/game-1-products';
 import { GameAudioService } from '../../core/game-audio.service';
-import { normalizeRawStageScore } from '../../core/scoring';
+import { sanitizeStageScore } from '../../core/scoring';
 import { shuffleGameItems } from '../../core/shuffle-game-items';
 import {
   HOME_BACKGROUND_ASSET,
@@ -718,7 +718,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.removeHomeSlot(slot.id);
     this.setHomeBinState(dropZone.id, 'error');
     this.audio.playWrongDrop();
-    this.spawnHomeEffect('error', '-40', this.getHomeZoneCenter(dropZone.id));
+    this.spawnHomeEffect('error', '-40', this.getHomeZoneCenter(dropZone.id), slot.item.category);
 
     this.settleHomeDrop(dropZone.id);
   }
@@ -876,6 +876,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     type: HomeEffect['type'],
     text: string | undefined,
     position: { x: number; y: number },
+    correctZoneId?: string,
   ): void {
     const id = this.homeEffectId;
     this.homeEffectId += 1;
@@ -883,6 +884,8 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
       id,
       type,
       text,
+      answer: this.stage.dropZones.find((zone) => zone.id === correctZoneId)?.label,
+      answerColor: this.stage.dropZones.find((zone) => zone.id === correctZoneId)?.color,
       x: position.x,
       y: position.y,
     };
@@ -928,6 +931,6 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   }
 
   private visibleStageScore(score: number): number {
-    return normalizeRawStageScore(score, this.stage);
+    return sanitizeStageScore(score);
   }
 }

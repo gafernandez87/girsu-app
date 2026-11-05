@@ -7,7 +7,7 @@ import {
 
 import { GAME_STAGES } from './app-content';
 import { LocalitySource, School, UserProfile } from './app.models';
-import { clampStageScore } from './scoring';
+import { sanitizeStageScore } from './scoring';
 import { SupabaseService } from './supabase.service';
 import {
   GameResultInsert,
@@ -404,7 +404,7 @@ export class AdminService {
   }
 
   async createGameScore(input: AdminGameScoreCreateInput): Promise<AdminGameScore> {
-    const score = clampStageScore(input.score);
+    const score = sanitizeStageScore(input.score);
     const payload: GameResultInsert = {
       completed_at: input.completedAt,
       correct: Math.max(0, Math.round(input.correct)),
@@ -439,7 +439,7 @@ export class AdminService {
       correct: Math.max(0, Math.round(input.correct)),
       mistakes: Math.max(0, Math.round(input.mistakes)),
       remaining_seconds: Math.max(0, Math.round(input.remainingSeconds)),
-      score: clampStageScore(input.score),
+      score: sanitizeStageScore(input.score),
     };
 
     const { data, error } = await this.supabase

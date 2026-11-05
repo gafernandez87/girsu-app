@@ -98,11 +98,14 @@
       class="industrial-game__effect"
       [class.industrial-game__effect--score]="effect.type === 'score'"
       [class.industrial-game__effect--error]="effect.type === 'error'"
-      [style.left.px]="effect.x"
+      [style.left]="effect.type === 'error' ? 'clamp(6rem, ' + effect.x + 'px, calc(100% - 6rem))' : effect.x + 'px'"
       [style.top.px]="effect.y"
       aria-hidden="true"
     >
-      {{ effect.text }}
+      <span>{{ effect.text }}</span>
+      @if (effect.answer) {
+        <small class="industrial-game__effect-answer" [style.background-color]="effect.answerColor">{{ effect.answer }}</small>
+      }
     </span>
   }
 </div>

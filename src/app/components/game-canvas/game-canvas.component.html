@@ -116,11 +116,14 @@
           [class.home-game__effect--score]="effect.type === 'score'"
           [class.home-game__effect--success]="effect.type === 'success'"
           [class.home-game__effect--error]="effect.type === 'error'"
-          [style.left.px]="effect.x"
+          [style.left]="effect.type === 'error' ? 'clamp(6rem, ' + effect.x + 'px, calc(100% - 6rem))' : effect.x + 'px'"
           [style.top.px]="effect.y"
           aria-hidden="true"
         >
-          {{ effect.text }}
+          <span>{{ effect.text }}</span>
+          @if (effect.answer) {
+            <small class="home-game__effect-answer" [style.background-color]="effect.answerColor">{{ effect.answer }}</small>
+          }
         </span>
       }
     }
@@ -319,7 +322,7 @@
               </div>
             </div>
           }
-          <small>Puntaje para ranking: {{ result.score }} / 1000</small>
+          <small>Puntaje para ranking: {{ result.score }}</small>
         </div>
       </div>
     }

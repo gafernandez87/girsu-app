@@ -2,7 +2,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 
 import { AuthService } from './auth.service';
 import { LeaderboardEntry, StageResult, StageScoreBreakdownItem } from './app.models';
-import { clampStageScore } from './scoring';
+import { sanitizeStageScore } from './scoring';
 import { SupabaseService } from './supabase.service';
 import { GameResultRow, Json, LeaderboardRow } from './supabase.types';
 
@@ -191,14 +191,14 @@ export class GameProgressService {
   private normalizeResult(result: StageResult): StageResult {
     return {
       ...result,
-      score: clampStageScore(result.score),
+      score: sanitizeStageScore(result.score),
     };
   }
 
   private mapResult(row: GameResultRow): StageResult {
     return {
       stageId: row.stage_id,
-      score: clampStageScore(row.score),
+      score: sanitizeStageScore(row.score),
       rawScore: row.raw_score ?? undefined,
       scoreBreakdown: this.mapScoreBreakdown(row.score_breakdown),
       correct: row.correct,

@@ -426,10 +426,12 @@
 
 .home-game__effect--error {
   display: inline-grid;
-  grid-auto-flow: column;
+  grid-template-columns: auto auto;
+  justify-content: center;
   gap: 0.34rem;
   align-items: center;
-  min-width: 5.1rem;
+  width: 9rem;
+  box-sizing: border-box;
   min-height: 4rem;
   padding: 0.4rem 0.74rem;
   border: 3px solid rgba(255, 255, 255, 0.92);
@@ -456,6 +458,18 @@
   font-size: 1.45rem;
   line-height: 1;
   text-shadow: none;
+}
+
+.home-game__effect-answer {
+  grid-column: 1 / -1;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.3rem 0.5rem;
+  border-radius: 0.35rem;
+  color: white;
+  font-size: 0.75rem;
+  text-align: center;
+  text-shadow: 0 1px 2px #222;
 }
 
 .hud-icon {
