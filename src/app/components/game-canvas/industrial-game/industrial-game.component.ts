@@ -38,6 +38,11 @@ interface IndustrialActiveToken {
   readonly falling: boolean;
 }
 
+export interface IndustrialCompletion {
+  readonly result: StageResult;
+  readonly playedItems: readonly { item: GameItem; correct: boolean }[];
+}
+
 type IndustrialEffectType = 'score' | 'error';
 
 interface IndustrialEffect {
@@ -63,7 +68,7 @@ const INDUSTRIAL_PROGRESS_STEP = 0.0048;
 export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input({ required: true }) stage!: GameStage;
   @Output() tick = new EventEmitter<StageTick>();
-  @Output() completed = new EventEmitter<StageResult>();
+  @Output() completed = new EventEmitter<IndustrialCompletion>();
   @ViewChild('industrialStage', { static: true })
   private readonly industrialStage!: ElementRef<HTMLDivElement>;
   @ViewChild('beltTrack', { static: true }) private readonly beltTrack!: ElementRef<HTMLDivElement>;
@@ -82,6 +87,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   private viewReady = false;
   private pendingItems: GameItem[] = [];
   private correct = 0;
+  private playedItems: Array<{ item: GameItem; correct: boolean }> = [];
   private processed = 0;
   private mistakes = 0;
   private score = 0;
@@ -224,6 +230,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     this.clearTimers();
     this.pendingItems = shuffleGameItems(this.stage.items);
     this.correct = 0;
+    this.playedItems = [];
     this.processed = 0;
     this.mistakes = 0;
     this.score = 0;
@@ -408,6 +415,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   private handleCorrectDrop(token: IndustrialActiveToken, dropZone: DropZone): void {
+    this.playedItems.push({ item: token.item, correct: true });
     this.correct += 1;
     this.processed += 1;
     this.streak += 1;
@@ -429,6 +437,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   private handleWrongDrop(token: IndustrialActiveToken, dropZone: DropZone): void {
+    this.playedItems.push({ item: token.item, correct: false });
     this.mistakes += 1;
     this.processed += 1;
     this.streak = 0;
@@ -477,6 +486,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   }
 
   private handleItemLost(token: IndustrialActiveToken): void {
+    this.playedItems.push({ item: token.item, correct: false });
     this.mistakes += 1;
     this.processed += 1;
     this.streak = 0;
@@ -521,12 +531,15 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
     this.score += timeBonus + accuracyBonus;
     this.emitTick();
     this.completed.emit({
-      stageId: this.stage.id,
-      score: this.score,
-      correct: this.correct,
-      mistakes: this.mistakes,
-      remainingSeconds: this.remainingSeconds,
-      completedAt: new Date().toISOString(),
+      result: {
+        stageId: this.stage.id,
+        score: this.score,
+        correct: this.correct,
+        mistakes: this.mistakes,
+        remainingSeconds: this.remainingSeconds,
+        completedAt: new Date().toISOString(),
+      },
+      playedItems: [...this.playedItems],
     });
   }
 

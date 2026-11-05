@@ -15,7 +15,7 @@
   --landfill-grid-gap: 0.08rem;
   --landfill-cell-size: calc((var(--landfill-board-width) - 7 * var(--landfill-grid-gap)) / 8);
   --landfill-preview-cell-size: 1rem;
-  --landfill-control-size: clamp(4.2rem, 18vw, 4.8rem);
+  --landfill-control-size: clamp(2.9rem, 13vw, 4.4rem);
 
   position: absolute;
   inset: 0;
@@ -297,10 +297,11 @@
 }
 
 .landfill-game__recycle-bin {
-  --recycle-bin-size: clamp(3rem, 7dvh, 4.25rem);
+  --recycle-bin-size: clamp(6.2rem, 26vw, 9.2rem);
 
-  bottom: calc(var(--landfill-board-bottom) + var(--landfill-board-height));
-  left: max(0.75rem, calc(50% - var(--landfill-board-width) / 2 - 4.5rem));
+  position: absolute;
+  left: 50%;
+  bottom: 50%;
   z-index: 16;
   display: grid;
   justify-items: center;
@@ -315,6 +316,7 @@
   text-align: center;
   text-shadow: 0 0.1rem 0.28rem rgba(7, 28, 16, 0.42);
   transform-origin: center bottom;
+  transform: translate(-50%, 50%);
   transition:
     filter 160ms ease,
     transform 160ms ease,
@@ -323,10 +325,22 @@
   touch-action: manipulation;
 }
 
-.landfill-game__recycle-bin img {
+.landfill-game__recycle-bin-art {
+  position: relative;
   display: block;
-  width: 100%;
-  height: auto;
+  width: var(--recycle-bin-size);
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+}
+
+.landfill-game__recycle-bin img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: calc(1024 / 880 * 100%);
+  height: calc(1536 / 605 * 100%);
+  transform: translate(calc(-72 / 1024 * 100%), calc(-403 / 1536 * 100%));
   filter: drop-shadow(0 0.34rem 0.5rem rgba(17, 28, 16, 0.24));
   pointer-events: none;
   user-select: none;
@@ -346,7 +360,7 @@
 .landfill-game__recycle-bin strong {
   margin-top: -0.58rem;
   padding: 0.14rem 0.36rem 0.16rem;
-  font-size: 0.46rem;
+  font-size: 0.75rem;
   font-weight: 950;
   line-height: 1;
   text-transform: uppercase;
@@ -369,11 +383,11 @@
 .landfill-game__recycle-bin.is-ready {
   color: #e8ffe1;
   filter: drop-shadow(0 0 0.66rem rgba(113, 255, 113, 0.56));
-  transform: translateX(-0.12rem) scale(1.05);
+  transform: translate(-50%, 50%) scale(1.05);
 }
 
 .landfill-game__recycle-bin.is-ready:active {
-  transform: translateX(-0.12rem) translateY(0.08rem) scale(1.02);
+  transform: translate(-50%, 50%) translateY(0.08rem) scale(1.02);
 }
 
 .landfill-game__grid {
@@ -549,12 +563,12 @@
 
 .landfill-game__control-cluster {
   display: flex;
-  gap: 0.82rem;
+  gap: 0.2rem;
   align-items: center;
   min-width: 0;
 }
 
-.landfill-game__controls button {
+.landfill-game__control-cluster button {
   display: inline-grid;
   place-items: center;
   width: var(--landfill-control-size);
@@ -573,11 +587,11 @@
     filter 140ms ease;
 }
 
-.landfill-game__controls button:active:not(:disabled) {
+.landfill-game__control-cluster button:active:not(:disabled) {
   transform: translateY(0.08rem) scale(0.97);
 }
 
-.landfill-game__controls button:disabled {
+.landfill-game__control-cluster button:disabled {
   cursor: default;
   opacity: 1;
 }
@@ -1011,10 +1025,6 @@
     gap: var(--landfill-grid-gap);
   }
 
-  .landfill-game__recycle-bin strong {
-    font-size: 0.38rem;
-  }
-
   .landfill-game__recycle-bin small {
     min-width: 1.12rem;
     font-size: 0.5rem;
@@ -1037,7 +1047,7 @@
   }
 
   .landfill-game__control-cluster {
-    gap: 0.56rem;
+    gap: 0.15rem;
   }
 
   .landfill-hud {
@@ -1155,7 +1165,7 @@
 
 .landfill-game__recycle-bin.is-hovered {
   filter: drop-shadow(0 0 0.8rem #c7ff83);
-  transform: scale(1.12);
+  transform: translate(-50%, 50%) scale(1.12);
 }
 
 .landfill-game__recycle-hint {

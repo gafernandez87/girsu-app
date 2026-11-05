@@ -32,7 +32,7 @@
     <app-industrial-game
       [stage]="stage"
       (tick)="handleIndustrialTick($event)"
-      (completed)="handleStageCompleted($event)"
+      (completed)="handleIndustrialCompleted($event)"
     />
   }
 
@@ -168,7 +168,7 @@
                 routerLink="/juego/valorizacion-industrial"
                 class="home-complete__action home-complete__action--secondary"
               >
-                &iexcl;Quiero visitar la planta de reciclaje!
+                &iexcl;Próximo nivel: planta de clasificación de residuos!
               </a>
             </div>
           </div>
@@ -347,6 +347,8 @@
         <span class="game-intro__eyebrow">{{ stage.shortTitle }}</span>
         <strong>{{ stage.title }}</strong>
         <p>{{ stageIntroText() }}</p>
+        <br>
+        <p>{{ stageIntroText2() }}</p>
         <button type="button" class="game-intro__button" (click)="startIntroCountdown()">
           &iexcl;Quiero jugar!
         </button>

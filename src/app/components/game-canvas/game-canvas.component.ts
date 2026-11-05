@@ -36,7 +36,7 @@ import {
 } from './game-canvas.assets';
 import type { BinVisualState, HomeEffect, StageTick } from './game-canvas.types';
 import { CompostGameComponent } from './compost-game/compost-game.component';
-import { IndustrialGameComponent } from './industrial-game/industrial-game.component';
+import { IndustrialGameComponent, IndustrialCompletion } from './industrial-game/industrial-game.component';
 import { LandfillGameComponent } from './landfill-game/landfill-game.component';
 import { GameReviewComponent, GameReviewGroup } from './game-review/game-review.component';
 
@@ -360,7 +360,7 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
   reviewDescription(): string {
     return this.stage.id === 'compostaje-domiciliario'
       ? 'Los materiales compostables van a la compostera. Separá los demás residuos en sus cestos.'
-      : 'Cada residuo aparece en el cesto que le corresponde.';
+      : 'Cada residuo aparece en el cesto que le corresponde. Los que tienen una cruz son los que tiraste en el cesto equivocado esta vez. Pero... ¡podés volver a jugar!';
   }
 
   reviewNextStageLink(): string {
@@ -374,8 +374,8 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   reviewNextStageLabel(): string {
     return this.stage.id === 'separacion-origen'
-      ? '¡Quiero visitar la planta de reciclaje!'
-      : 'Próximo juego';
+      ? '¡Quiero pasar al próximo nivel: la planta de clasificación de residuos!'
+      : 'Próximo nivel';
   }
 
   private createCompostReviewGroups(): readonly GameReviewGroup[] {
@@ -421,6 +421,23 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     ];
   }
 
+  handleIndustrialCompleted(completion: IndustrialCompletion): void {
+    this.reviewGroups.set(
+      this.stage.dropZones.map((zone) => ({
+        zone,
+        items: completion.playedItems
+          .filter(({ item }) => item.category === zone.id)
+          .map(({ item, correct }) => ({
+            id: item.id,
+            label: item.label,
+            imagePath: INDUSTRIAL_PRODUCT_ASSETS[item.id]?.path ?? '',
+            correct,
+          })),
+      })),
+    );
+    this.handleStageCompleted(completion.result);
+  }
+
   handleStageCompleted(result: StageResult): void {
     const visibleResult = this.withVisibleStageScore(result);
 
@@ -430,18 +447,6 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
     this.completed.emit(visibleResult);
 
     if (this.stage.id === 'valorizacion-industrial') {
-      this.reviewGroups.set(
-        this.stage.dropZones.map((zone) => ({
-          zone,
-          items: this.stage.items
-            .filter((item) => item.category === zone.id)
-            .map((item) => ({
-              id: item.id,
-              label: item.label,
-              imagePath: INDUSTRIAL_PRODUCT_ASSETS[item.id]?.path ?? '',
-            })),
-        })),
-      );
       this.scheduleReview();
     } else if (this.stage.id === 'compostaje-domiciliario') {
       this.reviewGroups.set(this.createCompostReviewGroups());
@@ -455,6 +460,10 @@ export class GameCanvasComponent implements AfterViewInit, OnChanges, OnDestroy 
 
   stageIntroText(): string {
     return this.stage.introText.trim() || this.stage.mechanic;
+  }
+
+  stageIntroText2(): string {
+    return this.stage.introText2?.trim() || '';
   }
 
   startIntroCountdown(): void {

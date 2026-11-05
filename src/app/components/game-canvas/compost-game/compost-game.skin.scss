@@ -118,14 +118,15 @@
   bottom: max(1rem, env(safe-area-inset-bottom));
   left: clamp(0.8rem, 3vw, 2.2rem);
   display: grid;
-  grid-template-areas: 'verdes composter marrones';
-  grid-template-columns: minmax(8.2rem, 12.2rem) minmax(23rem, 40rem) minmax(8.2rem, 12.2rem);
+  grid-template-areas: 'materials composter';
+  grid-template-columns: minmax(17rem, 24rem) minmax(23rem, 40rem);
   gap: clamp(0.74rem, 2.2vw, 1.35rem);
   align-items: end;
   justify-content: center;
 }
 
 .compost-game__source {
+  grid-area: materials;
   position: relative;
   z-index: 8;
   display: grid;
@@ -142,6 +143,7 @@
     filter 160ms ease,
     transform 160ms ease;
   backdrop-filter: blur(10px);
+  background: linear-gradient(180deg, rgba(93, 109, 68, 0.94), rgba(55, 76, 47, 0.94));
 }
 
 .compost-game__source--verdes {
@@ -183,6 +185,7 @@
 .compost-game__source-items {
   display: grid;
   gap: 0.46rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   grid-template-rows: repeat(5, minmax(0, 3.1rem));
   min-height: calc(5 * 3.1rem + 4 * 0.46rem);
 }
@@ -1176,7 +1179,7 @@
     left: 0.88rem;
     grid-template-areas:
       'composter composter'
-      'verdes marrones';
+      'materials materials';
     grid-template-columns: repeat(2, minmax(0, 1fr));
     grid-template-rows: minmax(clamp(20.5rem, 44dvh, 29rem), 1fr) minmax(0, auto);
     gap: 0.66rem;

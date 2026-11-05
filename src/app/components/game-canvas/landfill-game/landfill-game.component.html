@@ -57,35 +57,6 @@
     </div>
   </aside>
 
-  <button
-    #recycleBin
-    type="button"
-    class="landfill-game__recycle-bin"
-    [class.is-active]="recycleBinCanReceive()"
-    [class.is-ready]="recycleBinReady()"
-    [class.is-hovered]="recycleBinHovered()"
-    [attr.aria-disabled]="!recycleBinCanReceive()"
-    [attr.aria-label]="
-      recycleBinReady()
-        ? 'Reciclar pieza verde'
-        : recycleBinCanReceive()
-          ? 'Error: la pieza negra no va al tacho verde'
-          : 'Tacho verde de reciclaje'
-    "
-    [attr.title]="
-      recycleBinReady()
-        ? 'Reciclar pieza verde'
-        : recycleBinCanReceive()
-          ? 'La pieza negra no va al tacho verde'
-          : 'Tacho verde de reciclaje'
-    "
-    (pointerdown)="stopRecycleBinGesture($event)"
-    (click)="recycleFromBin($event)"
-  >
-    <img [src]="recycleBinImagePath()" alt="" draggable="false" />
-    <strong>Reciclaje</strong>
-    <small>{{ recycledPieces() }}</small>
-  </button>
 
   <aside class="landfill-game__status" aria-live="polite">
     <span>Compactación</span>
@@ -199,7 +170,6 @@
     </div>
   }
 
-  <p class="landfill-game__recycle-hint">Bolsas verdes: arrastralas al cesto o tocá Reciclaje.</p>
 
   <div class="landfill-game__controls" aria-label="Controles de pieza">
     <div class="landfill-game__control-cluster">
@@ -228,6 +198,38 @@
         ></span>
       </button>
     </div>
+
+    <button
+      #recycleBin
+      type="button"
+      class="landfill-game__recycle-bin"
+      [class.is-active]="recycleBinCanReceive()"
+      [class.is-ready]="recycleBinReady()"
+      [class.is-hovered]="recycleBinHovered()"
+      [attr.aria-disabled]="!recycleBinCanReceive()"
+      [attr.aria-label]="
+        recycleBinReady()
+          ? 'Reciclar pieza verde'
+          : recycleBinCanReceive()
+            ? 'Error: la pieza negra no va al tacho verde'
+            : 'Tacho verde de reciclaje'
+      "
+      [attr.title]="
+        recycleBinReady()
+          ? 'Reciclar pieza verde'
+          : recycleBinCanReceive()
+            ? 'La pieza negra no va al tacho verde'
+            : 'Tacho verde de reciclaje'
+      "
+      (pointerdown)="stopRecycleBinGesture($event)"
+      (click)="recycleFromBin($event)"
+    >
+      <span class="landfill-game__recycle-bin-art" aria-hidden="true">
+        <img [src]="recycleBinAsset.path" alt="" draggable="false" />
+      </span>
+      <strong>Reciclaje</strong>
+      <small>{{ recycledPieces() }}</small>
+    </button>
 
     <div class="landfill-game__control-cluster">
       <button

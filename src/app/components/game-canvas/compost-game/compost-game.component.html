@@ -29,19 +29,14 @@
   </aside>
 
   <div class="compost-game__playfield">
-    @for (zone of stage.dropZones; track zone.id) {
-      <section
-        class="compost-game__source"
-        [class.compost-game__source--verdes]="zone.id === 'verdes'"
-        [class.compost-game__source--marrones]="zone.id === 'marrones'"
-      >
+      <section class="compost-game__source">
         <div class="compost-game__source-top">
-          <strong>{{ zone.label }}</strong>
-          <small>{{ zone.shortLabel }}</small>
+          <strong>Materiales</strong>
+          <small>Elegí entre húmedos y secos</small>
         </div>
 
         <div class="compost-game__source-items">
-          @for (item of itemsByCategory(zone.id); track item.id) {
+          @for (item of mixedItems(); track item.id) {
             <button
               type="button"
               class="compost-game__source-item"
@@ -77,7 +72,6 @@
           }
         </div>
       </section>
-    }
 
     <section
       class="compost-game__composter"

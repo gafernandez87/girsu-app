@@ -79,6 +79,7 @@ export interface GameStage {
   readonly objective: string;
   readonly environment: string;
   readonly introText: string;
+  readonly introText2?: string;
   readonly mechanic: string;
   readonly scoring: string;
   readonly kind: StageKind;

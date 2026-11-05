@@ -16,6 +16,7 @@ import {
 
 import { GameItem, GameStage, StageResult } from '../../../core/app.models';
 import { GameAudioService } from '../../../core/game-audio.service';
+import { shuffleGameItems } from '../../../core/shuffle-game-items';
 import {
   COMPOST_MIX_BONUS,
   COMPOST_SKIP_MIX_PENALTY,
@@ -110,6 +111,7 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
   readonly tokenPosition = signal({ x: 0, y: 0 });
   readonly tokenAngle = signal(0);
   readonly placedItemIds = signal<ReadonlySet<string>>(new Set());
+  readonly mixedItems = signal<readonly GameItem[]>([]);
   readonly layers = signal<readonly CompostLayer[]>([]);
   readonly particles = signal<readonly CompostParticle[]>([]);
   readonly composterState = signal<CompostZoneState>('normal');
@@ -228,10 +230,6 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
 
     const target = event.currentTarget as HTMLElement | null;
     target?.setPointerCapture?.(event.pointerId);
-  }
-
-  itemsByCategory(category: string): readonly GameItem[] {
-    return this.stage.items.filter((item) => item.category === category);
   }
 
   isItemPlaced(itemId: string): boolean {
@@ -424,6 +422,7 @@ export class CompostGameComponent implements AfterViewInit, OnChanges, OnDestroy
     this.layerId = 0;
     this.particleId = 0;
     this.activeItem.set(null);
+    this.mixedItems.set(shuffleGameItems(this.stage.items));
     this.dragging.set(false);
     this.placedItemIds.set(new Set());
     this.layers.set([]);

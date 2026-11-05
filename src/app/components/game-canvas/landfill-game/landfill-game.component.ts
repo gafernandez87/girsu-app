@@ -17,7 +17,7 @@ import {
 
 import { GameStage, StageResult, StageScoreBreakdownItem } from '../../../core/app.models';
 import { GameAudioService } from '../../../core/game-audio.service';
-import { HOME_BIN_ASSET_PATHS } from '../game-canvas.assets';
+import { INDUSTRIAL_BIN_ASSETS } from '../game-canvas.assets';
 import type { StageTick } from '../game-canvas.types';
 
 const BOARD_COLUMNS = 8;
@@ -38,10 +38,6 @@ const LANDFILL_BAG_ASSETS = {
   green: `${LANDFILL_ASSET_BASE}/bags/bolsa-verde.png`,
   red: `${LANDFILL_ASSET_BASE}/bags/bolsa-roja.png`,
   violet: `${LANDFILL_ASSET_BASE}/bags/bolsa-violeta.png`,
-} as const;
-const LANDFILL_RECYCLE_BIN_ASSETS = {
-  normal: HOME_BIN_ASSET_PATHS['bin-reciclables-normal'],
-  ready: HOME_BIN_ASSET_PATHS['bin-reciclables-open'],
 } as const;
 
 interface LandfillGridCell {
@@ -479,11 +475,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
     return `${y + 1}`;
   }
 
-  recycleBinImagePath(): string {
-    return this.recycleBinReady()
-      ? LANDFILL_RECYCLE_BIN_ASSETS.ready
-      : LANDFILL_RECYCLE_BIN_ASSETS.normal;
-  }
+  readonly recycleBinAsset = INDUSTRIAL_BIN_ASSETS['vidrio'];
 
   stopRecycleBinGesture(event: PointerEvent): void {
     event.stopPropagation();

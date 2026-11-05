@@ -76,7 +76,7 @@ export const GAME_STAGES: readonly GameStage[] = [
     subtitle: 'Clasificar residuos desde la cocina',
     objective: 'Promover el hábito primario de separar residuos en el núcleo familiar.',
     environment:
-      'Cocina familiar con tonos cálidos, luz natural y referencias visuales al paisaje andino.',
+      'Todos los días generamos residuos, pero no todos van al mismo lugar. Tu misión es separar cada residuo y colocarlo en el cesto que corresponde. ¡Sumá puntos!',
     introText:
       'En este juego vas a separar residuos del hogar en el cesto correcto para aprender qué materiales se reciclan, cuáles van al resto y cuáles pueden compostarse.',
     mechanic:
@@ -115,15 +115,15 @@ export const GAME_STAGES: readonly GameStage[] = [
   {
     id: 'valorizacion-industrial',
     order: 2,
-    title: 'Planta de reciclaje',
+    title: 'Planta de clasificación de residuos',
     shortTitle: 'Planta',
     subtitle: 'Separar materiales en cinta',
     objective:
       'Visibilizar el trabajo de recuperadores urbanos y la clasificación técnica por material.',
     environment:
-      'Planta urbana limpia, luminosa y techada, con cinta transportadora y cerros al fondo.',
+      'Los residuos reciclables llegan a las plantas de clasificación, donde se preparan para recuperar sus materiales. Tu misión es clasificarlos en la cinta transportadora.',
     introText:
-      'En este juego vas a clasificar materiales secos en una planta de reciclaje para sostener el flujo de reciclaje y evitar que el descarte contamine la cinta.',
+      'En este juego vas a clasificar materiales secos en una planta de clasificación de residuos para sostener el flujo de reciclaje y evitar que el descarte contamine la cinta.',
     mechanic: 'Clasificar residuos secos en plástico, papel/cartón, vidrio, metal o descarte.',
     scoring:
       'Los aciertos sostienen el flujo de la planta; los errores representan mezcla inadecuada.',
@@ -179,9 +179,11 @@ export const GAME_STAGES: readonly GameStage[] = [
     objective:
       'Introducir la economía circular biológica mediante compostaje hogareño y balance de nutrientes.',
     environment:
-      'Patio jujeño con suelo arcilloso, plantas regionales, cerros de fondo y compostera central.',
+      'Los restos orgánicos pueden convertirse en un abono natural. Tu misión es alimentar tu compostera, equilibrar la humedad y mezclar para ayudar al proceso. ¡Cuidá a las lombrices!',
     introText:
-      'En este juego vas a armar una compostera equilibrando materiales verdes húmedos y marrones secos para transformar restos orgánicos en abono.',
+      'En este juego vas a armar tu propia compostera, combinando materiales orgánicos húmedos (como yerba, frutas y verduras) y secos (como hojas, ramas y cartón, entre otros). ¡Manos a la obra!',
+    introText2:
+      '¡Ojo! Para mantener la compostera equilibrada, deberás intercalar capas de materiales húmedos y secos.',
     mechanic:
       'Alternar materiales verdes húmedos y marrones secos para mantener el equilibrio de humedad.',
     scoring:
@@ -298,9 +300,11 @@ export const GAME_STAGES: readonly GameStage[] = [
     objective:
       'Mostrar la complejidad de la ingeniería sanitaria y la importancia de reducir residuos desde el hogar.',
     environment:
-      'Fosa impermeabilizada con geomembrana, grúa hidráulica y cerros jujeños al atardecer.',
+      'Los residuos que no pueden reciclarse ni compostarse necesitan una disposición final adecuada. Tu misión es identificar cuáles deben ir al relleno sanitario y cuáles todavía pueden recuperarse.',
     introText:
-      'En este juego vas a ubicar bolsas en una fosa sanitaria intentando compactar bien, evitar huecos y cuidar la vida útil del relleno.',
+      'En este juego vas a ubicar bolsas en el relleno sanitario intentando compactar bien y evitar huecos.',
+    introText2: 
+      '¡Ojo! Las bolsas reciclables no van dentro del relleno. Colocalas en su contenedor para que se puedan recuperar los materiales.',
     mechanic:
       'Ubicar bolsas de residuos en la fosa con criterio de encastre para evitar huecos y colapso.',
     scoring:
