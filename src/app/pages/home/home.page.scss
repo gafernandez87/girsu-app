@@ -439,6 +439,7 @@
   background: var(--accent);
   color: #fffaf0;
   box-shadow: 0 0.72rem 1.25rem color-mix(in srgb, var(--accent), transparent 78%);
+  filter: drop-shadow(2px 2px 2px black);
 }
 
 @container app (max-width: 680px) {
