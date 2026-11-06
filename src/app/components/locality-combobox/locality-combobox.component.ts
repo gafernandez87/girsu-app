@@ -6,7 +6,7 @@ import { JujuyLocality } from '../../core/app.models';
 @Component({
   selector: 'app-locality-combobox',
   template: `
-    <span class="locality-combobox" [class.locality-combobox--invalid]="invalid">
+    <span class="locality-combobox" [class.locality-combobox--invalid]="invalid" (focusout)="hideResults($event)">
       <input
         type="search"
         autocomplete="address-level2"
@@ -15,7 +15,6 @@ import { JujuyLocality } from '../../core/app.models';
         [disabled]="isDisabled"
         [placeholder]="placeholder"
         [value]="search"
-        (blur)="hideResults()"
         (focus)="focused = true"
         (input)="onSearchInput($event)"
       />
@@ -27,7 +26,8 @@ import { JujuyLocality } from '../../core/app.models';
               type="button"
               class="locality-result"
               role="option"
-              (mousedown)="selectLocality(locality)"
+              (pointerdown)="$event.preventDefault()"
+              (click)="selectLocality(locality)"
             >
               {{ locality.name }}
             </button>
@@ -177,8 +177,16 @@ export class LocalityComboboxComponent implements ControlValueAccessor, OnChange
     this.disabled = disabled;
   }
 
-  hideResults(): void {
+  hideResults(event: FocusEvent): void {
+    const container = event.currentTarget as HTMLElement;
+    if (event.relatedTarget instanceof Node && container.contains(event.relatedTarget)) {
+      return;
+    }
+
     window.setTimeout(() => {
+      if (container.contains(document.activeElement)) {
+        return;
+      }
       this.focused = false;
       this.onTouched();
     }, 120);

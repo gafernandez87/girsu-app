@@ -6,14 +6,13 @@ import { School } from '../../core/app.models';
 @Component({
   selector: 'app-school-combobox',
   template: `
-    <span class="school-combobox" [class.school-combobox--invalid]="invalid">
+    <span class="school-combobox" [class.school-combobox--invalid]="invalid" (focusout)="hideResults($event)">
       <input
         type="search"
         autocomplete="organization"
         [disabled]="isDisabled"
         [placeholder]="placeholder"
         [value]="search"
-        (blur)="hideResults()"
         (focus)="focused = true"
         (input)="onSearchInput($event)"
       />
@@ -25,7 +24,8 @@ import { School } from '../../core/app.models';
               type="button"
               class="school-result"
               role="option"
-              (mousedown)="selectSchool(school)"
+              (pointerdown)="$event.preventDefault()"
+              (click)="selectSchool(school)"
             >
               <strong>{{ school.name }}</strong>
               <small>{{ school.locality || 'Sin localidad' }} · CUEANEXO {{ school.sourceCode }}</small>
@@ -189,8 +189,16 @@ export class SchoolComboboxComponent implements ControlValueAccessor, OnChanges 
     this.disabled = disabled;
   }
 
-  hideResults(): void {
+  hideResults(event: FocusEvent): void {
+    const container = event.currentTarget as HTMLElement;
+    if (event.relatedTarget instanceof Node && container.contains(event.relatedTarget)) {
+      return;
+    }
+
     window.setTimeout(() => {
+      if (container.contains(document.activeElement)) {
+        return;
+      }
       this.focused = false;
       this.onTouched();
     }, 120);

@@ -53,8 +53,10 @@
                 @for (year of birthYears; track year) { <option [value]="year">{{ year }}</option> }
               </select>
             </div>
-            @if ((birthDateTouched || submitted()) && birthDay && birthMonth && birthYear && !isBirthDateValid()) {
-              <small class="field-error" role="alert">Ingresá una fecha válida que no sea futura.</small>
+            @if ((submitted() || (birthDateTouched && birthDay && birthMonth && birthYear)) && !isBirthDateValid()) {
+              <small class="field-error" role="alert">
+                {{ birthDay && birthMonth && birthYear ? 'Ingresá una fecha válida que no sea futura.' : 'Completá la fecha de nacimiento.' }}
+              </small>
             }
           </fieldset>
 
@@ -111,6 +113,9 @@
               />
               @if (hasLocalityError(localityControl)) {
                 <small class="field-error" role="alert">Seleccioná una localidad.</small>
+              }
+              @if (localitiesError()) {
+                <small class="field-error" role="alert">No pudimos cargar las localidades. <a href="" (click)="$event.preventDefault(); loadLocalities()">Reintentar</a></small>
               }
             </div>
           } @else {
@@ -176,10 +181,12 @@
                 [loading]="schoolsLoading()"
                 [schools]="schools()"
                 [(ngModel)]="schoolId"
-                (schoolSelect)="onSchoolSelected($event)"
               />
               @if (hasSchoolError(schoolControl)) {
                 <small class="field-error" role="alert">Seleccioná una escuela.</small>
+              }
+              @if (schoolsError()) {
+                <small class="field-error" role="alert">No pudimos cargar las escuelas. <a href="" (click)="$event.preventDefault(); loadSchools()">Reintentar</a></small>
               }
             </div>
           }
@@ -335,9 +342,9 @@
         <button
           type="submit"
           class="auth-form__full"
-          [disabled]="!canSubmit() || formLoading()"
+          [disabled]="formLoading()"
         >
-          {{ schoolsLoading() ? 'Cargando escuelas...' : loading() ? 'Creando...' : 'Crear cuenta' }}
+          {{ loading() ? 'Creando...' : formLoading() ? 'Cargando datos...' : 'Crear cuenta' }}
         </button>
       </form>
 

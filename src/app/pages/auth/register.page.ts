@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormsModule, NgModel } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 
@@ -26,17 +26,16 @@ export class RegisterPage {
   readonly notice = signal<string | null>(null);
   readonly localities = signal<readonly JujuyLocality[]>([]);
   readonly localitiesLoading = signal(true);
+  readonly localitiesError = signal(false);
   readonly schools = signal<readonly School[]>([]);
   readonly schoolsLoading = signal(true);
+  readonly schoolsError = signal(false);
   readonly showPassword = signal(false);
   readonly submitted = signal(false);
   readonly maxBirthDate = this.getTodayAsInputDate();
   readonly birthDays = Array.from({ length: 31 }, (_, index) => index + 1);
   readonly birthMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
   readonly birthYears = Array.from({ length: 121 }, (_, index) => new Date().getFullYear() - index);
-  readonly formLoading = computed(() =>
-    this.loading() || this.schoolsLoading() || this.localitiesLoading(),
-  );
 
   birthDate = '';
   birthDay = '';
@@ -64,23 +63,37 @@ export class RegisterPage {
   }
 
   async loadRegistrationData(): Promise<void> {
-    this.schoolsLoading.set(true);
-    this.localitiesLoading.set(true);
-    this.error.set(null);
+    await Promise.all([this.loadSchools(), this.loadLocalities()]);
+  }
 
+  async loadSchools(): Promise<void> {
+    this.schoolsLoading.set(true);
+    this.schoolsError.set(false);
     try {
-      const [schools, localities] = await Promise.all([
-        this.schoolService.listActiveSchools(),
-        this.localityService.listJujuyLocalities(),
-      ]);
-      this.schools.set(schools);
-      this.localities.set(localities);
-    } catch (error) {
-      this.error.set(error instanceof Error ? error.message : 'No pudimos cargar los datos del formulario.');
+      this.schools.set(await this.schoolService.listActiveSchools());
+    } catch {
+      this.schoolsError.set(true);
     } finally {
       this.schoolsLoading.set(false);
+    }
+  }
+
+  async loadLocalities(): Promise<void> {
+    this.localitiesLoading.set(true);
+    this.localitiesError.set(false);
+    try {
+      this.localities.set(await this.localityService.listJujuyLocalities());
+    } catch {
+      this.localitiesError.set(true);
+    } finally {
       this.localitiesLoading.set(false);
     }
+  }
+
+  formLoading(): boolean {
+    return this.loading() ||
+      (this.province === 'Jujuy' && this.localitiesLoading()) ||
+      (this.schoolMembership === 'jujuy_school' && this.schoolsLoading());
   }
 
   canSubmit(): boolean {
@@ -149,18 +162,6 @@ export class RegisterPage {
     if (value === 'no_school') {
       this.schoolRole = '';
     }
-  }
-
-  onSchoolSelected(school: School): void {
-    if (this.province !== 'Jujuy' || !school.locality) {
-      return;
-    }
-
-    const locality = this.localities().find(
-      (candidate) => candidate.name.trim().toUpperCase() === school.locality.trim().toUpperCase(),
-    );
-
-    this.localityId = locality?.id ?? '';
   }
 
   toggleComposting(value: string): void {
