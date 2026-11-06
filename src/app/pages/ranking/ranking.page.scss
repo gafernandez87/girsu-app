@@ -98,8 +98,26 @@
   font-weight: 900;
 }
 
-@media (max-width: 640px) {
+@container app (max-width: 640px) {
   .ranking-hero h1 {
     font-size: 2.2rem;
+  }
+}
+
+@container app (max-width: 520px) {
+  .ranking-row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .ranking-detail {
+    grid-column: 3;
+    align-self: start;
+    text-align: right;
+  }
+
+  .ranking-detail .ranking-score {
+    grid-column: auto;
+    justify-self: end;
   }
 }

@@ -232,7 +232,12 @@ export interface Database {
         Relationships: [];
       };
     };
-    Functions: Record<string, never>;
+    Functions: {
+      school_enrollment_counts: {
+        Args: { school_ids: string[] };
+        Returns: { school_id: string; enrolled_count: number }[];
+      };
+    };
     Enums: Record<string, never>;
     CompositeTypes: Record<string, never>;
   };

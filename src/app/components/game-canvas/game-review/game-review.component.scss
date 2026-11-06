@@ -40,7 +40,7 @@ header {
 }
 
 h2 {
-  font-size: clamp(1.1rem, 4vw, 1.65rem);
+  font-size: clamp(1.1rem, 4cqw, 1.65rem);
   line-height: 1.2;
 }
 
@@ -140,7 +140,7 @@ footer a {
   color: #245c40;
 }
 
-@media (max-width: 520px) {
+@container app (max-width: 520px) {
   .game-review__groups {
     grid-template-columns: 1fr;
   }

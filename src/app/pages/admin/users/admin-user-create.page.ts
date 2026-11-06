@@ -40,7 +40,7 @@ export class AdminUserCreatePage {
   province: 'Jujuy' | 'Otra' = 'Jujuy';
   role: UserRole = 'player';
   schoolId = '';
-  schoolMembership: 'jujuy_school' | 'no_jujuy_school' = 'jujuy_school';
+  schoolMembership: 'jujuy_school' | 'no_jujuy_school' | 'other_school' | 'no_school' = 'jujuy_school';
   schoolRole = '';
   wasteSeparation: string[] = [];
 
@@ -122,10 +122,13 @@ export class AdminUserCreatePage {
   }
 
   onSchoolMembershipChange(value: string): void {
-    this.schoolMembership = value === 'no_jujuy_school' ? 'no_jujuy_school' : 'jujuy_school';
+    this.schoolMembership = value === 'other_school' || value === 'no_school' || value === 'no_jujuy_school' ? value : 'jujuy_school';
 
-    if (this.schoolMembership === 'no_jujuy_school') {
+    if (this.schoolMembership !== 'jujuy_school') {
       this.schoolId = '';
+    }
+    if (this.schoolMembership === 'no_school') {
+      this.schoolRole = '';
     }
   }
 
@@ -161,7 +164,7 @@ export class AdminUserCreatePage {
       Boolean(this.email.trim()) &&
       hasLocality &&
       hasSchool &&
-      Boolean(this.schoolRole) &&
+      (this.schoolMembership === 'no_school' || Boolean(this.schoolRole)) &&
       this.password.length >= 6 &&
       this.wasteSeparation.length > 0 &&
       this.composting.length > 0

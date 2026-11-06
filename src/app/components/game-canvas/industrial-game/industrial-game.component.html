@@ -8,9 +8,9 @@
   <div class="industrial-game__floor" aria-hidden="true"></div>
 
   <div class="industrial-game__workers" aria-hidden="true">
-    @for (position of workerPositions; track position) {
+    @for (position of workerPositions; track position; let index = $index) {
       <img
-        src="/assets/game-2/operario-planta.svg"
+        [src]="'/assets/game-2/operario-' + (index + 1) + '.png'"
         alt=""
         [style.left.%]="position"
         draggable="false"

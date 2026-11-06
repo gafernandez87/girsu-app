@@ -5,7 +5,7 @@
   --landfill-board-side-clearance: 15rem;
   --landfill-board-width: min(
     calc((100dvh - var(--landfill-hud-clearance) - var(--landfill-board-bottom)) / 2),
-    calc(100vw - var(--landfill-board-side-clearance)),
+    calc(100cqw - var(--landfill-board-side-clearance)),
     22rem
   );
   --landfill-board-height: calc(var(--landfill-board-width) * 2);
@@ -15,7 +15,7 @@
   --landfill-grid-gap: 0.08rem;
   --landfill-cell-size: calc((var(--landfill-board-width) - 7 * var(--landfill-grid-gap)) / 8);
   --landfill-preview-cell-size: 1rem;
-  --landfill-control-size: clamp(2.9rem, 13vw, 4.4rem);
+  --landfill-control-size: clamp(2.9rem, 13cqw, 4.4rem);
 
   position: absolute;
   inset: 0;
@@ -297,7 +297,7 @@
 }
 
 .landfill-game__recycle-bin {
-  --recycle-bin-size: clamp(6.2rem, 26vw, 9.2rem);
+  --recycle-bin-size: clamp(6.2rem, 26cqw, 9.2rem);
 
   position: absolute;
   left: 50%;
@@ -652,7 +652,7 @@
   place-items: center;
   min-width: 4.8rem;
   min-height: 3.1rem;
-  max-width: min(13rem, 72vw);
+  max-width: min(13rem, 72cqw);
   padding: 0.42rem 0.78rem;
   border: 3px solid rgba(255, 255, 255, 0.94);
   border-radius: 8px;
@@ -661,7 +661,7 @@
     0 0 0 4px rgba(65, 203, 101, 0.44),
     0 1rem 2.3rem rgba(28, 16, 9, 0.28);
   color: #237447;
-  font-size: clamp(1.48rem, 5.4vw, 2.7rem);
+  font-size: clamp(1.48rem, 5.4cqw, 2.7rem);
   font-weight: 950;
   line-height: 1;
   pointer-events: none;
@@ -681,7 +681,7 @@
     0 0 0 4px rgba(232, 63, 48, 0.42),
     0 1rem 2.35rem rgba(34, 13, 8, 0.3);
   color: #e83f30;
-  font-size: clamp(0.92rem, 4.2vw, 1.45rem);
+  font-size: clamp(0.92rem, 4.2cqw, 1.45rem);
   text-shadow: 0 1px 0 #fff;
   animation: landfill-error-pop 1080ms cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
 }
@@ -692,7 +692,7 @@
     0 0 0 4px rgba(72, 205, 96, 0.46),
     0 1rem 2.3rem rgba(35, 20, 11, 0.26);
   color: #21814a;
-  font-size: clamp(1rem, 4.6vw, 1.7rem);
+  font-size: clamp(1rem, 4.6cqw, 1.7rem);
 }
 
 .landfill-hud,
@@ -723,9 +723,9 @@
   top: max(0.92rem, calc(env(safe-area-inset-top) + 0.92rem));
   left: max(1.3rem, calc(env(safe-area-inset-left) + 1.3rem));
   display: block;
-  max-width: min(24rem, calc(50vw - 6rem));
+  max-width: min(24rem, calc(50cqw - 6rem));
   color: rgba(255, 255, 255, 0.9);
-  font-size: clamp(1.05rem, 3.2vw, 2.05rem);
+  font-size: clamp(1.05rem, 3.2cqw, 2.05rem);
   font-weight: 950;
   line-height: 1.02;
   overflow: hidden;
@@ -788,7 +788,7 @@
 .landfill-hud__score strong {
   margin-top: 0.16rem;
   color: #f5d67b;
-  font-size: clamp(1.92rem, 4.8vw, 2.45rem);
+  font-size: clamp(1.92rem, 4.8cqw, 2.45rem);
   font-weight: 950;
   line-height: 0.95;
 }
@@ -991,7 +991,7 @@
   }
 }
 
-@media (max-width: 520px) {
+@container app (max-width: 520px) {
   .landfill-game {
     --landfill-grid-gap: 0.075rem;
     --landfill-board-side-clearance: 7rem;
@@ -1057,7 +1057,7 @@
   .landfill-hud__title {
     top: max(0.76rem, calc(env(safe-area-inset-top) + 0.76rem));
     left: max(0.85rem, calc(env(safe-area-inset-left) + 0.85rem));
-    max-width: min(8.1rem, calc(100vw - 13.7rem));
+    max-width: min(8.1rem, calc(100cqw - 13.7rem));
     font-size: 0.9rem;
     line-height: 1.02;
     overflow: visible;
@@ -1187,14 +1187,14 @@
   pointer-events: none;
 }
 
-@media (max-width: 520px) {
+@container app (max-width: 520px) {
   .landfill-game__next {
     top: max(8.6rem, calc(env(safe-area-inset-top) + 8.6rem));
     right: max(0.68rem, calc(env(safe-area-inset-right) + 0.68rem));
   }
 }
 
-@media (max-height: 540px) and (min-width: 521px) {
+@container app (min-width: 521px) {
   .landfill-game {
     --landfill-hud-clearance: max(5.5rem, calc(env(safe-area-inset-top) + 5.5rem));
     --landfill-board-bottom: max(2rem, calc(env(safe-area-inset-bottom) + 2rem));

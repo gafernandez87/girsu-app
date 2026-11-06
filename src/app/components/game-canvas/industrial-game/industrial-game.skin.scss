@@ -1,5 +1,5 @@
 .industrial-game {
-  --industrial-bin-width: clamp(3rem, min(22vw, 10dvh), 8rem);
+  --industrial-bin-width: clamp(3rem, min(22cqw, 10dvh), 8rem);
   --industrial-bin-label-space: 2.2rem;
   --industrial-bin-row-height: calc(
     var(--industrial-bin-width) * 0.75 + var(--industrial-bin-label-space)
@@ -9,8 +9,8 @@
     clamp(3rem, 7dvh, 5rem),
     calc(env(safe-area-inset-bottom) + 1rem)
   );
-  --industrial-belt-height: clamp(3.35rem, 9vw, 5.2rem);
-  --industrial-base-height: clamp(4.3rem, 11vw, 6.4rem);
+  --industrial-belt-height: clamp(3.35rem, 9cqw, 5.2rem);
+  --industrial-base-height: clamp(4.3rem, 11cqw, 6.4rem);
   --industrial-conveyor-overlap: calc(var(--industrial-base-height) * 0.2);
   --industrial-conveyor-height: calc(
     var(--industrial-belt-height) +
@@ -112,8 +112,8 @@
   --station-translate: -50%;
   position: absolute;
   top: var(--industrial-conveyor-y);
-  left: calc(3% + min(76%, 72rem) + clamp(1.9rem, 10vw, 6rem));
-  width: clamp(3.4rem, 17vw, 8rem);
+  left: calc(3% + min(76%, 72rem) + clamp(1.9rem, 10cqw, 6rem));
+  width: clamp(3.4rem, 17cqw, 8rem);
   padding-bottom: 0;
 }
 
@@ -130,7 +130,7 @@
   border-radius: 6px;
   background: rgba(255, 255, 255, 0.96);
   color: #000;
-  font-size: clamp(0.65rem, 2.3vw, 0.9rem);
+  font-size: clamp(0.65rem, 2.3cqw, 0.9rem);
   font-weight: 800;
   line-height: 1.15;
   text-align: center;
@@ -144,18 +144,18 @@
 
 .industrial-game__workers {
   position: absolute;
-  top: calc(var(--industrial-conveyor-y) - clamp(5rem, 18vw, 10rem));
+  top: calc(var(--industrial-conveyor-y) - clamp(5rem, 18cqw, 10rem));
   left: 3%;
   z-index: 7;
   width: min(76%, 72rem);
-  height: clamp(5rem, 18vw, 10rem);
+  height: clamp(5rem, 18cqw, 10rem);
   pointer-events: none;
 }
 
 .industrial-game__workers img {
   position: absolute;
   bottom: 0;
-  width: clamp(3.4rem, 11vw, 7.5rem);
+  width: clamp(3.4rem, 11cqw, 7.5rem);
   height: 100%;
   object-fit: contain;
   transform: translateX(-50%);
@@ -240,7 +240,7 @@
 }
 
 .industrial-game__asset--conveyor-belt {
-  --belt-tile-width: clamp(12.5rem, 32vw, 20.8rem);
+  --belt-tile-width: clamp(12.5rem, 32cqw, 20.8rem);
 
   z-index: 2;
   isolation: isolate;
@@ -279,7 +279,7 @@
   z-index: 18;
   display: grid;
   justify-items: center;
-  width: clamp(5.9rem, 18vw, 7.6rem);
+  width: clamp(5.9rem, 18cqw, 7.6rem);
   min-height: 6.7rem;
   padding: 0;
   border: 0;
@@ -311,8 +311,8 @@
   position: relative;
   display: grid;
   place-items: center;
-  width: clamp(5.5rem, 16vw, 6.6rem);
-  height: clamp(5.5rem, 16vw, 6.6rem);
+  width: clamp(5.5rem, 16cqw, 6.6rem);
+  height: clamp(5.5rem, 16cqw, 6.6rem);
   pointer-events: none;
 }
 
@@ -467,7 +467,7 @@
   border: 3px solid rgba(255, 255, 255, 0.94);
   border-radius: 8px;
   font-family: Inter, Arial, sans-serif;
-  font-size: clamp(1.65rem, 5.2vw, 2.75rem);
+  font-size: clamp(1.65rem, 5.2cqw, 2.75rem);
   font-weight: 950;
   line-height: 1;
   pointer-events: none;
@@ -587,7 +587,7 @@
   }
 }
 
-@media (max-width: 520px) {
+@container app (max-width: 520px) {
   .industrial-game {
     --industrial-base-height: 4.65rem;
     --industrial-belt-height: 3.55rem;
@@ -654,6 +654,6 @@
   }
 
   .industrial-game__station--descarte {
-    width: min(12vw, 4.5rem);
+    width: min(12cqw, 4.5rem);
   }
 }

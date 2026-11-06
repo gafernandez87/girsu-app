@@ -76,9 +76,9 @@ export const GAME_STAGES: readonly GameStage[] = [
     subtitle: 'Clasificar residuos desde la cocina',
     objective: 'Promover el hábito primario de separar residuos en el núcleo familiar.',
     environment:
-      'Todos los días generamos residuos, pero no todos van al mismo lugar. Tu misión es separar cada residuo y colocarlo en el cesto que corresponde. ¡Sumá puntos!',
+      '¡Demos el primer paso separando en origen! Todos los días generamos residuos, pero no todos van al mismo lugar. Algunos pueden reciclarse, otros convertirse en compost y otros deben descartarse. Tu misión: colocar cada residuo en el cesto que corresponde. ¡Sumá puntos por cada acierto!',
     introText:
-      'En este juego vas a separar residuos del hogar en el cesto correcto para aprender qué materiales se reciclan, cuáles van al resto y cuáles pueden compostarse.',
+      'En este juego vas a clasificar residuos del hogar arrastrándolos hacia el cesto correcto según sean reciclables, no reciclables o compostables.',
     mechanic:
       'Arrastrar cada residuo doméstico al cesto correcto: reciclables, no reciclables o compostables.',
     scoring:
@@ -121,9 +121,9 @@ export const GAME_STAGES: readonly GameStage[] = [
     objective:
       'Visibilizar el trabajo de recuperadores urbanos y la clasificación técnica por material.',
     environment:
-      'Los residuos reciclables llegan a las plantas de clasificación, donde se preparan para recuperar sus materiales. Tu misión es clasificarlos en la cinta transportadora.',
+      '¡Llegó el momento de recuperar materiales! Los residuos reciclables que separamos en casa llegan a las plantas de clasificación, donde se preparan para recuperar sus materiales. Tu misión: arrastrar los residuos de la cinta al contenedor que corresponda según el tipo de material: vidrio, plástico, metal, papel y cartón.',
     introText:
-      'En este juego vas a clasificar materiales secos en una planta de clasificación de residuos para sostener el flujo de reciclaje y evitar que el descarte contamine la cinta.',
+      'En este juego vas a clasificar materiales secos en una planta de clasificación de residuos, arrastrándolos hacia el contenedor correcto según sean de vidrio, metal, plástico o papel y cartón.',
     mechanic: 'Clasificar residuos secos en plástico, papel/cartón, vidrio, metal o descarte.',
     scoring:
       'Los aciertos sostienen el flujo de la planta; los errores representan mezcla inadecuada.',
@@ -179,9 +179,9 @@ export const GAME_STAGES: readonly GameStage[] = [
     objective:
       'Introducir la economía circular biológica mediante compostaje hogareño y balance de nutrientes.',
     environment:
-      'Los restos orgánicos pueden convertirse en un abono natural. Tu misión es alimentar tu compostera, equilibrar la humedad y mezclar para ayudar al proceso. ¡Cuidá a las lombrices!',
+      '¡Transformá tus residuos orgánicos en compost! Las cáscaras de frutas y verduras, las hojas secas y otros restos orgánicos pueden convertirse en un abono natural que nutre el suelo y ayuda a crecer a las plantas. Tu misión: alimentar tu compostera, equilibrar la humedad y mezclar para ayudar al proceso. ¡Cuidá a las lombrices!',
     introText:
-      'En este juego vas a armar tu propia compostera, combinando materiales orgánicos húmedos (como yerba, frutas y verduras) y secos (como hojas, ramas y cartón, entre otros). ¡Manos a la obra!',
+      'En este juego vas a encontrar la combinación justa entre materiales secos y húmedos para rellenar una compostera, regulando la humedad, el oxígeno y el cuidado de las lombrices.',
     introText2:
       '¡Ojo! Para mantener la compostera equilibrada, deberás intercalar capas de materiales húmedos y secos.',
     mechanic:
@@ -300,10 +300,10 @@ export const GAME_STAGES: readonly GameStage[] = [
     objective:
       'Mostrar la complejidad de la ingeniería sanitaria y la importancia de reducir residuos desde el hogar.',
     environment:
-      'Los residuos que no pueden reciclarse ni compostarse necesitan una disposición final adecuada. Tu misión es identificar cuáles deben ir al relleno sanitario y cuáles todavía pueden recuperarse.',
+      '¡Cada residuo debe llegar al lugar correcto! Los residuos que no pueden reciclarse ni compostarse necesitan una disposición final adecuada. Los rellenos sanitarios permiten gestionarlos de manera controlada y reducir su impacto ambiental. Tu misión: organizar las bolsas aprovechando el espacio para que entre la mayor cantidad de residuos.',
     introText:
-      'En este juego vas a ubicar bolsas en el relleno sanitario intentando compactar bien y evitar huecos.',
-    introText2: 
+      'En este juego vas a ubicar bolsas dentro de un relleno sanitario intentando evitar huecos para aprovechar el espacio al máximo. Mientras caen, podés girar las bolsas tocándolas y arrastrarlas al lado que prefieras.',
+    introText2:
       '¡Ojo! Las bolsas reciclables no van dentro del relleno. Colocalas en su contenedor para que se puedan recuperar los materiales.',
     mechanic:
       'Ubicar bolsas de residuos en la fosa con criterio de encastre para evitar huecos y colapso.',

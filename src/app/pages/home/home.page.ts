@@ -7,7 +7,7 @@ import { GameProgressService } from '../../core/game-progress.service';
 
 const STAGE_IMAGES: Record<string, string> = {
   'separacion-origen': 'url("/assets/game-1/backgrounds/fondo%20juego%201.png")',
-  'valorizacion-industrial': 'url("/assets/game-2/backgrounds/fondo-juego-2.png")',
+  'valorizacion-industrial': 'url("/assets/game-2/landing-planta.png")',
   'compostaje-domiciliario': 'url("/assets/game-3/backgrounds/fondo-compostera.png")',
   'relleno-sanitario': 'url("/assets/game-4/processed/background/fondo-tetris.png")',
 };

@@ -42,7 +42,7 @@
                 <small>{{ user.province || '-' }}</small>
               </td>
               <td>
-                {{ user.school || (user.schoolMembership === 'no_jujuy_school' ? 'Sin escuela de Jujuy' : '-') }}
+                {{ user.school || (user.schoolMembership === 'no_school' ? 'Sin escuela' : user.schoolMembership === 'other_school' ? 'Otra jurisdicción' : user.schoolMembership === 'no_jujuy_school' ? 'Otra institución o sin escuela (anterior)' : '-') }}
                 <small>{{ user.schoolRole || '-' }}</small>
               </td>
               <td>{{ user.role === 'admin' ? 'Admin' : 'Jugador' }}</td>

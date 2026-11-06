@@ -10,7 +10,7 @@
 }
 
 .game-audio-toggle {
-  position: fixed;
+  position: absolute;
   top: max(1rem, calc(env(safe-area-inset-top) + 1rem));
   right: max(6rem, calc(env(safe-area-inset-right) + 6rem));
   z-index: 32;
@@ -30,7 +30,7 @@
   backdrop-filter: blur(12px);
 }
 
-@media (max-width: 419px) {
+@container app (max-width: 419px) {
   .game-audio-toggle {
     top: max(0.7rem, calc(env(safe-area-inset-top) + 0.7rem));
     right: max(5.7rem, calc(env(safe-area-inset-right) + 5.7rem));
@@ -105,7 +105,7 @@
 .game-intro__panel strong {
   margin-top: 0.28rem;
   color: #241c16;
-  font-size: clamp(1.85rem, 7vw, 2.7rem);
+  font-size: clamp(1.85rem, 7cqw, 2.7rem);
   font-weight: 950;
   line-height: 0.98;
 }
@@ -114,7 +114,7 @@
   max-width: 21rem;
   margin: 0.78rem 0 0;
   color: #58493d;
-  font-size: clamp(0.98rem, 3.4vw, 1.08rem);
+  font-size: clamp(0.98rem, 3.4cqw, 1.08rem);
   font-weight: 800;
   line-height: 1.32;
 }
@@ -153,7 +153,7 @@
 .game-intro__panel--countdown strong {
   margin-top: 0.7rem;
   color: var(--intro-accent);
-  font-size: clamp(5.2rem, 24vw, 8.5rem);
+  font-size: clamp(5.2rem, 24cqw, 8.5rem);
   line-height: 0.82;
 }
 
@@ -318,8 +318,8 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: min(9rem, 31vw);
-  min-height: clamp(7.35rem, 28vw, 9.15rem);
+  width: min(9rem, 31cqw);
+  min-height: clamp(7.35rem, 28cqw, 9.15rem);
   padding: 0;
   border: 0;
   background: transparent;
@@ -341,8 +341,8 @@
 .home-game__item-orb {
   display: grid;
   place-items: center;
-  width: clamp(4.8rem, 22vw, 6.5rem);
-  height: clamp(4.8rem, 22vw, 6.5rem);
+  width: clamp(4.8rem, 22cqw, 6.5rem);
+  height: clamp(4.8rem, 22cqw, 6.5rem);
   border: 5px solid #fff;
   border-radius: 50%;
   background: white;
@@ -373,7 +373,7 @@
   box-shadow: 0 10px 22px rgba(52, 28, 15, 0.2);
   color: #351a10;
   font-family: Inter, Arial, sans-serif;
-  font-size: clamp(0.68rem, 2.7vw, 0.92rem);
+  font-size: clamp(0.68rem, 2.7cqw, 0.92rem);
   font-weight: 950;
   line-height: 1.04;
   overflow-wrap: anywhere;
@@ -411,7 +411,7 @@
     0 0 0 4px rgba(65, 203, 101, 0.48),
     0 1rem 2.3rem rgba(28, 16, 9, 0.28);
   color: #237447;
-  font-size: clamp(2rem, 7vw, 3rem);
+  font-size: clamp(2rem, 7cqw, 3rem);
   text-shadow:
     0 1px 0 #fff,
     0 8px 18px rgba(36, 24, 12, 0.24);
@@ -441,7 +441,7 @@
     0 0 0 4px rgba(232, 63, 48, 0.44),
     0 1rem 2.4rem rgba(34, 13, 8, 0.32);
   color: #e83f30;
-  font-size: clamp(1.7rem, 6vw, 2.7rem);
+  font-size: clamp(1.7rem, 6cqw, 2.7rem);
   text-shadow: 0 1px 0 #fff;
   animation: home-error-pop 1080ms cubic-bezier(0.17, 0.84, 0.44, 1) forwards;
 }
@@ -549,9 +549,9 @@
   top: max(1.38rem, calc(env(safe-area-inset-top) + 1.38rem));
   left: max(1.3rem, calc(env(safe-area-inset-left) + 1.3rem));
   display: block;
-  max-width: min(31rem, calc(100vw - 12rem));
+  max-width: min(31rem, calc(100cqw - 12rem));
   color: rgba(255, 247, 237, 0.76);
-  font-size: clamp(0.9rem, 5.1vw, 2.45rem);
+  font-size: clamp(0.9rem, 5.1cqw, 2.45rem);
   font-weight: 950;
   line-height: 0.96;
   text-shadow: 0 2px 10px rgba(28, 15, 9, 0.34);
@@ -589,7 +589,7 @@
 .home-hud__timer strong {
   margin-top: 0.2rem;
   color: #d6aa47;
-  font-size: clamp(2.2rem, 5.2vw, 2.85rem);
+  font-size: clamp(2.2rem, 5.2cqw, 2.85rem);
   font-weight: 950;
   line-height: 0.95;
 }
@@ -599,7 +599,7 @@
 }
 
 .home-hud p {
-  max-width: min(30rem, calc(100vw - 7rem));
+  max-width: min(30rem, calc(100cqw - 7rem));
   margin: clamp(1.2rem, 4vh, 2rem) auto 0;
   padding: 0.54rem 0.68rem;
   border: 1px solid rgba(255, 255, 255, 0.26);
@@ -635,9 +635,9 @@
   top: max(1.15rem, calc(env(safe-area-inset-top) + 1.15rem));
   left: max(1.3rem, calc(env(safe-area-inset-left) + 1.3rem));
   display: block;
-  max-width: min(22rem, calc(50vw - 6rem));
+  max-width: min(22rem, calc(50cqw - 6rem));
   color: rgba(255, 255, 255, 0.88);
-  font-size: clamp(1.05rem, 3.2vw, 2.05rem);
+  font-size: clamp(1.05rem, 3.2cqw, 2.05rem);
   font-weight: 950;
   line-height: 1.02;
   overflow: hidden;
@@ -682,7 +682,7 @@
 .industrial-hud__timer strong {
   margin-top: 0.16rem;
   color: #f5d879;
-  font-size: clamp(1.92rem, 4.8vw, 2.45rem);
+  font-size: clamp(1.92rem, 4.8cqw, 2.45rem);
   font-weight: 950;
   line-height: 0.95;
 }
@@ -765,9 +765,9 @@
   top: max(1.15rem, calc(env(safe-area-inset-top)));
   left: max(1.3rem, calc(env(safe-area-inset-left) + 1.3rem));
   display: block;
-  max-width: min(24rem, calc(50vw - 6rem));
+  max-width: min(24rem, calc(50cqw - 6rem));
   color: rgba(255, 255, 255, 0.9);
-  font-size: clamp(1.05rem, 3.2vw, 2.05rem);
+  font-size: clamp(1.05rem, 3.2cqw, 2.05rem);
   font-weight: 950;
   line-height: 1.02;
   overflow: hidden;
@@ -844,7 +844,7 @@
 .compost-hud__timer strong {
   margin-top: 0.16rem;
   color: #f6d875;
-  font-size: clamp(1.92rem, 4.8vw, 2.45rem);
+  font-size: clamp(1.92rem, 4.8cqw, 2.45rem);
   font-weight: 950;
   line-height: 0.95;
 }
@@ -1129,7 +1129,7 @@
   }
 }
 
-@media (max-width: 419px) {
+@container app (max-width: 419px) {
   .game-audio-toggle {
     top: max(3.75rem, calc(env(safe-area-inset-top) + 3.75rem));
     right: max(0.7rem, calc(env(safe-area-inset-right) + 0.7rem));
@@ -1153,7 +1153,7 @@
   .home-hud__title {
     top: max(0.95rem, calc(env(safe-area-inset-top) + 0.95rem));
     left: max(0.85rem, calc(env(safe-area-inset-left) + 0.85rem));
-    max-width: calc(100vw - 7.8rem);
+    max-width: calc(100cqw - 7.8rem);
     font-size: 1.35rem;
     line-height: 1.02;
   }
@@ -1181,7 +1181,7 @@
   .industrial-hud__title {
     top: max(0.82rem, calc(env(safe-area-inset-top) + 0.82rem));
     left: max(0.85rem, calc(env(safe-area-inset-left) + 0.85rem));
-    max-width: min(7.4rem, calc(50vw - 1.4rem));
+    max-width: min(7.4rem, calc(50cqw - 1.4rem));
     font-size: 1.08rem;
     line-height: 1.02;
   }
@@ -1222,7 +1222,7 @@
   .compost-hud__title {
     top: max(0.76rem, calc(env(safe-area-inset-top) + 0.76rem));
     left: max(0.85rem, calc(env(safe-area-inset-left) + 0.85rem));
-    max-width: min(8.1rem, calc(100vw - 13.7rem));
+    max-width: min(8.1rem, calc(100cqw - 13.7rem));
     font-size: 0.9rem;
     line-height: 1.02;
     overflow: visible;
@@ -1277,7 +1277,7 @@
   }
 
   .home-game__item-label {
-    font-size: clamp(0.62rem, 2.55vw, 0.78rem);
+    font-size: clamp(0.62rem, 2.55cqw, 0.78rem);
   }
 
   .home-bin-labels {

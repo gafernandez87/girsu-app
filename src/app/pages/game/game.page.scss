@@ -3,7 +3,8 @@
 
   position: fixed;
   inset: 0;
-  width: 100vw;
+  width: min(100%, 26.25rem);
+  margin-inline: auto;
   height: 100dvh;
   overflow: hidden;
   background: #15110e;
@@ -16,7 +17,7 @@
 }
 
 .exit-button {
-  position: fixed;
+  position: absolute;
   top: max(1rem, calc(env(safe-area-inset-top) + 1.3rem));
   right: max(1rem, calc(env(safe-area-inset-right) + 1rem));
   z-index: 30;
@@ -36,7 +37,7 @@
   backdrop-filter: blur(12px);
 }
 
-@media (max-width: 419px) {
+@container app (max-width: 419px) {
   .exit-button {
     top: max(0.7rem, calc(env(safe-area-inset-top) + 0.7rem));
     right: max(0.7rem, calc(env(safe-area-inset-right) + 0.7rem));

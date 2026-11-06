@@ -31,11 +31,18 @@ export class RegisterPage {
   readonly showPassword = signal(false);
   readonly submitted = signal(false);
   readonly maxBirthDate = this.getTodayAsInputDate();
+  readonly birthDays = Array.from({ length: 31 }, (_, index) => index + 1);
+  readonly birthMonths = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+  readonly birthYears = Array.from({ length: 121 }, (_, index) => new Date().getFullYear() - index);
   readonly formLoading = computed(() =>
     this.loading() || this.schoolsLoading() || this.localitiesLoading(),
   );
 
   birthDate = '';
+  birthDay = '';
+  birthMonth = '';
+  birthYear = '';
+  birthDateTouched = false;
   composting: string[] = [];
   email = '';
   localityId = '';
@@ -84,7 +91,7 @@ export class RegisterPage {
       this.hasValidLocality() &&
       Boolean(this.schoolMembership) &&
       (this.schoolMembership !== 'jujuy_school' || Boolean(this.schoolId)) &&
-      Boolean(this.schoolRole) &&
+      (this.schoolMembership === 'no_school' || Boolean(this.schoolRole)) &&
       this.password.length >= 6 &&
       this.wasteSeparation.length > 0 &&
       this.composting.length > 0
@@ -99,8 +106,11 @@ export class RegisterPage {
     return (control.touched || this.submitted()) && !value.trim();
   }
 
-  hasBirthDateError(control: NgModel): boolean {
-    return (control.touched || this.submitted()) && !this.isBirthDateValid();
+  updateBirthDate(): void {
+    this.birthDateTouched = true;
+    this.birthDate = this.birthYear && this.birthMonth && this.birthDay
+      ? `${this.birthYear}-${this.birthMonth.padStart(2, '0')}-${this.birthDay.padStart(2, '0')}`
+      : '';
   }
 
   hasEmailError(control: NgModel): boolean {
@@ -135,6 +145,9 @@ export class RegisterPage {
 
     if (value !== 'jujuy_school') {
       this.schoolId = '';
+    }
+    if (value === 'no_school') {
+      this.schoolRole = '';
     }
   }
 
@@ -228,8 +241,12 @@ export class RegisterPage {
     return this.localities().some((locality) => locality.id === this.localityId);
   }
 
-  private isBirthDateValid(): boolean {
-    return /^\d{4}-\d{2}-\d{2}$/.test(this.birthDate) && this.birthDate <= this.maxBirthDate;
+  isBirthDateValid(): boolean {
+    if (!/^\d{4}-\d{2}-\d{2}$/.test(this.birthDate) || this.birthDate > this.maxBirthDate) {
+      return false;
+    }
+    const parsed = new Date(`${this.birthDate}T00:00:00Z`);
+    return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === this.birthDate;
   }
 
   private isEmailValid(): boolean {

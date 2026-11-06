@@ -111,7 +111,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
   },
   {
     id: 'reciclables-bidon-plastico-limpio',
-    label: 'Bidón plástico limpio',
+    label: 'Bidón plástico',
     category: 'reciclables',
     path: '/assets/game-1/products/reciclables/reciclables-bidon-plastico-limpio.png',
   },
@@ -183,7 +183,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
   },
   {
     id: 'reciclables-papel-de-oficina-limpio',
-    label: 'Papel de oficina limpio',
+    label: 'Papel de oficina',
     category: 'reciclables',
     path: '/assets/game-1/products/reciclables/reciclables-papel-de-oficina-limpio.png',
   },
@@ -243,7 +243,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
   },
   {
     id: 'no-reciclables-caja-pizza-muy-sucia',
-    label: 'Caja de pizza muy sucia',
+    label: 'Caja de pizza',
     category: 'no-reciclables',
     path: '/assets/game-1/products/no-reciclables/no-reciclables-caja-pizza-muy-sucia.png',
   },
@@ -273,7 +273,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
   },
   {
     id: 'no-reciclables-envase-de-telgopor-sucio',
-    label: 'Envase de telgopor sucio',
+    label: 'Envase de telgopor',
     category: 'no-reciclables',
     path: '/assets/game-1/products/no-reciclables/no-reciclables-envase-de-telgopor-sucio.png',
   },
@@ -333,7 +333,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
   },
   {
     id: 'no-reciclables-servilleta-sucia-con-grasa',
-    label: 'Servilleta sucia con grasa',
+    label: 'Servilleta con grasa',
     category: 'no-reciclables',
     path: '/assets/game-1/products/no-reciclables/no-reciclables-servilleta-sucia-con-grasa.png',
   },

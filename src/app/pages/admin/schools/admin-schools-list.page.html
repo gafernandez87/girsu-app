@@ -30,7 +30,7 @@
       </label>
 
       <label class="filter-field filter-field--compact">
-        Estado
+        Estado del catálogo
         <select name="status" [(ngModel)]="status">
           <option value="all">Todas</option>
           <option value="active">Activas</option>
@@ -52,7 +52,8 @@
             <th scope="col">Ubicación</th>
             <th scope="col">Sector</th>
             <th scope="col">Ámbito</th>
-            <th scope="col">Estado</th>
+            <th scope="col">Estado del catálogo</th>
+            <th scope="col">Inscripciones</th>
             <th scope="col">Acciones</th>
           </tr>
         </thead>
@@ -74,6 +75,7 @@
                   {{ school.isActive ? 'Activa' : 'Inactiva' }}
                 </span>
               </td>
+              <td>{{ enrollmentError() ? 'No disponible' : (enrollmentCounts()[school.id] || 0) + ' inscriptos' }}</td>
               <td>
                 <a class="row-action" [routerLink]="['/admin/escuelas', school.id, 'edit']">
                   Editar
@@ -82,7 +84,7 @@
             </tr>
           } @empty {
             <tr>
-              <td colspan="6" class="empty-cell">
+              <td colspan="7" class="empty-cell">
                 {{ loading() ? 'Cargando escuelas...' : 'Todavía no hay escuelas cargadas.' }}
               </td>
             </tr>

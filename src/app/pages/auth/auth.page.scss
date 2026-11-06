@@ -14,7 +14,7 @@
 .signup-layout {
   display: grid;
   grid-template-columns: minmax(18rem, 0.8fr) minmax(0, 1.2fr);
-  gap: clamp(1rem, 3vw, 2rem);
+  gap: clamp(1rem, 3cqw, 2rem);
   width: min(100%, 68rem);
   align-items: start;
 }
@@ -37,7 +37,7 @@
 
 .signup-intro h1 {
   color: #19231d;
-  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-size: clamp(2rem, 4cqw, 3.2rem);
   line-height: 1;
 }
 
@@ -167,6 +167,24 @@
   display: grid;
   gap: 0.3rem;
   min-width: 0;
+}
+
+.birth-date-field {
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.birth-date-inputs {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 0.4rem;
+}
+
+.birth-date-inputs select {
+  min-width: 0;
+  width: 100%;
 }
 
 .auth-form label {
@@ -392,7 +410,7 @@
   color: #246a73;
 }
 
-@media (max-width: 640px) {
+@container app (max-width: 640px) {
   .auth-page--signup {
     padding-block: 1rem;
   }

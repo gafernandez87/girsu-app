@@ -14,7 +14,7 @@
 .admin-hero h1 {
   margin: 0.3rem 0 0;
   color: #19231d;
-  font-size: clamp(1.85rem, 3vw, 2.65rem);
+  font-size: clamp(1.85rem, 3cqw, 2.65rem);
   font-weight: 760;
   line-height: 1.04;
 }
@@ -559,7 +559,7 @@
   flex-wrap: wrap;
 }
 
-@media (max-width: 720px) {
+@container app (max-width: 720px) {
   .admin-hero {
     display: grid;
   }

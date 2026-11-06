@@ -16,12 +16,12 @@ export const COMPOST_NOTICES = {
   wet: {
     title: '💧 ¡Demasiada humedad!',
     message:
-      'La compostera necesita aire para funcionar bien. Agregá materiales secos y mezclá para equilibrarla.',
+      'La compostera necesita aire para funcionar bien. Agregá materiales secos y, cuando aparezca la opción, mezclá para equilibrarla.',
   },
   dry: {
     title: '🍂 ¡Demasiado seco!',
     message:
-      'Los organismos necesitan humedad para transformar los residuos. Agregá materiales húmedos y mezclá para equilibrar la compostera.',
+      'Los organismos necesitan humedad para transformar los residuos. Agregá materiales húmedos y, cuando aparezca la opción, mezclá para equilibrar la compostera.',
   },
   mixed: {
     title: '¡Muy bien!',

@@ -135,7 +135,7 @@ type PageItem =
         font-weight: 700;
       }
 
-      @media (max-width: 560px) {
+      @container app (max-width: 560px) {
         :host {
           width: 100%;
         }

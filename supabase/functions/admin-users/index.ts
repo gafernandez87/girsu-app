@@ -2,7 +2,7 @@ import { createClient } from 'npm:@supabase/supabase-js@2.112.2';
 
 type UserRole = 'player' | 'admin';
 type Province = 'Jujuy' | 'Otra';
-type SchoolMembership = 'jujuy_school' | 'no_jujuy_school';
+type SchoolMembership = 'jujuy_school' | 'no_jujuy_school' | 'other_school' | 'no_school';
 
 interface AdminUserPayload {
   readonly birthDate?: string;
@@ -327,7 +327,7 @@ function normalizePayload(
     throw new HttpError('El nombre es obligatorio.', 400);
   }
 
-  if (!schoolRole) {
+  if (!schoolRole && schoolMembership !== 'no_school') {
     throw new HttpError('Seleccioná el rol en la escuela.', 400);
   }
 
@@ -379,7 +379,7 @@ function normalizeProvince(province: string | undefined): Province {
 }
 
 function normalizeSchoolMembership(value: string | undefined): SchoolMembership {
-  if (value === 'jujuy_school' || value === 'no_jujuy_school') {
+  if (value === 'jujuy_school' || value === 'no_jujuy_school' || value === 'other_school' || value === 'no_school') {
     return value;
   }
 

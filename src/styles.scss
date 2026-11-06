@@ -178,7 +178,7 @@ svg {
   font-weight: 950;
 }
 
-@media (max-width: 520px) {
+@container app (max-width: 520px) {
   .ranking-row {
     grid-template-columns: auto minmax(0, 1fr);
   }

@@ -31,7 +31,7 @@ export interface AdminUserProfileInput {
   readonly province: 'Jujuy' | 'Otra';
   readonly role: UserProfile['role'];
   readonly schoolId?: string;
-  readonly schoolMembership: 'jujuy_school' | 'no_jujuy_school';
+  readonly schoolMembership: 'jujuy_school' | 'no_jujuy_school' | 'other_school' | 'no_school';
   readonly schoolRole: string;
   readonly wasteSeparation: readonly string[];
 }
@@ -291,6 +291,13 @@ export class AdminService {
       pageSize,
       total: count ?? 0,
     };
+  }
+
+  async schoolEnrollmentCounts(schoolIds: string[]): Promise<Record<string, number>> {
+    if (!schoolIds.length) return {};
+    const { data, error } = await this.supabase.rpc('school_enrollment_counts', { school_ids: schoolIds });
+    if (error) throw error;
+    return Object.fromEntries((data ?? []).map((row) => [row.school_id, row.enrolled_count]));
   }
 
   async getSchool(id: string): Promise<School> {

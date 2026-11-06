@@ -114,13 +114,13 @@
 .compost-game__playfield {
   z-index: 9;
   top: clamp(8.1rem, 14vh, 9.6rem);
-  right: clamp(0.8rem, 3vw, 2.2rem);
+  right: clamp(0.8rem, 3cqw, 2.2rem);
   bottom: max(1rem, env(safe-area-inset-bottom));
-  left: clamp(0.8rem, 3vw, 2.2rem);
+  left: clamp(0.8rem, 3cqw, 2.2rem);
   display: grid;
   grid-template-areas: 'materials composter';
   grid-template-columns: minmax(17rem, 24rem) minmax(23rem, 40rem);
-  gap: clamp(0.74rem, 2.2vw, 1.35rem);
+  gap: clamp(0.74rem, 2.2cqw, 1.35rem);
   align-items: end;
   justify-content: center;
 }
@@ -1053,7 +1053,7 @@
   padding: 0.42rem 0.78rem;
   border: 3px solid rgba(255, 255, 255, 0.94);
   border-radius: 8px;
-  font-size: clamp(1.65rem, 5.2vw, 2.75rem);
+  font-size: clamp(1.65rem, 5.2cqw, 2.75rem);
   font-weight: 950;
   line-height: 1;
   pointer-events: none;
@@ -1144,7 +1144,7 @@
   }
 }
 
-@media (max-width: 760px) {
+@container app (max-width: 760px) {
   .compost-game {
     background-position: center center;
   }
@@ -1371,7 +1371,7 @@
   }
 }
 
-@media (max-width: 380px) {
+@container app (max-width: 380px) {
   .compost-game__playfield {
     top: max(6.72rem, calc(env(safe-area-inset-top) + 6.72rem));
     right: 0.72rem;
@@ -1552,7 +1552,7 @@
 }
 
 .compost-game__notice h2 {
-  font-size: clamp(1.1rem, 4.5vw, 1.4rem);
+  font-size: clamp(1.1rem, 4.5cqw, 1.4rem);
 }
 
 .compost-game__notice button {

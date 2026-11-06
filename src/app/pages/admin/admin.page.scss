@@ -127,10 +127,10 @@
   align-content: start;
   gap: 1.45rem;
   min-width: 0;
-  padding: 2.05rem clamp(1.35rem, 3.5vw, 4.2rem) 3.5rem;
+  padding: 2.05rem clamp(1.35rem, 3.5cqw, 4.2rem) 3.5rem;
 }
 
-@media (max-width: 980px) {
+@container app (max-width: 980px) {
   .admin-page {
     grid-template-columns: 1fr;
   }
@@ -145,7 +145,7 @@
   }
 }
 
-@media (max-width: 720px) {
+@container app (max-width: 720px) {
   .admin-sidebar {
     display: none;
   }

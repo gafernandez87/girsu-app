@@ -164,13 +164,23 @@
                   <input
                     type="radio"
                     name="schoolMembership"
-                    value="no_jujuy_school"
+                    value="other_school"
                     required
                     [ngModel]="schoolMembership"
                     (ngModelChange)="onSchoolMembershipChange($event)"
                   />
-                  Otra institución o sin escuela
+                  Escuela de otra jurisdicción
                 </label>
+                <label>
+                  <input type="radio" name="schoolMembership" value="no_school" required
+                    [ngModel]="schoolMembership" (ngModelChange)="onSchoolMembershipChange($event)" />
+                  Sin escuela
+                </label>
+                @if (schoolMembership === 'no_jujuy_school') {
+                  <label><input type="radio" name="schoolMembership" value="no_jujuy_school"
+                    [ngModel]="schoolMembership" (ngModelChange)="onSchoolMembershipChange($event)" />
+                    Otra institución o sin escuela (registro anterior)</label>
+                }
               </div>
             </fieldset>
 
@@ -188,6 +198,7 @@
               </label>
             }
 
+            @if (schoolMembership !== 'no_school') {
             <label class="field">
               Rol en la escuela
               <select name="schoolRole" required [(ngModel)]="schoolRole">
@@ -200,6 +211,7 @@
               </select>
             </label>
 
+            }
             <label class="field">
               Curso <span class="field__optional">(opcional)</span>
               <input type="text" name="course" [(ngModel)]="course" />

@@ -21,7 +21,7 @@
   overflow: hidden;
   align-items: end;
   gap: 1.2rem;
-  padding: clamp(1.25rem, 4vw, 2.75rem);
+  padding: clamp(1.25rem, 4cqw, 2.75rem);
   border: 1px solid rgba(255, 246, 220, 0.38);
   border-radius: 8px;
   background:
@@ -82,7 +82,7 @@
 
 .hero h1 {
   max-width: 11ch;
-  font-size: clamp(2.8rem, 9vw, 5.7rem);
+  font-size: clamp(2.8rem, 9cqw, 5.7rem);
   text-wrap: balance;
 }
 
@@ -90,7 +90,7 @@
   max-width: 41rem;
   margin: 0.95rem 0 0;
   color: rgba(255, 250, 240, 0.88);
-  font-size: clamp(1rem, 2vw, 1.18rem);
+  font-size: clamp(1rem, 2cqw, 1.18rem);
   font-weight: 650;
   line-height: 1.48;
 }
@@ -281,7 +281,7 @@
 }
 
 .summary-strip strong {
-  font-size: clamp(1.5rem, 3vw, 2.1rem);
+  font-size: clamp(1.5rem, 3cqw, 2.1rem);
   line-height: 1;
 }
 
@@ -297,7 +297,7 @@
 
 .section-heading h2 {
   color: #2e241c;
-  font-size: clamp(1.65rem, 3vw, 2.35rem);
+  font-size: clamp(1.65rem, 3cqw, 2.35rem);
 }
 
 .section-heading p {
@@ -360,7 +360,7 @@
   display: grid;
   align-content: center;
   gap: 0.5rem;
-  padding: clamp(0.85rem, 2vw, 1.15rem);
+  padding: clamp(0.85rem, 2cqw, 1.15rem);
 }
 
 .stage-kicker,
@@ -396,7 +396,7 @@
 .stage-body h3 {
   margin: 0;
   color: #251b15;
-  font-size: clamp(1.35rem, 2.5vw, 1.9rem);
+  font-size: clamp(1.35rem, 2.5cqw, 1.9rem);
   line-height: 1.05;
 }
 
@@ -430,7 +430,7 @@
   box-shadow: 0 0.72rem 1.25rem color-mix(in srgb, var(--accent), transparent 78%);
 }
 
-@media (max-width: 680px) {
+@container app (max-width: 680px) {
   .home-page {
     padding-inline: 0.75rem;
   }
@@ -450,7 +450,7 @@
   }
 }
 
-@media (max-width: 430px) {
+@container app (max-width: 430px) {
   .hero {
     min-height: auto;
   }
@@ -478,7 +478,7 @@
   }
 }
 
-@media (min-width: 860px) {
+@container app (min-width: 860px) {
   .home-page {
     grid-template-columns: minmax(0, 1fr) minmax(17rem, 22rem);
     padding: 1.25rem 2rem 2.25rem;

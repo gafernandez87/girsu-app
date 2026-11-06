@@ -39,22 +39,26 @@
             }
           </label>
 
-          <label class="form-field" [class.form-field--invalid]="hasBirthDateError(birthDateControl)">
-            <span class="field-label">Fecha de nacimiento <span class="required-indicator" aria-hidden="true">*</span></span>
-            <input
-              #birthDateControl="ngModel"
-              type="date"
-              name="birthDate"
-              required
-              [max]="maxBirthDate"
-              [(ngModel)]="birthDate"
-            />
-            @if (hasBirthDateError(birthDateControl)) {
-              <small class="field-error" role="alert">
-                {{ birthDate ? 'La fecha no puede ser futura.' : 'Este campo es obligatorio.' }}
-              </small>
+          <fieldset class="form-field birth-date-field">
+            <legend class="field-label">Fecha de nacimiento <span class="required-indicator" aria-hidden="true">*</span></legend>
+            <div class="birth-date-inputs">
+              <select name="birthDay" aria-label="Día de nacimiento" required [(ngModel)]="birthDay" (ngModelChange)="updateBirthDate()">
+                <option value="" disabled>Día</option>
+                @for (day of birthDays; track day) { <option [value]="day">{{ day }}</option> }
+              </select>
+              <select name="birthMonth" aria-label="Mes de nacimiento" required [(ngModel)]="birthMonth" (ngModelChange)="updateBirthDate()">
+                <option value="" disabled>Mes</option>
+                @for (month of birthMonths; track month; let index = $index) { <option [value]="index + 1">{{ month }}</option> }
+              </select>
+              <select name="birthYear" aria-label="Año de nacimiento" required [(ngModel)]="birthYear" (ngModelChange)="updateBirthDate()">
+                <option value="" disabled>Año</option>
+                @for (year of birthYears; track year) { <option [value]="year">{{ year }}</option> }
+              </select>
+            </div>
+            @if ((birthDateTouched || submitted()) && birthDay && birthMonth && birthYear && !isBirthDateValid()) {
+              <small class="field-error" role="alert">Ingresá una fecha válida que no sea futura.</small>
             }
-          </label>
+          </fieldset>
 
           <label class="form-field" [class.form-field--invalid]="hasEmailError(emailControl)">
             <span class="field-label">Correo electrónico <span class="required-indicator" aria-hidden="true">*</span></span>
@@ -147,12 +151,17 @@
                 <input
                   type="radio"
                   name="schoolMembership"
-                  value="no_jujuy_school"
+                  value="other_school"
                   required
                   [ngModel]="schoolMembership"
                   (ngModelChange)="onSchoolMembershipChange($event)"
                 />
-                Otra institución o sin escuela
+                Escuela de otra jurisdicción
+              </label>
+              <label class="choice-option">
+                <input type="radio" name="schoolMembership" value="no_school" required
+                  [ngModel]="schoolMembership" (ngModelChange)="onSchoolMembershipChange($event)" />
+                Sin escuela
               </label>
             </div>
           </fieldset>
@@ -177,6 +186,7 @@
             </div>
           }
 
+          @if (schoolMembership !== 'no_school') {
           <label class="form-field" [class.form-field--invalid]="isFieldInvalid(schoolRoleControl)">
             <span class="field-label">Rol en la escuela <span class="required-indicator" aria-hidden="true">*</span></span>
             <select #schoolRoleControl="ngModel" name="schoolRole" required [(ngModel)]="schoolRole">
@@ -191,6 +201,7 @@
               <small class="field-error" role="alert">Seleccioná un rol.</small>
             }
           </label>
+          }
 
           <label class="form-field" [class.form-field--invalid]="isFieldInvalid(passwordControl)">
             <span class="field-label">Contraseña <span class="required-indicator" aria-hidden="true">*</span></span>
