@@ -3,37 +3,6 @@
 .privacy-page {
   @include legal.document;
 }
-
-.privacy-intro {
-  padding: 1.5rem;
-  border: 1px solid #c7d8ca;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.62);
-
-  .label {
-    display: block;
-    margin-bottom: 0.75rem;
-  }
-}
-
-.privacy-date {
-  margin-bottom: 0;
-  color: #46584c;
-  font-size: 0.9rem;
-}
-
-.privacy-draft {
-  margin-top: 1.5rem;
-  padding: 1rem 1.25rem;
-  border: 1px solid #b88525;
-  border-radius: 8px;
-  background: #fff3d5;
-
-  p {
-    margin-bottom: 0;
-  }
-}
-
 .privacy-data {
   margin: 0;
 
@@ -52,11 +21,5 @@
 
   dd {
     margin: 0;
-  }
-}
-
-@container app (max-width: 520px) {
-  .privacy-intro {
-    padding: 1rem;
   }
 }

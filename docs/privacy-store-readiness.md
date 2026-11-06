@@ -1,8 +1,8 @@
 # Privacidad y publicación en tiendas
 
 La política se sirve en `/politica-privacidad`, sin guard de autenticación, con acceso desde
-el menú, login, registro y eliminación de cuenta. El registro informa qué datos se muestran
-a otros participantes. Este aviso no implementa ni acredita consentimiento.
+el menú, login, registro y eliminación de cuenta. El registro incluye un enlace a la política
+y menciona la visibilidad de nombres y puntajes en el ranking; no implementa ni acredita consentimiento.
 
 URL prevista, una vez desplegada y verificada:
 `https://girsu-app.vercel.app/politica-privacidad`.
@@ -30,8 +30,8 @@ No se ha realizado un despliegue como parte de este cambio.
   Supabase, alojamiento, correo y copias propias; no inventar plazos ni declarar eliminación
   inmediata si no se puede garantizar.
 
-Mientras falta alguno de esos datos, la página muestra que es un borrador. Completar campos
-solo retira esa indicación: no verifica el funcionamiento ni certifica cumplimiento.
+Mientras falten esos datos, la política sigue incompleta aunque no muestre un aviso general.
+Completar los campos no verifica el funcionamiento ni certifica cumplimiento.
 Actualizar `lastUpdated` al aprobar o modificar el contenido.
 
 ## Pendientes funcionales antes del lanzamiento
