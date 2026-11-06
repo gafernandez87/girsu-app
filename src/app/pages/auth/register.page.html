@@ -1,24 +1,23 @@
 <main class="auth-page auth-page--signup">
   <section class="signup-layout" aria-labelledby="register-title">
     <aside class="signup-intro">
-      <h1 id="register-title">¡Comenzá tu camino!</h1>
+      <span class="label">GIRSU - Jujuy</span>
+      <h1 id="register-title">PIVOT</h1>
+      <p><strong>Cambiá el rumbo de los residuos</strong></p>
+      <p><strong>¡Jugá, ganá y sumá!</strong></p>
       <p>
-        <strong>El Camino de los Residuos</strong> es una aplicación educativa interactiva
-        creada para estudiantes y docentes de <strong>Jujuy</strong>, que te invita a aprender jugando sobre qué pasa con nuestros residuos desde el momento en que los generamos hasta su reciclaje, compostaje o disposición final.
+        Esta aplicación, creada por jóvenes para jóvenes, te propone distintos juegos y desafíos
+        para poner a prueba tus conocimientos, aprender nuevas formas de separar y gestionar los
+        residuos, y sumar puntos para el <strong>ranking provincial de Jujuy</strong>, donde se
+        muestran los nombres de los participantes y sus puntajes acumulados.
       </p>
       <p>
-        A través de distintos juegos, vas a poder poner a prueba tus conocimientos, aprender nuevas formas de separar y gestionar los residuos y sumar puntos para el <strong>ranking provincial de
-        Jujuy</strong>.
+        Antes de comenzar, te pedimos que completes este breve formulario para conocer un poco más
+        sobre vos y sobre los hábitos de gestión de residuos y compostaje que ya existen en tu
+        escuela y en tu casa.
       </p>
       <p>
-        Antes de comenzar, queremos conocer un poco más sobre vos y sobre los hábitos de gestión de residuos que ya existen <strong>en tu escuela y en tu casa</strong>.
-      </p>
-      <p>
-        Completá este breve formulario con tus datos y respondé algunas preguntas sobre <strong>separación
-        de residuos y compostaje</strong>.
-      </p>
-      <p>
-        ¡Prepará todo para empezar a recorrer <strong>El Camino de los Residuos</strong> y ser parte de una comunidad jujeña que apuesta por una provincia más sostenible!
+        ¡Jugá y sumá por una provincia más limpia y sostenible!
       </p>
     </aside>
 
@@ -134,7 +133,7 @@
           }
 
           <fieldset class="choice-group choice-group--wide auth-form__full">
-            <legend>Institución educativa <span class="required-indicator" aria-hidden="true">*</span></legend>
+            <legend>Escuela o institución a la que pertenecés <span class="required-indicator" aria-hidden="true">*</span></legend>
             <div class="choice-options choice-options--two-columns">
               <label class="choice-option">
                 <input
@@ -188,7 +187,7 @@
 
           @if (schoolMembership !== 'no_school') {
           <label class="form-field" [class.form-field--invalid]="isFieldInvalid(schoolRoleControl)">
-            <span class="field-label">Rol en la escuela <span class="required-indicator" aria-hidden="true">*</span></span>
+            <span class="field-label">¿Cuál es tu rol en la escuela? <span class="required-indicator" aria-hidden="true">*</span></span>
             <select #schoolRoleControl="ngModel" name="schoolRole" required [(ngModel)]="schoolRole">
               <option value="" disabled>Seleccionar rol</option>
               <option value="Estudiante">Estudiante</option>
@@ -254,6 +253,7 @@
               La clasificación de residuos reciclables consiste en separar materiales como plástico,
               papel, cartón, vidrio y metales para que puedan ser recuperados.
             </p>
+            <p>Podés seleccionar más de una opción.</p>
             <div class="choice-options choice-options--three-columns">
               <label class="choice-option">
                 <input
@@ -261,7 +261,7 @@
                   [checked]="wasteSeparation.includes('school')"
                   (change)="toggleWasteSeparation('school')"
                 />
-                En la escuela
+                Sí, en la escuela
               </label>
               <label class="choice-option">
                 <input
@@ -269,7 +269,7 @@
                   [checked]="wasteSeparation.includes('home')"
                   (change)="toggleWasteSeparation('home')"
                 />
-                En casa
+                Sí, en casa
               </label>
               <label class="choice-option">
                 <input
@@ -277,7 +277,7 @@
                   [checked]="wasteSeparation.includes('none')"
                   (change)="toggleWasteSeparation('none')"
                 />
-                No separamos
+                No realizamos separación de residuos
               </label>
             </div>
             @if (hasChoiceError(wasteSeparation)) {
@@ -288,6 +288,7 @@
           <fieldset class="choice-group choice-group--wide auth-form__full" [class.choice-group--invalid]="hasChoiceError(composting)">
             <legend>¿Realizan compostaje? <span class="required-indicator" aria-hidden="true">*</span></legend>
             <p>El compostaje es el proceso de transformar residuos orgánicos en abono natural para el suelo.</p>
+            <p>Podés seleccionar más de una opción.</p>
             <div class="choice-options choice-options--three-columns">
               <label class="choice-option">
                 <input
@@ -295,7 +296,7 @@
                   [checked]="composting.includes('school')"
                   (change)="toggleComposting('school')"
                 />
-                En la escuela
+                Sí, en la escuela
               </label>
               <label class="choice-option">
                 <input
@@ -303,7 +304,7 @@
                   [checked]="composting.includes('home')"
                   (change)="toggleComposting('home')"
                 />
-                En casa
+                Sí, en casa
               </label>
               <label class="choice-option">
                 <input
@@ -311,7 +312,7 @@
                   [checked]="composting.includes('none')"
                   (change)="toggleComposting('none')"
                 />
-                No compostamos
+                No realizamos compostaje
               </label>
             </div>
             @if (hasChoiceError(composting)) {
