@@ -6,8 +6,8 @@ Bundle ID: com.proyectojujuy.caminoresiduos. Idioma: Espanol (Mexico).
 
 ## Icono
 
-Se reemplazo el icono de ejemplo de Capacitor por el logo existente de la app.
-Origen: `public/assets/brand/logo512.png` (1254 x 1254).
+Se actualizo el icono de la app con el logo solicitado.
+Origen: `public/assets/brand/logo-camino.png` (1080 x 1080).
 Destino: `ios/App/App/Assets.xcassets/AppIcon.appiconset/AppIcon-512@2x.png`.
 Exportacion: PNG de 1024 x 1024, sin canal alfa. El nombre del archivo se conserva
 porque `Contents.json` ya lo referencia como icono universal de iOS.

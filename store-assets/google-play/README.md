@@ -4,10 +4,10 @@ Archivos preparados para los campos **App icon** y **Feature graphic** de la fic
 
 | Archivo | Medidas | Formato | Peso |
 | --- | --- | --- | --- |
-| `girsu-app-icon-512.png` | 512 × 512 | PNG de 32 bits, sRGB, alfa completamente opaco | 152.408 bytes |
+| `girsu-app-icon-512.png` | 512 × 512 | PNG de 32 bits, sRGB, alfa completamente opaco | Menos de 1 MB |
 | `girsu-feature-graphic-1024x500.png` | 1024 × 500 | PNG de 24 bits, sRGB, sin alfa | 1.211.029 bytes |
 
-El ícono conserva el arte original de `public/assets/brand/girsu-logo.jpg`. Se redujo proporcionalmente a 448 × 448 y se centró en un lienzo blanco de 512 × 512, con 32 píxeles de margen adicional por lado. No lleva esquinas redondeadas ni sombra exterior. El archivo original de la app se conserva.
+El ícono utiliza `public/assets/brand/logo-camino.png`, centrado sobre un fondo crema de 512 × 512. No lleva esquinas redondeadas ni sombra exterior. También se actualizaron los íconos de inicio de Android dentro del proyecto; publicar una versión nueva requiere generar y subir una nueva compilación.
 
 La gráfica destacada se creó con la habilidad **imagegen**, usando la herramienta integrada y los fondos reales de los juegos 2 y 3 como referencias. La exportación se ajustó a 1024 × 500 y se verificaron sus dimensiones, canales de color y peso.
 
@@ -28,4 +28,4 @@ Referencias locales:
 - [Recursos gráficos de la ficha de la tienda](https://support.google.com/googleplay/android-developer/answer/9866151)
 - [Política de metadatos](https://support.google.com/googleplay/android-developer/answer/9898842)
 
-Los archivos están exportados para subir a la ficha de la tienda. Su preparación no los publica ni reemplaza los íconos de inicio de Android incluidos en el proyecto.
+Los archivos están exportados para subir a la ficha de la tienda; su preparación no los publica en Google Play.
