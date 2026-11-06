@@ -80,7 +80,7 @@ export class IndustrialGameComponent implements AfterViewInit, OnChanges, OnDest
   readonly backgroundImage = `url("${INDUSTRIAL_BACKGROUND_ASSET.path}")`;
   readonly conveyorBaseAsset = INDUSTRIAL_CONVEYOR_ASSETS.base;
   readonly conveyorBeltPattern = `url("${INDUSTRIAL_CONVEYOR_ASSETS.belt.path}")`;
-  readonly workerPositions = [16, 44, 70];
+  readonly workerPositions = [20, 50, 80];
   readonly activeTokens = signal<readonly IndustrialActiveToken[]>([]);
   readonly effects = signal<readonly IndustrialEffect[]>([]);
   readonly draggingTokenId = signal<number | null>(null);
