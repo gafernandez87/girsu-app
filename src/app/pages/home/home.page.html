@@ -1,11 +1,12 @@
 <main class="home-page">
   <section class="hero" aria-labelledby="home-title">
     <div class="hero-copy">
-      <span class="eyebrow">GIRSU Jujuy</span>
       <h1 id="home-title">El Camino de los Residuos</h1>
       <p>
-        Un recorrido interactivo por hogares, plantas de clasificación, composteras comunitarias y
-        rellenos sanitarios, inspirado por los paisajes, colores y habitantes de la provincia de Jujuy.
+        A través de 4 niveles con distintos juegos, vamos a recorrer el camino de los residuos desde
+        casa hasta su disposición final. En cada escenario habrá distintos desafíos que suman puntos
+        según los aciertos y el tiempo de resolución que consigas. Vos podés cambiar el destino de
+        cada residuo si lo ubicás donde corresponde. ¿Te animás?
       </p>
     </div>
 
@@ -36,7 +37,7 @@
         @if (nextStage(); as stage) {
           <a [routerLink]="['/juego', stage.id]" class="next-stage">
             <span>Próxima parada</span>
-            <strong>{{ stage.shortTitle }}</strong>
+            <strong>{{ stage.landingTitle || stage.shortTitle }}</strong>
             <small>{{ stage.subtitle }}</small>
           </a>
         }
@@ -74,11 +75,10 @@
         >
           <div class="stage-body">
             <div class="stage-kicker">
-              <span>Nivel {{ stage.order }} · {{ stage.shortTitle }}</span>
-              <small>{{ stageCompleted(stage.id) ? 'Completada' : 'Lista para jugar' }}</small>
+              <h3>Nivel {{ stage.order }} - {{ stage.landingTitle || stage.title }}</h3>
+              <small>{{ stageCompleted(stage.id) ? 'Completado' : 'Lista para jugar' }}</small>
             </div>
 
-            <h3>{{ stage.title }}</h3>
             <p>{{ stage.environment }}</p>
 
             <div class="stage-meta">
@@ -87,14 +87,18 @@
                 Tiempo: {{ stage.durationSeconds }}s
               </small>
               <small>
-                <span class="stage-meta__icon stage-meta__icon--score" aria-hidden="true"></span>
+                <span class="stage-meta__icon stage-meta__icon--trophy" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0V4ZM7 5H3v3a4 4 0 0 0 4 4M17 5h4v3a4 4 0 0 1-4 4" />
+                  </svg>
+                </span>
                 Tus puntos: {{ stageScore(stage.id) }}
               </small>
             </div>
 
           </div>
           <div class="stage-visual">
-            <a [routerLink]="['/juego', stage.id]" class="play-button" [attr.aria-label]="(stageCompleted(stage.id) ? 'Rejugar ' : 'Jugar ') + stage.title">
+            <a [routerLink]="['/juego', stage.id]" class="play-button" [attr.aria-label]="(stageCompleted(stage.id) ? 'Rejugar ' : 'Jugar ') + (stage.landingTitle || stage.title)">
               {{ stageCompleted(stage.id) ? 'Rejugar' : 'Jugar' }}
             </a>
           </div>

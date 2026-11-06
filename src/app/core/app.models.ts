@@ -74,6 +74,7 @@ export interface GameStage {
   readonly id: string;
   readonly order: number;
   readonly title: string;
+  readonly landingTitle?: string;
   readonly shortTitle: string;
   readonly subtitle: string;
   readonly objective: string;

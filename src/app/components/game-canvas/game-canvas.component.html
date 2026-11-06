@@ -347,8 +347,8 @@
       aria-live="polite"
     >
       <section class="game-intro__panel">
-        <span class="game-intro__eyebrow">{{ stage.shortTitle }}</span>
-        <strong>{{ stage.title }}</strong>
+        <span class="game-intro__eyebrow">Nivel {{ stage.order }}</span>
+        <strong>{{ stage.landingTitle || stage.title }}</strong>
         <p>{{ stageIntroText() }}</p>
         <br>
         <p>{{ stageIntroText2() }}</p>

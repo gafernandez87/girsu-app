@@ -373,20 +373,18 @@
 
 .stage-kicker {
   justify-content: space-between;
+  flex-wrap: nowrap;
+  align-items: flex-start;
 }
 
-.stage-kicker span,
 .stage-kicker small {
   font-size: 0.76rem;
   font-weight: 950;
   text-transform: uppercase;
 }
 
-.stage-kicker span {
-  color: var(--accent);
-}
-
 .stage-kicker small {
+  flex: 0 0 auto;
   padding: 0.34rem 0.52rem;
   border-radius: 99rem;
   background: color-mix(in srgb, var(--accent), white 86%);
@@ -394,19 +392,21 @@
 }
 
 .stage-body h3 {
+  min-width: 0;
   margin: 0;
   color: #251b15;
-  font-size: clamp(1.35rem, 2.5cqw, 1.9rem);
-  line-height: 1.05;
+  font-size: 1rem;
+  line-height: 1.3;
 }
 
 .stage-body p {
   max-width: 40rem;
   margin: 0;
   color: #67594c;
-  font-size: 0.96rem;
-  font-weight: 620;
+  font-size: 0.82rem;
+  font-weight: 500;
   line-height: 1.43;
+  white-space: pre-line;
 }
 
 .stage-meta small {
@@ -419,6 +419,17 @@
   color: white;
   font-size: 0.78rem;
   font-weight: 850;
+}
+
+.stage-meta__icon--trophy {
+  width: 1rem;
+  height: 1rem;
+}
+
+.stage-meta__icon--trophy svg {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .play-button {
@@ -472,10 +483,6 @@
     padding: 0.54rem 0.64rem;
   }
 
-  .stage-kicker {
-    align-items: start;
-    flex-direction: column;
-  }
 }
 
 @container app (min-width: 860px) {
