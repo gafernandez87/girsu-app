@@ -1,54 +1,72 @@
 <main class="ranking-page">
   <section class="ranking-hero" aria-labelledby="ranking-title">
-    <span class="label">Ranking</span>
-    <h1 id="ranking-title">Ranking provincial</h1>
-    <p>El tablero ordena participantes y escuelas con datos normalizados del padrón provincial.</p>
-
-    <div class="ranking-stats" aria-label="Resumen del ranking">
-      <article>
-        <span>Participantes</span>
-        <strong>{{ progress.leaderboard().length }}</strong>
-      </article>
-      <article>
-        <span>Escuelas en ranking</span>
-        <strong>{{ representedSchoolsCount() }}</strong>
-      </article>
-      @if (officialSchoolsCount()) {
-        <article>
-          <span>Escuelas cargadas</span>
-          <strong>{{ officialSchoolsCount() }}</strong>
-        </article>
-      }
+    <div class="ranking-hero__art" aria-hidden="true">
+      <span class="ranking-hero__spark ranking-hero__spark--one">✦</span>
+      <span class="ranking-hero__spark ranking-hero__spark--two">✦</span>
+      <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M16 6h16v8a8 8 0 0 1-16 0V6ZM16 9H9v3a8 8 0 0 0 8 8M32 9h7v3a8 8 0 0 1-8 8M24 22v10M17 37h14M20 32h8" />
+        <path d="m24 9 1.1 2.3 2.5.4-1.8 1.8.4 2.5-2.2-1.2-2.2 1.2.4-2.5-1.8-1.8 2.5-.4L24 9Z" />
+      </svg>
     </div>
+    <span class="ranking-hero__eyebrow">El camino de los residuos</span>
+    <h1 id="ranking-title">Ranking <span>provincial</span></h1>
+    <p>Cada punto cuenta. ¡Jugá, sumá y seguí avanzando!</p>
   </section>
 
-  <section class="ranking-board">
+  @if (!progress.loading() && currentEntry(); as entry) {
+    <section class="your-place" aria-label="Tu posición en el ranking">
+      <div class="your-place__badge" aria-hidden="true">★</div>
+      <div class="your-place__copy">
+        <span>Tu lugar en el ranking</span>
+        <strong>¡Vas en el puesto #{{ entry.position }}!</strong>
+      </div>
+      <div class="your-place__score"><strong>{{ entry.score }}</strong><small>puntos</small></div>
+    </section>
+  }
+
+  <section class="ranking-board" aria-labelledby="ranking-board-title">
+    <div class="ranking-board__heading">
+      <div>
+        <span class="ranking-board__eyebrow">Comunidad jujeña</span>
+        <h2 id="ranking-board-title">Tabla de posiciones</h2>
+      </div>
+      <span class="ranking-board__icon" aria-hidden="true">✦</span>
+    </div>
+
     @if (progress.loading()) {
-      <p class="empty-state">Cargando ranking...</p>
+      <p class="empty-state" role="status">Cargando el ranking...</p>
+    } @else if (progress.error()) {
+      <p class="empty-state" role="status">No pudimos cargar el ranking. Intentá de nuevo más tarde.</p>
     } @else if (progress.leaderboard().length) {
-      <div class="ranking-list">
+      <div class="ranking-summary">
+        <span><strong>{{ progress.leaderboard().length }}</strong> participantes en el tablero</span>
+        <span><strong>{{ representedSchoolsCount() }}</strong> escuelas representadas</span>
+      </div>
+      <p class="ranking-board__note">Hasta 50 participantes con mejor puntaje</p>
+      <ol class="ranking-list" aria-label="Posiciones del ranking provincial">
         @for (entry of progress.leaderboard(); track entry.userId) {
-          <article class="ranking-row" [class.current]="entry.isCurrentUser">
-            <span class="position">{{ entry.position }}</span>
+          <li class="ranking-row" [class.current]="entry.isCurrentUser" [class.ranking-row--first]="entry.position === 1" [class.ranking-row--second]="entry.position === 2" [class.ranking-row--third]="entry.position === 3" [attr.aria-current]="entry.isCurrentUser ? 'true' : null">
+            <span class="position" [attr.aria-label]="'Puesto ' + entry.position">{{ entry.position }}</span>
             <div class="ranking-person">
-              <strong>{{ entry.name }}</strong>
-              <small class="ranking-meta">
-                <span aria-hidden="true">🏫</span>
-                {{ entry.school || 'Sin escuela' }}{{ entry.course ? ' / ' + entry.course : '' }}
-              </small>
+              <strong>{{ entry.name }} @if (entry.isCurrentUser) { <span class="ranking-you">Vos</span> }</strong>
+              <small class="ranking-meta">{{ entry.school || 'Sin escuela' }}{{ entry.course ? ' / ' + entry.course : '' }}</small>
             </div>
             <div class="ranking-detail">
-              <strong class="ranking-score">{{ entry.score }}</strong>
-              <small>{{ entry.completedStages || 0 }} juegos</small>
+              <strong class="ranking-score">{{ entry.score }} <span>pts</span></strong>
+              <small>{{ entry.completedStages || 0 }} {{ entry.completedStages === 1 ? 'juego' : 'juegos' }}</small>
             </div>
-          </article>
+          </li>
         }
-      </div>
+      </ol>
     } @else {
       <div class="empty-state">
-        <p>Todavía no hay puntajes guardados.</p>
-        <a routerLink="/">Volver al recorrido</a>
+        <span class="empty-state__icon" aria-hidden="true">✦</span>
+        <strong>¡El camino está por empezar!</strong>
+        <p>Todavía no hay puntajes en el ranking. Jugá y sumá los primeros puntos.</p>
+        <a routerLink="/">Ir a los juegos <span aria-hidden="true">→</span></a>
       </div>
     }
   </section>
+
+  <a class="ranking-play" routerLink="/">Seguir jugando <span aria-hidden="true">→</span></a>
 </main>

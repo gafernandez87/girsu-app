@@ -1,3 +1,5 @@
+@use "../../shared/ranking-list";
+
 .home-page {
   --ink: #251b15;
   --muted: #6f6356;
@@ -291,6 +293,56 @@
   gap: 0.9rem;
 }
 
+.ranking-section {
+  gap: 0.85rem;
+  padding: 1rem;
+  border: 1px solid #e9dfc9;
+  border-radius: 1.1rem;
+  background: #fffdf7;
+  box-shadow: 0 0.7rem 1.8rem rgba(74, 54, 29, 0.08);
+}
+
+.ranking-heading {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.ranking-eyebrow {
+  color: #a97742;
+  font-size: 0.66rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.ranking-heading h2 {
+  margin: 0.28rem 0 0;
+  color: #28372d;
+  font-size: 1.16rem;
+  line-height: 1.15;
+}
+
+.ranking-heading p,
+.ranking-message {
+  margin: 0.35rem 0 0;
+  color: #716b5e;
+  font-size: 0.78rem;
+  line-height: 1.4;
+}
+
+.ranking-heading__icon {
+  display: grid;
+  width: 2rem;
+  height: 2rem;
+  flex: 0 0 auto;
+  place-items: center;
+  border-radius: 0.7rem;
+  background: #f5e8c7;
+  color: #b97c2c;
+}
+
 .section-heading {
   max-width: 42rem;
 }
@@ -310,6 +362,20 @@
 .stage-list {
   display: grid;
   gap: 0.9rem;
+}
+
+.ranking-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 2.8rem;
+  border: 1px solid rgba(47, 125, 87, 0.28);
+  border-radius: 0.75rem;
+  background: rgba(237, 245, 232, 0.9);
+  color: #27663f;
+  font-weight: 850;
+  text-decoration: none;
 }
 
 .stage-card {

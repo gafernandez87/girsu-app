@@ -1,0 +1,24 @@
+.ranking-list { display: grid; gap: 0.45rem; margin: 0; padding: 0; list-style: none; }
+.ranking-row { display: grid; grid-template-columns: 2.4rem minmax(0, 1fr) auto; gap: 0.65rem; align-items: center; min-height: 4.4rem; padding: 0.65rem; border: 1px solid #eee9dd; border-radius: 0.8rem; background: #faf9f3; }
+.ranking-row--first { border-color: #e9c77b; background: linear-gradient(105deg, #fff7da, #fffcf0); }
+.ranking-row--second { border-color: #d2d9d3; background: #f4f7f4; }
+.ranking-row--third { border-color: #e4c3a7; background: #fcf2e9; }
+.ranking-row.current { border-color: #6ba47a; box-shadow: inset 0 0 0 1px #6ba47a; }
+.position { display: grid; width: 2.4rem; height: 2.4rem; place-items: center; border-radius: 0.75rem; background: #e9eee5; color: #45624c; font-size: 0.9rem; font-weight: 900; }
+.ranking-row--first .position { background: #dba842; color: #fff; }
+.ranking-row--second .position { background: #9aa9a1; color: #fff; }
+.ranking-row--third .position { background: #c7865a; color: #fff; }
+.ranking-person { min-width: 0; }
+.ranking-person strong, .ranking-person small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ranking-person strong { color: #26392c; font-size: 0.86rem; }
+.ranking-person small { margin-top: 0.23rem; color: #776f62; font-size: 0.71rem; font-weight: 600; }
+.ranking-you { padding: 0.15rem 0.35rem; border-radius: 0.3rem; background: #dcefdc; color: #27633e; font-size: 0.62rem; }
+.ranking-detail { display: grid; justify-items: end; gap: 0.22rem; text-align: right; }
+.ranking-detail .ranking-score { grid-column: auto; justify-self: end; color: #276e44; font-size: 0.94rem; white-space: nowrap; }
+.ranking-score span { font-size: 0.62rem; }
+.ranking-detail small { color: #817768; font-size: 0.66rem; font-weight: 700; white-space: nowrap; }
+
+@container app (max-width: 360px) {
+  .ranking-row { grid-template-columns: 2.15rem minmax(0, 1fr) auto; gap: 0.45rem; padding: 0.55rem; }
+  .position { width: 2.15rem; height: 2.15rem; }
+}

@@ -303,7 +303,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
   },
   {
     id: 'no-reciclables-panal-descartable',
-    label: 'Pañal descartable',
+    label: 'Pañal',
     category: 'no-reciclables',
     path: '/assets/game-1/products/no-reciclables/no-reciclables-panal-descartable.png',
   },
@@ -315,7 +315,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
   },
   {
     id: 'no-reciclables-papel-higienico-usado',
-    label: 'Papel higiénico usado',
+    label: 'Papel higiénico',
     category: 'no-reciclables',
     path: '/assets/game-1/products/no-reciclables/no-reciclables-papel-higienico-usado.png',
   },
@@ -333,7 +333,7 @@ export const GAME_ONE_PRODUCTS: readonly GameOneProduct[] = [
   },
   {
     id: 'no-reciclables-servilleta-sucia-con-grasa',
-    label: 'Servilleta con grasa',
+    label: 'Servilleta',
     category: 'no-reciclables',
     path: '/assets/game-1/products/no-reciclables/no-reciclables-servilleta-sucia-con-grasa.png',
   },

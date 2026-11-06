@@ -27,6 +27,8 @@ export class HomePage {
   readonly totalScore = this.progress.totalScore;
   readonly completedStages = this.progress.completedStages;
   readonly leaderboard = this.progress.leaderboard;
+  readonly rankingLoading = this.progress.loading;
+  readonly rankingError = this.progress.error;
   readonly progressPercent = computed(() =>
     Math.round((this.completedStages() / this.stages.length) * 100),
   );

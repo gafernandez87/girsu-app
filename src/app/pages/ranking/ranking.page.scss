@@ -1,123 +1,116 @@
+@use "../../shared/ranking-list";
+
 .ranking-page {
   display: grid;
-  gap: 1.25rem;
-  width: min(100%, 980px);
+  gap: 0.85rem;
+  width: 100%;
   margin: 0 auto;
-  padding: 2rem 1rem 3rem;
+  padding: 1rem 0.85rem calc(2.5rem + env(safe-area-inset-bottom));
+  color: #26352a;
 }
 
 .ranking-hero {
-  display: grid;
-  gap: 0.6rem;
+  position: relative;
+  overflow: hidden;
+  min-height: 14rem;
+  padding: 1.55rem 1.3rem 1.4rem;
+  border: 1px solid rgba(255, 255, 255, 0.23);
+  border-radius: 1.2rem;
+  background:
+    radial-gradient(circle at 88% 5%, rgba(241, 192, 100, 0.23), transparent 40%),
+    linear-gradient(145deg, #214d3b, #2f7550 68%, #5a8851);
+  box-shadow: 0 0.8rem 1.8rem rgba(36, 66, 42, 0.18);
+  color: #fff9eb;
 }
 
-.label {
-  color: #756651;
-  font-size: 0.76rem;
+.ranking-hero::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 0.4rem;
+  background: repeating-linear-gradient(90deg, #d9903d 0 1.4rem, #e5bd69 1.4rem 2rem, #bc6542 2rem 3rem, #99b66a 3rem 4rem);
+  content: '';
+}
+
+.ranking-hero__eyebrow,
+.ranking-board__eyebrow {
+  display: block;
+  font-size: 0.66rem;
   font-weight: 900;
-  letter-spacing: 0;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
 }
 
-.ranking-hero h1,
-.ranking-hero p {
-  margin: 0;
-}
+.ranking-hero__eyebrow { color: #d6e9bf; }
 
 .ranking-hero h1 {
-  font-size: 3.1rem;
+  position: relative;
+  max-width: 9ch;
+  margin: 0.75rem 0 0;
+  font-size: clamp(2.1rem, 9cqw, 3rem);
   line-height: 0.98;
+  letter-spacing: -0.035em;
 }
 
-.ranking-hero p {
-  max-width: 42rem;
-  color: #5f5246;
-  line-height: 1.55;
-}
+.ranking-hero h1 span { color: #f6d995; }
+.ranking-hero p { position: relative; max-width: 19rem; margin: 0.8rem 0 0; color: #f5f3df; font-size: 0.88rem; font-weight: 650; line-height: 1.45; }
 
-.ranking-stats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.65rem;
-  margin-top: 0.25rem;
-}
-
-.ranking-stats article {
+.ranking-hero__art {
+  position: absolute;
+  top: 1.8rem;
+  right: 1.1rem;
   display: grid;
-  gap: 0.1rem;
-  min-width: 9.2rem;
-  padding: 0.7rem 0.82rem;
-  border: 1px solid rgba(61, 43, 29, 0.1);
-  border-radius: 8px;
-  background: rgba(255, 253, 244, 0.76);
-}
-
-.ranking-stats span {
-  color: #6d604f;
-  font-size: 0.76rem;
-  font-weight: 850;
-}
-
-.ranking-stats strong {
-  color: #2f7d57;
-  font-size: 1.25rem;
-  line-height: 1;
-}
-
-.ranking-board {
-  border: 1px solid rgba(61, 43, 29, 0.12);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
-.ranking-detail {
-  display: grid;
-  justify-items: end;
-  gap: 0.15rem;
-}
-
-.ranking-detail small {
-  color: #766957;
-  font-weight: 800;
-}
-
-.empty-state {
-  display: grid;
-  gap: 0.75rem;
-  min-height: 10rem;
+  width: 5.6rem;
+  height: 5.6rem;
   place-items: center;
-  margin: 0;
-  padding: 2rem;
-  background: rgba(255, 253, 244, 0.84);
-  color: #5f5246;
-  text-align: center;
+  border: 1px solid rgba(255, 235, 177, 0.36);
+  border-radius: 50%;
+  background: rgba(255, 241, 195, 0.12);
+  color: #ffe2a0;
+  transform: rotate(8deg);
 }
+.ranking-hero__art svg { width: 3.2rem; height: 3.2rem; }
+.ranking-hero__spark { position: absolute; color: #ffe8ab; font-size: 1rem; }
+.ranking-hero__spark--one { top: -0.25rem; right: -0.2rem; }
+.ranking-hero__spark--two { bottom: 0; left: -0.45rem; font-size: 0.7rem; }
 
-.empty-state a {
-  color: #246a73;
-  font-weight: 900;
+.your-place {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem;
+  border: 1px solid #e8c780;
+  border-radius: 0.9rem;
+  background: linear-gradient(110deg, #fff9e5, #f8e8bd);
+  box-shadow: 0 0.35rem 1rem rgba(95, 69, 29, 0.08);
 }
+.your-place__badge { display: grid; flex: 0 0 2.6rem; height: 2.6rem; place-items: center; border-radius: 0.8rem; background: #d79639; color: #fff9e7; font-size: 1.35rem; }
+.your-place__copy { display: grid; gap: 0.2rem; min-width: 0; }
+.your-place__copy span { color: #806341; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; }
+.your-place__copy strong { font-size: 0.94rem; line-height: 1.18; }
+.your-place__score { display: grid; gap: 0.1rem; margin-left: auto; color: #2b6845; text-align: right; white-space: nowrap; }
+.your-place__score strong { font-size: 1.12rem; }
+.your-place__score small { font-size: 0.66rem; font-weight: 750; }
 
-@container app (max-width: 640px) {
-  .ranking-hero h1 {
-    font-size: 2.2rem;
-  }
-}
+.ranking-board { padding: 1rem; border: 1px solid #e9dfc9; border-radius: 1.1rem; background: #fffdf7; box-shadow: 0 0.7rem 1.8rem rgba(74, 54, 29, 0.08); }
+.ranking-board__heading { display: flex; justify-content: space-between; align-items: center; gap: 0.75rem; }
+.ranking-board__eyebrow { color: #a97742; }
+.ranking-board__heading h2 { margin: 0.28rem 0 0; color: #28372d; font-size: 1.16rem; line-height: 1.15; }
+.ranking-board__icon { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: 0.7rem; background: #f5e8c7; color: #b97c2c; }
+.ranking-summary { display: flex; flex-wrap: wrap; gap: 0.35rem 0.9rem; margin-top: 0.95rem; color: #716b5e; font-size: 0.72rem; font-weight: 650; }
+.ranking-summary strong { color: #2f7550; font-size: 0.82rem; }
+.ranking-board__note { margin: 0.35rem 0 0.8rem; color: #81796c; font-size: 0.68rem; }
+.empty-state { display: grid; justify-items: center; gap: 0.55rem; padding: 2rem 0.5rem 1rem; color: #6d6558; text-align: center; }
+.empty-state p { max-width: 23rem; margin: 0; font-size: 0.85rem; line-height: 1.45; }
+.empty-state__icon { color: #d59d46; font-size: 2rem; }
+.empty-state a, .ranking-play { color: #27663f; font-weight: 850; text-decoration: none; }
+.empty-state a { padding: 0.5rem; }
+.ranking-play { display: flex; align-items: center; justify-content: center; gap: 0.5rem; min-height: 3rem; border: 1px solid #a7c5aa; border-radius: 0.8rem; background: #edf5e8; }
+.ranking-play:focus-visible, .empty-state a:focus-visible { outline: 3px solid #a77a2d; outline-offset: 3px; }
 
-@container app (max-width: 520px) {
-  .ranking-row {
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    align-items: start;
-  }
-
-  .ranking-detail {
-    grid-column: 3;
-    align-self: start;
-    text-align: right;
-  }
-
-  .ranking-detail .ranking-score {
-    grid-column: auto;
-    justify-self: end;
-  }
+@container app (max-width: 360px) {
+  .ranking-page { padding-inline: 0.6rem; }
+  .ranking-board { padding: 0.75rem; }
+  .ranking-hero__art { width: 4.6rem; height: 4.6rem; }
 }

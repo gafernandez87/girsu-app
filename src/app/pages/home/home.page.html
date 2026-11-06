@@ -107,27 +107,43 @@
     </div>
   </section>
 
-  <section class="ranking-section" aria-label="Ranking provincial">
-    <div class="section-heading">
-      <span class="label">Ranking</span>
-      <h2>Ranking provincial</h2>
-      <p>Escuelas y estudiantes comparten un tablero de avance provincial.</p>
+  <section class="ranking-section" aria-labelledby="home-ranking-title">
+    <div class="ranking-heading">
+      <div>
+        <span class="ranking-eyebrow">Comunidad jujeña</span>
+        <h2 id="home-ranking-title">Ranking provincial</h2>
+        <p>¡Cada punto cuenta!</p>
+      </div>
+      <span class="ranking-heading__icon" aria-hidden="true">✦</span>
     </div>
 
-    <div class="ranking-list">
-      @for (entry of leaderboard(); track entry.name) {
-        <article class="ranking-row" [class.current]="entry.isCurrentUser">
-          <span class="position">{{ entry.position }}</span>
-          <div class="ranking-person">
-            <strong>{{ entry.name }}</strong>
-            <small class="ranking-meta">
-              <span aria-hidden="true">🏫</span>
-              {{ entry.school || 'Sin escuela' }}{{ entry.course ? ' / ' + entry.course : '' }}
-            </small>
-          </div>
-          <strong class="ranking-score">{{ entry.score }}</strong>
-        </article>
-      }
-    </div>
+    @if (rankingLoading()) {
+      <p class="ranking-message" role="status">Cargando el ranking...</p>
+    } @else if (rankingError()) {
+      <p class="ranking-message" role="status">No pudimos cargar el ranking. Intentá de nuevo más tarde.</p>
+    } @else if (leaderboard().length) {
+      <ol class="ranking-list" aria-label="Posiciones del ranking provincial">
+        @for (entry of leaderboard(); track entry.userId) {
+          <li class="ranking-row" [class.current]="entry.isCurrentUser"
+            [class.ranking-row--first]="entry.position === 1"
+            [class.ranking-row--second]="entry.position === 2"
+            [class.ranking-row--third]="entry.position === 3"
+            [attr.aria-current]="entry.isCurrentUser ? 'true' : null">
+            <span class="position" [attr.aria-label]="'Puesto ' + entry.position">{{ entry.position }}</span>
+            <div class="ranking-person">
+              <strong>{{ entry.name }} @if (entry.isCurrentUser) { <span class="ranking-you">Vos</span> }</strong>
+              <small class="ranking-meta">{{ entry.school || 'Sin escuela' }}{{ entry.course ? ' / ' + entry.course : '' }}</small>
+            </div>
+            <div class="ranking-detail">
+              <strong class="ranking-score">{{ entry.score }} <span>pts</span></strong>
+              <small>{{ entry.completedStages || 0 }} {{ entry.completedStages === 1 ? 'juego' : 'juegos' }}</small>
+            </div>
+          </li>
+        }
+      </ol>
+    } @else {
+      <p class="ranking-message">Todavía no hay puntajes. ¡Jugá y sumá los primeros puntos!</p>
+    }
+    <a class="ranking-link" routerLink="/ranking">Ver ranking completo <span aria-hidden="true">→</span></a>
   </section>
 </main>
