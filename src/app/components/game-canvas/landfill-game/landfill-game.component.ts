@@ -17,7 +17,6 @@ import {
 
 import { GameStage, StageResult, StageScoreBreakdownItem } from '../../../core/app.models';
 import { GameAudioService } from '../../../core/game-audio.service';
-import { INDUSTRIAL_BIN_ASSETS } from '../game-canvas.assets';
 import type { StageTick } from '../game-canvas.types';
 
 const BOARD_COLUMNS = 8;
@@ -475,7 +474,7 @@ export class LandfillGameComponent implements AfterViewInit, OnChanges, OnDestro
     return `${y + 1}`;
   }
 
-  readonly recycleBinAsset = INDUSTRIAL_BIN_ASSETS['vidrio'];
+  readonly recycleBinAsset = { path: `${LANDFILL_ASSET_BASE}/bins/tacho-reciclaje.png` };
 
   stopRecycleBinGesture(event: PointerEvent): void {
     event.stopPropagation();

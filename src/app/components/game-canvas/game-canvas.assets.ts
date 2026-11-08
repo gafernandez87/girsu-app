@@ -131,12 +131,12 @@ export const HOME_EFFECT_ASSETS: Record<string, string> = {
 
 export const INDUSTRIAL_BACKGROUND_ASSET: ImageAsset = {
   key: 'industrial-background',
-  path: '/assets/game-2/backgrounds/fondo-juego-2.png',
+  path: '/assets/game-2/backgrounds/fondo-valle-jujuy.png',
 };
 
 export const COMPOST_BACKGROUND_ASSET: ImageAsset = {
   key: 'compost-background',
-  path: '/assets/game-3/backgrounds/fondo-compostera.png',
+  path: '/assets/game-3/backgrounds/fondo-yungas.png',
 };
 
 export const INDUSTRIAL_CONVEYOR_ASSETS: Record<'base' | 'belt', ImageAsset> = {

@@ -7,9 +7,11 @@
   (pointerdown)="startBoardGesture($event)"
   (pointerup)="finishBoardGesture($event)"
   (pointercancel)="cancelBoardGesture()"
+  (dblclick)="$event.preventDefault()"
   (contextmenu)="$event.preventDefault()"
 >
   <div class="landfill-game__landscape" aria-hidden="true"></div>
+  <div class="landfill-game__soil" aria-hidden="true"></div>
   <div class="landfill-game__environment" aria-hidden="true"></div>
 
   <div class="landfill-game__crane">
@@ -227,7 +229,6 @@
       <span class="landfill-game__recycle-bin-art" aria-hidden="true">
         <img [src]="recycleBinAsset.path" alt="" draggable="false" />
       </span>
-      <strong>Reciclaje</strong>
       <small>{{ recycledPieces() }}</small>
     </button>
 
